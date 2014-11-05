@@ -73,6 +73,20 @@
 			<version>${org.springframework.version}</version>
 		</dependency>
 
+		<!-- httpclient -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.4-beta1</version>
+		</dependency>
+
+		<!-- jackson json -->
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.13</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<finalName>refinery</finalName>
