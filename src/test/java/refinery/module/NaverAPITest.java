@@ -1,7 +1,7 @@
 package refinery.module;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,21 +14,21 @@ import refinery.config.Config;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=Config.class, loader=AnnotationConfigContextLoader.class)
-public class PumpTest {
+public class NaverAPITest {
 	
 	@Autowired
-	private Pump pump;
+	private NaverAPI naverApi;
 
 	@Test
-	public void get() {
-		int statusCode = pump.get("http://localhost/~Dec7/haru/test/newsApiServer.php");
-		assertThat(statusCode, is(200));
+	public void getRoot() {
+		Root actualRoot = naverApi.get("/", Root.class);
+		Root expectedRoot = new Root("root");
+		
+		assertSameData(actualRoot, expectedRoot);
 	}
-	
-	@Test(expected=HttpRequestErrorException.class)
-	public void getNone() {
-		int statusCode = pump.get("http://localhost/~Dec7/haru/test/nonExistentPage.php");
-		assertThat(statusCode, is(404));
+
+	private void assertSameData(Root actual, Root expected) {
+		assertThat(actual.getName(), is(expected.getName()));
 	}
 
 }
