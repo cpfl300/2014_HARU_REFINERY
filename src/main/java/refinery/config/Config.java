@@ -9,8 +9,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
+import refinery.module.NaverAPI;
+
 @org.springframework.context.annotation.Configuration
-@ComponentScan(basePackages={"refinery"})
+@ComponentScan(basePackages={"refinery", "core"})
 @PropertySource(value="classpath:application-properties.xml")
 public class Config {
 	
@@ -25,5 +27,13 @@ public class Config {
 		ds.setUsername(env.getRequiredProperty("database.username"));
 		ds.setPassword(env.getRequiredProperty("database.password"));
 		return ds;
+	}
+	
+	@Bean
+	public NaverAPI naverAPI() {
+		NaverAPI naverAPI = new NaverAPI("http://localhost/~Dec7/haru/test/newsApiServer.php");
+		return naverAPI;
+		
+		
 	}
 }

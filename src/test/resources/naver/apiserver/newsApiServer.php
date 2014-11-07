@@ -29,13 +29,13 @@
 	// 첫번째가 root context임
 	switch($path_arr[1]) {
 	case "" :
-		$response->test = "hardlink-root";
+		$response->name = "root";
 		break;
 	case "test" :
-		$response->test = "success";
+		$response->name = "test";
 		break;
 	default :
-		$response->test = "failure";
+		$response->name = "failure";
 	}
 
 	// convert to json and response
