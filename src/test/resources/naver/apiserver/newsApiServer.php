@@ -1,11 +1,16 @@
 <?php
-	
+	date_default_timezone_set('Asia/Seoul');
+
 	// response object
 	class Response {
 		
 	}
 	class Info {
 
+	}
+	
+	class Article {
+		
 	}
 
 	// get URI PATH
@@ -31,9 +36,27 @@
 	case "" :
 		$response->name = "root";
 		break;
-	case "test" :
-		$response->name = "test";
-		break;
+		
+	case "article" :
+		$articles = array();
+		for ($i=0; $i<100; $i++) {
+			$now = new DateTime();
+			
+			$article = new Article();
+			$article->hotissue = "hotissue".(string)$i;
+			$article->subject = "subject".(string)$i;
+			$article->journal = "journal".(string)$i;
+			$article->section = "section".(string)$i;
+			$article->date = $now->format('Y-m-d H:i:s');
+			$article->content = "content".(string)$i;
+			
+			$articles[$i] = $article;
+		}
+		
+		
+		$response->articles = $articles;
+		break;	
+	
 	default :
 		$response->name = "failure";
 	}

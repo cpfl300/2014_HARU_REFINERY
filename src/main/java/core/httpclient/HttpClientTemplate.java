@@ -8,8 +8,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Component;
+
+import com.google.gson.Gson;
 
 @Component
 public class HttpClientTemplate {
@@ -19,11 +20,11 @@ public class HttpClientTemplate {
 		HttpGet request = new HttpGet(host + uri);
 	 
 		// add request header
-		//request.addHeader("User-Agent", USER_AGENT);
+		// request.addHeader("User-Agent", USER_AGENT);
+		
 		HttpResponse response = null;
 		int statusCode = 0;
 		StringBuffer result = null;
-		T converted = null;
 		try {
 			response = client.execute(request);
 			statusCode = response.getStatusLine().getStatusCode();
@@ -39,12 +40,13 @@ public class HttpClientTemplate {
 				result.append(line);
 			}
 			
-			ObjectMapper mapper = new ObjectMapper();			
-			converted = mapper.readValue(result.toString(), clazz);
-			
 		} catch (IOException e) {
 			throw new HttpResponseFailureException("IO error", e);
+			
 		}
+			
+		Gson gson = new Gson();
+		T converted = gson.fromJson(result.toString(), clazz);
 		
 		return converted;
 	}
