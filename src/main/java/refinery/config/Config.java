@@ -8,8 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-import refinery.module.NaverAPI;
+import core.naver.api.NaverAPI;
 
 @org.springframework.context.annotation.Configuration
 @ComponentScan(basePackages={"refinery", "core"})
@@ -20,20 +21,26 @@ public class Config {
 	private Environment env;
 	
 	@Bean
-	public DataSource dataSource() {
+	public DataSource refineryDataSource() {
 		BasicDataSource ds = new BasicDataSource();
 		ds.setDriverClassName(env.getRequiredProperty("database.driverClassName"));
-		ds.setUrl(env.getRequiredProperty("database.url"));
-		ds.setUsername(env.getRequiredProperty("database.username"));
-		ds.setPassword(env.getRequiredProperty("database.password"));
+		ds.setUrl(env.getRequiredProperty("refinery.database.url"));
+		ds.setUsername(env.getRequiredProperty("refinery.database.username"));
+		ds.setPassword(env.getRequiredProperty("refinery.database.password"));
 		return ds;
 	}
 	
 	@Bean
+	public JdbcTemplate jdbcTemplate() {
+		
+		return new JdbcTemplate(refineryDataSource());
+	}
+
+	@Bean
 	public NaverAPI naverAPI() {
-		NaverAPI naverAPI = new NaverAPI("http://localhost/~Dec7/haru/test/newsApiServer.php");
+		NaverAPI naverAPI = new NaverAPI(env.getRequiredProperty("naver.news.api"));
+		
 		return naverAPI;
-		
-		
+
 	}
 }

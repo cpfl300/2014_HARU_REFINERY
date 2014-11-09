@@ -1,4 +1,4 @@
-package refinery.module;
+package core.naver.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,4 +20,5 @@ public class NaverAPI {
 		
 		return clazz.cast(httpClientTemplate.get(host, uri, clazz));
 	}
+
 }
