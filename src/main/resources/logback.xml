@@ -18,6 +18,8 @@
 		</encoder>
 	</appender>
 
+	<logger name="learningtest" level="DEBUG" />
+	<logger name="core" level="DEBUG" />
 	<logger name="refinery" level="DEBUG" />
 
 	<root level="INFO">
