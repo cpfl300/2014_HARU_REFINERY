@@ -9,32 +9,41 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import core.naver.api.NaverAPI;
 
 @org.springframework.context.annotation.Configuration
 @ComponentScan(basePackages={"refinery", "core"})
 @PropertySource(value="classpath:application-properties.xml")
+@EnableTransactionManagement
 public class Config {
 	
 	@Resource
 	private Environment env;
 	
 	@Bean
-	public DataSource refineryDataSource() {
+	public DataSource dataSource() {
 		BasicDataSource ds = new BasicDataSource();
 		ds.setDriverClassName(env.getRequiredProperty("database.driverClassName"));
-		ds.setUrl(env.getRequiredProperty("refinery.database.url"));
-		ds.setUsername(env.getRequiredProperty("refinery.database.username"));
-		ds.setPassword(env.getRequiredProperty("refinery.database.password"));
+		ds.setUrl(env.getRequiredProperty("database.url"));
+		ds.setUsername(env.getRequiredProperty("database.username"));
+		ds.setPassword(env.getRequiredProperty("database.password"));
 		return ds;
 	}
 	
 	@Bean
 	public JdbcTemplate jdbcTemplate() {
 		
-		return new JdbcTemplate(refineryDataSource());
+		return new JdbcTemplate(dataSource());
 	}
+	
+	@Bean
+    public PlatformTransactionManager txManager() {
+        return new DataSourceTransactionManager(dataSource());
+    }
 
 	@Bean
 	public NaverAPI naverAPI() {
