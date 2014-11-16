@@ -7,8 +7,8 @@ public class Article {
 	private Journal journal;
 	private Section section;
 	private String title;
-	private String date;
 	private String content;
+	private String date;
 	private int hits;
 	private int completedReadingCount;
 	private double score;
@@ -17,10 +17,15 @@ public class Article {
 	public Article() {
 
 	}
+	
+	public Article(Hotissue hotissue, Journal journal, Section section, String title, String date, String content, int hits,
+			int completedReadingCount) {
+		this(hotissue, journal, section, title, date, content, hits, completedReadingCount, 0);
+	}
+	
 
 	public Article(Hotissue hotissue, Journal journal, Section section, String title, String date, String content, int hits,
 			int completedReadingCount, double score) {
-
 		this.hotissue = hotissue;
 		this.journal = journal;
 		this.section = section;
