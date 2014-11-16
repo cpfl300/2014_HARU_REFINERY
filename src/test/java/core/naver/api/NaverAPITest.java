@@ -13,6 +13,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import core.naver.model.Response;
+import core.naver.model.ResponseArticle;
 import refinery.config.Config;
 
 @RunWith(SpringJUnit4ClassRunner.class)
