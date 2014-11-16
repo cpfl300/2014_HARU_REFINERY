@@ -147,4 +147,6 @@ public class ArticleServiceTest {
 		assertThat(hotissueDao.getCount() - initialHotissueCount, is(0));
 		
 	}
+
+	
 }
