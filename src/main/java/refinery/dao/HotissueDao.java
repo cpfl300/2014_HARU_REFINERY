@@ -1,6 +1,5 @@
 package refinery.dao;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,11 +8,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import refinery.model.Article;
@@ -58,7 +54,7 @@ public class HotissueDao {
 					article.setJournal(journal);
 					article.setSection(section);
 					
-					article.setId(rs.getString("articles.id"));
+					article.setId(rs.getInt("articles.id"));
 					article.setTitle(rs.getString("articles.title"));
 					article.setDate(rs.getString("articles.date"));
 					article.setContent(rs.getString("articles.content"));
@@ -91,22 +87,15 @@ public class HotissueDao {
 
 	}
 
-	public long add(final Hotissue hotissue) {
-		KeyHolder keyHolder = new GeneratedKeyHolder();
-		PreparedStatementCreator hotissuePSCreator = (conn) -> {
-			String name = hotissue.getName();
-			PreparedStatement pst = conn.prepareStatement("insert into hotissues (name) values (?)", new String[] {"id"});
-            pst.setString(1, name);
-            
-            return pst;
-		};
-		
-		this.jdbcTemplate.update(hotissuePSCreator, keyHolder);
-		
-		return (long) keyHolder.getKey();
+	public void add(final Hotissue hotissue) {
+		this.jdbcTemplate.update(
+					"insert into hotissues (id, name) values (?, ?)",
+					hotissue.getId(),
+					hotissue.getName()
+				);
 	}
 
-	public Hotissue get(long id) {
+	public Hotissue get(int id) {
 		
 		return this.jdbcTemplate.queryForObject(
 					"select * from hotissues where id = ?",
@@ -120,7 +109,7 @@ public class HotissueDao {
 		return this.jdbcTemplate.queryForInt("select last_insert_id()"); 
 	}
 
-	public Hotissue getWithArticles(long hotissueId) {
+	public Hotissue getWithArticles(int hotissueId) {
 		
 		return this.jdbcTemplate.queryForObject(
 					"SELECT * FROM hotissues INNER JOIN articles ON articles.hotissues_id = hotissues.id WHERE hotissues.id = ?",
@@ -141,7 +130,7 @@ public class HotissueDao {
 				
 	}
 
-	public int delete(long hotissueId) {
+	public int delete(int hotissueId) {
 		
 		return this.jdbcTemplate.update(
 					"DELETE FROM hotissues WHERE id = ?",

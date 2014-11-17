@@ -27,7 +27,7 @@ public class ArticleDao {
 		article.setJournal(journal);
 		article.setSection(section);
 		
-		article.setId(rs.getString("id"));
+		article.setId(rs.getInt("id"));
 		article.setTitle(rs.getString("title"));
 		article.setDate(rs.getString("date"));
 		article.setContent(rs.getString("content"));
@@ -51,9 +51,9 @@ public class ArticleDao {
 
 	}
 
-	public int add(Article article) {
+	public void add(Article article) {
 
-		return this.jdbcTemplate.update(
+		this.jdbcTemplate.update(
 				"insert into articles(id, hotissues_id, title, journals_id, minor_sections_id, date, content, hits, completed_reading_count) values (?,?,?,?,?,?,?,?,?)",
 				article.getId(),
 				article.getHotissue().getId(),
@@ -68,7 +68,7 @@ public class ArticleDao {
 		
 	}
 
-	public Article get(String id) {
+	public Article get(int id) {
 		
 		return this.jdbcTemplate.queryForObject (
 					"SELECT * FROM articles WHERE id = ?",
@@ -77,7 +77,7 @@ public class ArticleDao {
 				);
 	}
 
-	public int delete(String id) {
+	public int delete(int id) {
 		
 		return this.jdbcTemplate.update(
 					"DELETE FROM articles WHERE id = ?",

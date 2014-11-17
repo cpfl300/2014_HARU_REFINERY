@@ -15,7 +15,7 @@ public class SectionDao {
 	private JdbcTemplate jdbcTemplate;
 	private RowMapper<Section> sectionMapper = (rs, rowNum) -> {
 		Section section = new Section();
-		section.setId(rs.getLong("minor.id"));
+		section.setId(rs.getInt("minor.id"));
 		section.setMajor(rs.getString("major.name"));
 		section.setMinor(rs.getString("minor.name"));
 		

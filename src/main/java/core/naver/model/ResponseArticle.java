@@ -130,12 +130,6 @@ public class ResponseArticle {
 		this.timestamp = timestamp;
 	}
 
-	@Override
-	public String toString() {
-		return "Article [id=" + id + ", hotissue=" + hotissue + ", title=" + title + ", journal=" + journal + ", section=" + section + ", date="
-				+ date + ", content=" + content + ", hits=" + hits + ", completedReadingCount=" + completedReadingCount + ", score=" + score
-				+ ", timestamp=" + timestamp + "]";
-	}
 
 	public Article toArticle() {
 		Hotissue hotissue = new Hotissue(this.hotissue);
@@ -146,4 +140,13 @@ public class ResponseArticle {
 		
 		return article;
 	}
+
+	@Override
+	public String toString() {
+		return "ResponseArticle [id=" + id + ", hotissue=" + hotissue + ", title=" + title + ", journal=" + journal + ", section=" + section
+				+ ", date=" + date + ", content=" + content + ", hits=" + hits + ", completedReadingCount=" + completedReadingCount + ", score="
+				+ score + ", timestamp=" + timestamp + "]";
+	}
+	
+	
 }

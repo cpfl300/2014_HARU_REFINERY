@@ -4,15 +4,19 @@ import java.util.List;
 
 public class Response {
 	
-	private List<ResponseArticle> articles;
+	private List<ResponseArticle> responseArticles;
 
-	public List<ResponseArticle> getArticles() {
-		return articles;
+	public List<ResponseArticle> getResponseArticles() {
+		return responseArticles;
 	}
 
-	public void setArticles(List<ResponseArticle> articles) {
-		this.articles = articles;
+	public void setResponseArticles(List<ResponseArticle> articles) {
+		this.responseArticles = articles;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Response [responseArticles=" + responseArticles + "]";
+	}
 
 }

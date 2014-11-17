@@ -15,7 +15,7 @@ public class JournalDao {
 	private RowMapper<Journal> journalMapper = (rs, rowNum) -> {
 		
 		Journal journal = new Journal();
-		journal.setId(rs.getLong("journals.id"));
+		journal.setId(rs.getInt("journals.id"));
 		journal.setName(rs.getString("journals.name"));
 		journal.setSection(rs.getString("section.name"));
 		
