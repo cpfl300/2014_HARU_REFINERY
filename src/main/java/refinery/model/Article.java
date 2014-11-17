@@ -2,7 +2,7 @@ package refinery.model;
 
 public class Article {
 
-	private String id;
+	private int id;
 	private Hotissue hotissue;
 	private Journal journal;
 	private Section section;
@@ -14,18 +14,10 @@ public class Article {
 	private double score;
 	private String timestamp;
 
-	public Article() {
-
-	}
 	
-	public Article(Hotissue hotissue, Journal journal, Section section, String title, String date, String content, int hits,
-			int completedReadingCount) {
-		this(hotissue, journal, section, title, date, content, hits, completedReadingCount, 0);
-	}
-	
-
-	public Article(Hotissue hotissue, Journal journal, Section section, String title, String date, String content, int hits,
+	public Article(int id, Hotissue hotissue, Journal journal, Section section, String title, String date, String content, int hits,
 			int completedReadingCount, double score) {
+		this.id = id;
 		this.hotissue = hotissue;
 		this.journal = journal;
 		this.section = section;
@@ -37,11 +29,30 @@ public class Article {
 		this.score = score;
 	}
 
-	public String getId() {
+	public Article(Hotissue hotissue, Journal journal, Section section, String title, String date, String content, int hits,
+			int completedReadingCount, double score) {
+		this(0, hotissue, journal, section, title, date, content, hits, completedReadingCount, score);
+		
+	}
+	
+	public Article(Hotissue hotissue, Journal journal, Section section, String title, String date, String content, int hits,
+			int completedReadingCount) {
+		this(0, hotissue, journal, section, title, date, content, hits, completedReadingCount, 0);
+	}
+	
+	public Article(Hotissue hotissue, Journal journal, Section section, String title, String date) {
+		this(0, hotissue, journal, section, title, date, null, 0, 0, 0);
+	}
+	
+	public Article() {
+
+	}
+
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -135,16 +146,66 @@ public class Article {
 		this.timestamp = timestamp;
 	}
 
-	@Override
-	public String toString() {
-		return "Article [id=" + id + ", hotissue=" + hotissue + ", journal=" + journal + ", section=" + section + ", title=" + title + ", date="
-				+ date + ", content=" + content + ", hits=" + hits + ", completedReadingCount=" + completedReadingCount + ", score=" + score
-				+ ", timestamp=" + timestamp + "]";
-	}
 	
 	private String usableDateStr(String dateStr) {
 		
 		return dateStr.substring(0, dateStr.lastIndexOf("."));
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		result = prime * result + ((hotissue == null) ? 0 : hotissue.hashCode());
+		result = prime * result + ((journal == null) ? 0 : journal.hashCode());
+		result = prime * result + ((section == null) ? 0 : section.hashCode());
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Article other = (Article) obj;
+		if (date == null) {
+			if (other.date != null)
+				return false;
+		} else if (!date.equals(other.date))
+			return false;
+		if (hotissue == null) {
+			if (other.hotissue != null)
+				return false;
+		} else if (!hotissue.equals(other.hotissue))
+			return false;
+		if (journal == null) {
+			if (other.journal != null)
+				return false;
+		} else if (!journal.equals(other.journal))
+			return false;
+		if (section == null) {
+			if (other.section != null)
+				return false;
+		} else if (!section.equals(other.section))
+			return false;
+		if (title == null) {
+			if (other.title != null)
+				return false;
+		} else if (!title.equals(other.title))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Article [id=" + id + ", hotissue=" + hotissue + ", journal=" + journal + ", section=" + section + ", title=" + title + ", content="
+				+ content + ", date=" + date + ", hits=" + hits + ", completedReadingCount=" + completedReadingCount + ", score=" + score
+				+ ", timestamp=" + timestamp + "]";
 	}
 	
 }

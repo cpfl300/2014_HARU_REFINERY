@@ -13,8 +13,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import core.naver.api.NaverAPI;
-
 @org.springframework.context.annotation.Configuration
 @ComponentScan(basePackages={"refinery", "core"})
 @PropertySource(value="classpath:application-properties.xml")
@@ -42,14 +40,14 @@ public class Config {
 	
 	@Bean
     public PlatformTransactionManager txManager() {
+		
         return new DataSourceTransactionManager(dataSource());
     }
-
+	
+	
 	@Bean
-	public NaverAPI naverAPI() {
-		NaverAPI naverAPI = new NaverAPI(env.getRequiredProperty("naver.news.api"));
+	public String host() {
 		
-		return naverAPI;
-
+		return env.getRequiredProperty("naver.news.api");
 	}
 }

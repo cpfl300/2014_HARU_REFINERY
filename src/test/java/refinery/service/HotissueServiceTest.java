@@ -14,10 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import refinery.config.Config;
 import refinery.dao.HotissueDao;
-import refinery.model.Article;
 import refinery.model.Hotissue;
-import refinery.model.Journal;
-import refinery.model.Section;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=Config.class, loader=AnnotationConfigContextLoader.class)
@@ -40,24 +37,24 @@ public class HotissueServiceTest {
 	@Before
 	public void setup() {
 		// fixtures
-		hotissue1 = new Hotissue("hotissue1");
-		hotissue2 = new Hotissue("hotissue2");
-		hotissue3 = new Hotissue("hotissue3");
+		hotissue1 = new Hotissue(1, "hotissue1");
+		hotissue2 = new Hotissue(2, "hotissue2");
+		hotissue3 = new Hotissue(3, "hotissue3");
 	}
 
 	@Test
 	public void add() {
 		int initialCount = hotissueDao.getCount();
 		
-		long actualHotissue1Key = hotissueService.add(hotissue1);
+		int actualHotissue1Key = hotissueService.add(hotissue1);
 		assertThat(hotissueDao.getCount()-initialCount, is(1));
 		assertThat(hotissueDao.get(actualHotissue1Key).getName(), is(hotissue1.getName()));
 		
-		long actualHotissue2Key = hotissueService.add(hotissue2);
+		int actualHotissue2Key = hotissueService.add(hotissue2);
 		assertThat(hotissueDao.getCount()-initialCount, is(2));
 		assertThat(hotissueDao.get(actualHotissue2Key).getName(), is(hotissue2.getName()));
 		
-		long actualHotissue3Key = hotissueService.add(hotissue3);
+		int actualHotissue3Key = hotissueService.add(hotissue3);
 		assertThat(hotissueDao.getCount()-initialCount, is(3));
 		assertThat(hotissueDao.get(actualHotissue3Key).getName(), is(hotissue3.getName()));
 	}
@@ -80,19 +77,19 @@ public class HotissueServiceTest {
 	public void delete() {
 		int initialCount = hotissueDao.getCount();
 		
-		long hotissue1Id = hotissueDao.add(hotissue1);
-		long hotissue2Id = hotissueDao.add(hotissue2);
-		long hotissue3Id = hotissueDao.add(hotissue3);		
+		hotissueDao.add(hotissue1);
+		hotissueDao.add(hotissue2);
+		hotissueDao.add(hotissue3);		
 		assertThat(hotissueDao.getCount() - initialCount, is(3));
 
 		
-		assertThat(hotissueService.delete(hotissue1Id), is(1));
+		assertThat(hotissueService.delete(1), is(1));
 		assertThat(hotissueDao.getCount() - initialCount, is(2));
 		
-		assertThat(hotissueService.delete(hotissue2Id), is(1));
+		assertThat(hotissueService.delete(2), is(1));
 		assertThat(hotissueDao.getCount() - initialCount, is(1));
 		
-		assertThat(hotissueService.delete(hotissue3Id), is(1));
+		assertThat(hotissueService.delete(3), is(1));
 		assertThat(hotissueDao.getCount() - initialCount, is(0));		
 	}
 

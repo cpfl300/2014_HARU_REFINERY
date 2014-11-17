@@ -34,28 +34,29 @@ public class ArticleDaoTest {
 	private Article article2;
 	private Article article3;
 	
+	private Hotissue hotissue1;
+	private Hotissue hotissue2;
+	private Hotissue hotissue3;
+	
 	@Before
 	public void setup() {
 		// fixture
 		Journal journal1 = new Journal(84);
 		Section section1 = new Section(3);
-		Hotissue hotissue1 = new Hotissue(10);
-		article1 = new Article(hotissue1, journal1, section1, "title1", "1111-01-01 01:11:11", "content1", 10000, 7000, 10.1);
-		article1.setId("id1");
+		hotissue1 = new Hotissue(1, "hotissue1");
+		article1 = new Article(1, hotissue1, journal1, section1, "title1", "1111-01-01 01:11:11", "content1", 10000, 7000, 10.1);
 		
 		
 		Journal journal2 = new Journal(10);
 		Section section2 = new Section(10);
-		Hotissue hotissue2 = new Hotissue(15);
-		article2 = new Article(hotissue2, journal2, section2, "title2", "1222-02-02 02:11:11", "content2", 20000, 8000, 20.1);
-		article2.setId("id2");
+		hotissue2 = new Hotissue(2, "hotissue2");
+		article2 = new Article(2, hotissue2, journal2, section2, "title2", "1222-02-02 02:11:11", "content2", 20000, 8000, 20.1);
 		
 		
 		Journal journal3 = new Journal(23);
 		Section section3 = new Section(23);
-		Hotissue hotissue3 = new Hotissue(41);
-		article3 = new Article(hotissue3, journal3, section3, "title3", "1333-03-03 03:11:11", "content3", 30000, 9000, 10.1);
-		article3.setId("id3");
+		hotissue3 = new Hotissue(3, "hotissue3");
+		article3 = new Article(3, hotissue3, journal3, section3, "title3", "1333-03-03 03:11:11", "content3", 30000, 9000, 10.1);
 	}
 	
 
@@ -67,6 +68,11 @@ public class ArticleDaoTest {
 	
 	@Test
 	public void deleteAll() {
+		hotissueDao.add(hotissue1);
+		hotissueDao.add(hotissue2);
+		hotissueDao.add(hotissue3);
+		
+		
 		articleDao.deleteAll();
 		assertThat(articleDao.getCount(), is(0));
 		
@@ -92,21 +98,29 @@ public class ArticleDaoTest {
 	
 	@Test
 	public void add() {
+		hotissueDao.add(hotissue1);
+		hotissueDao.add(hotissue2);
+		hotissueDao.add(hotissue3);
+		
 		articleDao.deleteAll();
 		assertThat(articleDao.getCount(), is(0));
 		
-		assertThat(articleDao.add(article1), is(1));
+		articleDao.add(article1);
 		assertThat(articleDao.getCount(), is(1));
 		
-		assertThat(articleDao.add(article2), is(1));
+		articleDao.add(article2);
 		assertThat(articleDao.getCount(), is(2));
 		
-		assertThat(articleDao.add(article3), is(1));
+		articleDao.add(article3);
 		assertThat(articleDao.getCount(), is(3));
 	}
 	
 	@Test(expected=DuplicateKeyException.class)
 	public void notAdd() {
+		hotissueDao.add(hotissue1);
+		hotissueDao.add(hotissue2);
+		hotissueDao.add(hotissue3);
+		
 		articleDao.deleteAll();
 		assertThat(articleDao.getCount(), is(0));
 		
@@ -117,24 +131,32 @@ public class ArticleDaoTest {
 	
 	@Test
 	public void addAndGet() {
+		hotissueDao.add(hotissue1);
+		hotissueDao.add(hotissue2);
+		hotissueDao.add(hotissue3);
+		
 		articleDao.deleteAll();
 		assertThat(articleDao.getCount(), is(0));
 		
 		articleDao.add(this.article1);
-		Article actualArticle1 = articleDao.get(this.article1.getId());
+		Article actualArticle1 = articleDao.get(1);
 		assertSameArticle(actualArticle1, this.article1);
 		
 		articleDao.add(this.article2);
-		Article actualArticle2 = articleDao.get(this.article2.getId());
+		Article actualArticle2 = articleDao.get(2);
 		assertSameArticle(actualArticle2, this.article2);
 		
 		articleDao.add(this.article3);
-		Article actualArticle3 = articleDao.get(this.article3.getId());
+		Article actualArticle3 = articleDao.get(3);
 		assertSameArticle(actualArticle3, this.article3);
 	}
 	
 	@Test
 	public void delete() {
+		hotissueDao.add(hotissue1);
+		hotissueDao.add(hotissue2);
+		hotissueDao.add(hotissue3);
+		
 		articleDao.deleteAll();
 		assertThat(articleDao.getCount(), is(0));
 		
@@ -143,13 +165,13 @@ public class ArticleDaoTest {
 		articleDao.add(article3);
 		assertThat(articleDao.getCount(), is(3));
 		
-		assertThat(articleDao.delete(article1.getId()), is(1));
+		assertThat(articleDao.delete(1), is(1));
 		assertThat(articleDao.getCount(), is(2));
 		
-		assertThat(articleDao.delete(article2.getId()), is(1));
+		assertThat(articleDao.delete(2), is(1));
 		assertThat(articleDao.getCount(), is(1));
 		
-		assertThat(articleDao.delete(article3.getId()), is(1));
+		assertThat(articleDao.delete(3), is(1));
 		assertThat(articleDao.getCount(), is(0));
 	}
 

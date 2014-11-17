@@ -16,18 +16,17 @@ public class HotissueService {
 	private HotissueDao hotissueDao;
 	
 	@Transactional
-	public long add(Hotissue hotissue) {
+	public int add(Hotissue hotissue) {
 		
-		long id = 0;
-		Hotissue tmpHotissue = null;
+		int id = hotissue.hashCode();
+		hotissue.setId(id);
 		
 		try {
-			tmpHotissue = hotissueDao.getByName(hotissue.getName());
-			id = tmpHotissue.getId();
+			hotissueDao.get(id);
 			
 		} catch (EmptyResultDataAccessException e) {
-			id = hotissueDao.add(hotissue);
-			
+			hotissueDao.add(hotissue);
+
 		}
 		
 		return id;
@@ -35,7 +34,7 @@ public class HotissueService {
 	}
 
 	@Transactional
-	public int delete(long id) {
+	public int delete(int id) {
 		int delResult = 0;
 		
 		try {			
