@@ -19,10 +19,15 @@
 
 		<ch.qos.logback.version>1.1.2</ch.qos.logback.version>
 		<junit.version>4.11</junit.version>
+		<org.apache.httpcomponents.version>4.4-beta1</org.apache.httpcomponents.version>
+		<org.mockito.version>1.9.5</org.mockito.version>
+		<com.google.code.gson.version>2.3</com.google.code.gson.version>
+		<org.quartz-scheduler.version>2.2.1</org.quartz-scheduler.version>
 
 		<plugin.maven.war.version>2.4</plugin.maven.war.version>
 		<plugin.maven.eclipse.version>2.9</plugin.maven.eclipse.version>
 		<plugin.maven.compiler.version>3.1</plugin.maven.compiler.version>
+		<plugin.maven.compiler.jdk>1.8</plugin.maven.compiler.jdk>
 		<plugin.maven.javadoc.version>2.10.1</plugin.maven.javadoc.version>
 	</properties>
 
@@ -64,6 +69,16 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>${org.springframework.version}</version>
 		</dependency>
@@ -78,28 +93,28 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.4-beta1</version>
-		</dependency>
-
-		<!-- jackson json -->
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.9.13</version>
+			<version>${org.apache.httpcomponents.version}</version>
 		</dependency>
 		
 		<!-- mockito -->
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>1.9.5</version>
+			<version>${org.mockito.version}</version>
 		</dependency>
 		
 		<!-- gson -->
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.3</version>
+			<version>${com.google.code.gson.version}</version>
+		</dependency>
+		
+		<!-- quartz -->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>${org.quartz-scheduler.version}</version>
 		</dependency>
 
 	</dependencies>
@@ -138,8 +153,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${plugin.maven.compiler.version}</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>${plugin.maven.compiler.jdk}</source>
+					<target>${plugin.maven.compiler.jdk}</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
