@@ -35,17 +35,16 @@ public class HotissueService {
 
 	@Transactional
 	public int delete(int id) {
-		int delResult = 0;
-		
-		try {			
-			delResult = hotissueDao.delete(id);
+			
+		try {		
+			
+			return hotissueDao.delete(id);
 			
 		} catch (DataIntegrityViolationException e) {
 			// do-nothing
+			return 0;
 		}
-		
-		return delResult;
-		
+
 	}
 
 	

@@ -32,6 +32,10 @@ public class Hotissue {
 		this.timestamp = timestamp;
 	}
 
+	public Hotissue(String name, String timestamp) {
+		this(0, name, timestamp);
+	}
+
 	public int getId() {
 		return id;
 	}

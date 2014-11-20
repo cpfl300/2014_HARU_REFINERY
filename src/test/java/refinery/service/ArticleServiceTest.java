@@ -3,7 +3,6 @@ package refinery.service;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -63,7 +62,7 @@ public class ArticleServiceTest {
 		makeJournalDaoMocks();
 		makeSectionDaoMocks();
 		
-		article1 = new Article(hotissue1, journal1, section1, "title1", "1111-01-01 01:11:11", "content1", 10000, 7000, 10.1);
+		article1 = new Article(hotissue1, journal1, section1, "title1", "1111-01-01 01:11:11", "content1", 10000, 7000, 10.1);		
 		article2 = new Article(hotissue2, journal2, section2, "title2", "1222-02-02 02:11:11", "content2", 20000, 8000, 20.1);
 		article3 = new Article(hotissue3, journal3, section3, "title3", "1333-03-03 03:11:11", "content3", 30000, 9000, 10.1);
 	}
@@ -123,22 +122,25 @@ public class ArticleServiceTest {
 	@Test
 	public void delete() {
 		makeHotissueServiceMocks();
+		article1.setHotissue(hotissue1);
+		article2.setHotissue(hotissue2);
+		article3.setHotissue(hotissue3);
 		
-		assertThat(articleDaoMock.getCount(), is(3));
-		assertThat(hotissueDaoMock.getCount() - initialHotissueCount, is(1));
+		when(articleDaoMock.get(article1.hashCode())).thenReturn(article1);		
+		when(articleDaoMock.get(article2.hashCode())).thenReturn(article2);
+		when(articleDaoMock.get(article3.hashCode())).thenReturn(article3);
 		
-		articleService.delete(article1.getId());
-		assertThat(articleDaoMock.getCount(), is(2));
-		assertThat(hotissueDaoMock.getCount() - initialHotissueCount, is(1));
+		when(articleDaoMock.delete(article1.hashCode())).thenReturn(1);
+		when(articleDaoMock.delete(article2.hashCode())).thenReturn(1);
+		when(articleDaoMock.delete(article3.hashCode())).thenReturn(1);
+
+		when(hotissueServiceMock.delete(hotissue1.getId())).thenReturn(1);
+		when(hotissueServiceMock.delete(hotissue2.getId())).thenReturn(1);
+		when(hotissueServiceMock.delete(hotissue3.getId())).thenReturn(1);
 		
-		articleService.delete(article2.getId());
-		assertThat(articleDaoMock.getCount(), is(1));
-		assertThat(hotissueDaoMock.getCount() - initialHotissueCount, is(1));
-		
-		articleService.delete(article3.getId());
-		assertThat(articleDaoMock.getCount(), is(0));
-		assertThat(hotissueDaoMock.getCount() - initialHotissueCount, is(0));
-		
+		assertThat(articleService.delete(article1.hashCode()), is(1));
+		assertThat(articleService.delete(article1.hashCode()), is(1));
+		assertThat(articleService.delete(article1.hashCode()), is(1));
 	}
 	
 	@Test
@@ -160,9 +162,14 @@ public class ArticleServiceTest {
 	}
 	
 	private void makeHotissueServiceMocks() {
-		hotissue1 = new Hotissue(1, "hotissue1", "1001-01-01 01:11:11");
-		hotissue2 = new Hotissue(2, "hotissue2", "1002-02-02 02:11:11");
-		hotissue3 = new Hotissue(3, "hotissue3", "1003-03-03 03:11:11");
+		hotissue1 = new Hotissue("hotissue1", "1001-01-01 01:11:11");
+		hotissue1.setId(hotissue1.hashCode());
+		
+		hotissue2 = new Hotissue("hotissue2", "1002-02-02 02:11:11");
+		hotissue2.setId(hotissue2.hashCode());
+		
+		hotissue3 = new Hotissue("hotissue3", "1003-03-03 03:11:11");
+		hotissue3.setId(hotissue3.hashCode());
 		
 		when(hotissueServiceMock.add(hotissue1)).thenReturn(hotissue1.getId());
 		when(hotissueServiceMock.add(hotissue2)).thenReturn(hotissue2.getId());

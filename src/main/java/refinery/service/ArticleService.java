@@ -1,7 +1,5 @@
 package refinery.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -18,8 +16,6 @@ import refinery.model.Section;
 
 @Service
 public class ArticleService {
-	
-	private static final Logger log = LoggerFactory.getLogger(ArticleService.class);
 	
 	@Autowired
 	private ArticleDao articleDao;
@@ -72,11 +68,13 @@ public class ArticleService {
 	}
 
 	@Transactional
-	public void delete(int id) {
+	public int delete(int id) {
 		Hotissue hotissue = articleDao.get(id).getHotissue();
 		
-		articleDao.delete(id);
+		int affectedRow = articleDao.delete(id);
 		hotissueService.delete(hotissue.getId());
+		
+		return affectedRow;
 
 	}
 
