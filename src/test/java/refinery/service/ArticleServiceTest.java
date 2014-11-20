@@ -2,19 +2,21 @@ package refinery.service;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.transaction.annotation.Transactional;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 
-import refinery.config.Config;
 import refinery.dao.ArticleDao;
-import refinery.dao.HotissueDao;
 import refinery.dao.JournalDao;
 import refinery.dao.SectionDao;
 import refinery.model.Article;
@@ -22,176 +24,128 @@ import refinery.model.Hotissue;
 import refinery.model.Journal;
 import refinery.model.Section;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=Config.class, loader=AnnotationConfigContextLoader.class)
-@Transactional
+@RunWith(MockitoJUnitRunner.class)
 public class ArticleServiceTest {
 	
-	@Autowired
-	private ArticleDao articleDao;
-	
-	@Autowired
-	private JournalDao journalDao;
-	
-	@Autowired
-	private SectionDao sectionDao;
-	
-	@Autowired
-	private HotissueDao hotissueDao;
-	
-	@Autowired
-	private HotissueService hotissueService;
-	
-	@Autowired
+	@InjectMocks
 	private ArticleService articleService;
 	
+	@Mock
+	private ArticleDao articleDaoMock;
+	
+	@Mock
+	private JournalDao journalDaoMock;
+	
+	@Mock
+	private SectionDao sectionDaoMock;
+	
+	@Mock
+	private HotissueService hotissueServiceMock;
+	
+	
 	private Article article1;
+	private Journal journal1;
+	private Section section1;
+	private Hotissue hotissue1;
+	
 	private Article article2;
+	private Journal journal2;
+	private Section section2;
+	private Hotissue hotissue2;
+	
 	private Article article3;
+	private Journal journal3;
+	private Section section3;
+	private Hotissue hotissue3;
 
 	@Before
 	public void setup() {
-		Journal journal1 = new Journal("서울신문");
-		Section section1 = new Section("북한"); 
-		Hotissue hotissue1 = new Hotissue("hotissue1");
-		article1 = new Article(1, hotissue1, journal1, section1, "title1", "1111-01-01 01:11:11", "content1", 10000, 7000, 10.1);
+		makeJournalDaoMocks();
+		makeSectionDaoMocks();
 		
-		Journal journal2 = new Journal("한국일보");
-		Section section2 = new Section("금융");
-		Hotissue hotissue2 = new Hotissue("hotissue2");
-		article2 = new Article(2, hotissue2, journal2, section2, "title2", "1222-02-02 02:11:11", "content2", 20000, 8000, 20.1);
+		article1 = new Article(hotissue1, journal1, section1, "title1", "1111-01-01 01:11:11", "content1", 10000, 7000, 10.1);
+		article2 = new Article(hotissue2, journal2, section2, "title2", "1222-02-02 02:11:11", "content2", 20000, 8000, 20.1);
+		article3 = new Article(hotissue3, journal3, section3, "title3", "1333-03-03 03:11:11", "content3", 30000, 9000, 10.1);
+	}
+
+	@Test
+	public void has() {
+		when(articleDaoMock.get(article1.hashCode())).thenReturn(article1);
+		assertThat(articleService.has(article1.hashCode()), is(true));
 		
-		Journal journal3 = new Journal("전자신문");
-		Section section3 = new Section("언론");
-		Hotissue hotissue3 = new Hotissue("hotissue3");
-		article3 = new Article(3, hotissue3, journal3, section3, "title3", "1333-03-03 03:11:11", "content3", 30000, 9000, 10.1);
+		when(articleDaoMock.get(article2.hashCode())).thenReturn(article2);
+		assertThat(articleService.has(article2.hashCode()), is(true));
+		
+		when(articleDaoMock.get(article3.hashCode())).thenReturn(article3);
+		assertThat(articleService.has(article3.hashCode()), is(true));
 	}
 	
 	@Test
-	public void addAndGet() {
-		hotissueService.add(new Hotissue(1, "hotissue1"));
-		hotissueService.add(new Hotissue(2, "hotissue2"));
-		hotissueService.add(new Hotissue(3, "hotissue3"));
-		int initialHotissueCount = hotissueDao.getCount();
+	public void hasNot() {
+		when(articleDaoMock.get(article1.hashCode())).thenThrow(EmptyResultDataAccessException.class);
+		assertThat(articleService.has(article1.hashCode()), is(false));
 		
-		articleDao.deleteAll();
-		assertThat(articleDao.getCount(), is(0));	
+		when(articleDaoMock.get(article2.hashCode())).thenThrow(EmptyResultDataAccessException.class);
+		assertThat(articleService.has(article2.hashCode()), is(false));
 		
-		int actualArticle1Id = articleService.add(article1);
-		assertThat(articleDao.getCount(), is(1));
-		assertThat(hotissueDao.getCount() - initialHotissueCount, is(0));
-		assertSameArticle(articleDao.get(actualArticle1Id), article1);
-		
-		int actualArticle2Id = articleService.add(article2);
-		assertThat(articleDao.getCount(), is(2));
-		assertThat(hotissueDao.getCount() - initialHotissueCount, is(0));
-		assertSameArticle(articleDao.get(actualArticle2Id), article2);
-		
-		int actualArticle3Id = articleService.add(article3);
-		assertThat(articleDao.getCount(), is(3));
-		assertThat(hotissueDao.getCount() - initialHotissueCount, is(0));
-		assertSameArticle(articleDao.get(actualArticle3Id), article3);
-	}
-	
-	@Test
-	public void addAndGetWhenExistdArticle() {
-		hotissueService.add(new Hotissue(1, "hotissue1"));
-		hotissueService.add(new Hotissue(2, "hotissue2"));
-		hotissueService.add(new Hotissue(3, "hotissue3"));
-		
-		articleDao.deleteAll();
-		assertThat(articleDao.getCount(), is(0));
-		
-		int articleHashCode = article1.hashCode();
-		
-		int actualArticle1Id1 = articleService.add(article1);
-		assertThat(articleDao.getCount(), is(1));
-		assertThat(actualArticle1Id1, is(articleHashCode));
-		
-		int actualArticle1Id2 = articleService.add(article1);
-		assertThat(articleDao.getCount(), is(1));
-		assertThat(actualArticle1Id2, is(articleHashCode));
-		
-		int actualArticle1Id3 = articleService.add(article1);
-		assertThat(articleDao.getCount(), is(1));
-		assertThat(actualArticle1Id3, is(articleHashCode));
+		when(articleDaoMock.get(article3.hashCode())).thenThrow(EmptyResultDataAccessException.class);
+		assertThat(articleService.has(article3.hashCode()), is(false));
 	}
 	
 	
 	@Test
-	public void addArticleWhenExistedHotissue() {
-		hotissueService.add(new Hotissue(1, "hotissue1"));
-		hotissueService.add(new Hotissue(2, "hotissue2"));
-		hotissueService.add(new Hotissue(3, "hotissue3"));
-		int initialHotissueCount = hotissueDao.getCount();
+	public void add() {
+		int expectedArticle1Id = article1.hashCode();
+		assertThat(articleService.add(article1), is(expectedArticle1Id));
 		
-		articleDao.deleteAll();
-		assertThat(articleDao.getCount(), is(0));	
+		int expectedArticle2Id = article2.hashCode();
+		assertThat(articleService.add(article2), is(expectedArticle2Id));
 		
-		articleService.add(article1);
-		assertThat(articleDao.getCount(), is(1));
-		assertThat(hotissueDao.getCount() - initialHotissueCount, is(0));
-		
-		articleService.add(article2);
-		assertThat(articleDao.getCount(), is(2));
-		assertThat(hotissueDao.getCount() - initialHotissueCount, is(0));
-		
-		articleService.add(article3);
-		assertThat(articleDao.getCount(), is(3));
-		assertThat(hotissueDao.getCount() - initialHotissueCount, is(0));
+		int expectedArticle3Id = article3.hashCode();
+		assertThat(articleService.add(article3), is(expectedArticle3Id));
 	}
 	
 	@Test
-	public void addArticleWhenNonExistedHotissue() {
-		int initialHotissueCount = hotissueDao.getCount();
+	public void notAdd() {
+		doThrow(DuplicateKeyException.class).when(articleDaoMock).add(any(Article.class));
 		
-		articleDao.deleteAll();
-		assertThat(articleDao.getCount(), is(0));	
-				
-		articleService.add(article1);
-		assertThat(articleDao.getCount(), is(1));
-		assertThat(hotissueDao.getCount() - initialHotissueCount, is(1));
+		int expectedArticle1Id = article1.hashCode();
+		assertThat(articleService.add(article1), is(expectedArticle1Id));
 		
-		articleService.add(article2);
-		assertThat(articleDao.getCount(), is(2));
-		assertThat(hotissueDao.getCount() - initialHotissueCount, is(2));
+		int expectedArticle2Id = article2.hashCode();
+		assertThat(articleService.add(article2), is(expectedArticle2Id));
 		
-		articleService.add(article3);
-		assertThat(articleDao.getCount(), is(3));
-		assertThat(hotissueDao.getCount() - initialHotissueCount, is(3));
+		int expectedArticle3Id = article3.hashCode();
+		assertThat(articleService.add(article3), is(expectedArticle3Id));
 	}
 	
 	
 	@Test
-	public void deleteArticle() {
-		int initialHotissueCount = hotissueDao.getCount();
+	public void delete() {
+		makeHotissueServiceMocks();
 		
-		articleDao.deleteAll();
-		assertThat(articleDao.getCount(), is(0));
-		
-		Hotissue newHotissue = new Hotissue("new hotissue");
-		article1.setHotissue(newHotissue);
-		article2.setHotissue(newHotissue);
-		article3.setHotissue(newHotissue);
-		articleService.add(article1);
-		articleService.add(article2);
-		articleService.add(article3);
-		assertThat(articleDao.getCount(), is(3));
-		assertThat(hotissueDao.getCount() - initialHotissueCount, is(1));
+		assertThat(articleDaoMock.getCount(), is(3));
+		assertThat(hotissueDaoMock.getCount() - initialHotissueCount, is(1));
 		
 		articleService.delete(article1.getId());
-		assertThat(articleDao.getCount(), is(2));
-		assertThat(hotissueDao.getCount() - initialHotissueCount, is(1));
+		assertThat(articleDaoMock.getCount(), is(2));
+		assertThat(hotissueDaoMock.getCount() - initialHotissueCount, is(1));
 		
 		articleService.delete(article2.getId());
-		assertThat(articleDao.getCount(), is(1));
-		assertThat(hotissueDao.getCount() - initialHotissueCount, is(1));
+		assertThat(articleDaoMock.getCount(), is(1));
+		assertThat(hotissueDaoMock.getCount() - initialHotissueCount, is(1));
 		
 		articleService.delete(article3.getId());
-		assertThat(articleDao.getCount(), is(0));
-		assertThat(hotissueDao.getCount() - initialHotissueCount, is(0));
+		assertThat(articleDaoMock.getCount(), is(0));
+		assertThat(hotissueDaoMock.getCount() - initialHotissueCount, is(0));
 		
 	}
+	
+	@Test
+	public void addArticles() {
+		
+	}
+
 	
 	private void assertSameArticle(Article actual, Article expected) {
 		assertThat(actual.getId(), is(expected.getId()));
@@ -203,6 +157,36 @@ public class ArticleServiceTest {
 		assertThat(actual.getContent(), is(expected.getContent()));
 		assertThat(actual.getHits(), is(expected.getHits()));
 		assertThat(actual.getCompletedReadingCount(), is(expected.getCompletedReadingCount()));
+	}
+	
+	private void makeHotissueServiceMocks() {
+		hotissue1 = new Hotissue(1, "hotissue1", "1001-01-01 01:11:11");
+		hotissue2 = new Hotissue(2, "hotissue2", "1002-02-02 02:11:11");
+		hotissue3 = new Hotissue(3, "hotissue3", "1003-03-03 03:11:11");
+		
+		when(hotissueServiceMock.add(hotissue1)).thenReturn(hotissue1.getId());
+		when(hotissueServiceMock.add(hotissue2)).thenReturn(hotissue2.getId());
+		when(hotissueServiceMock.add(hotissue3)).thenReturn(hotissue3.getId());
+	}
+
+	private void makeSectionDaoMocks() {
+		section1 = new Section(1, "section_major1","section_minor1"); 
+		section2 = new Section(2, "section_major2","section_minor2");
+		section3 = new Section(3, "section_major3","section_minor3");
+		
+		when(sectionDaoMock.getByMinor(section1.getMinor())).thenReturn(section1);
+		when(sectionDaoMock.getByMinor(section2.getMinor())).thenReturn(section2);
+		when(sectionDaoMock.getByMinor(section3.getMinor())).thenReturn(section3);
+	}
+
+	private void makeJournalDaoMocks() {
+		journal1 = new Journal(1, "journal1", "journal_section1");
+		journal2 = new Journal(2, "journal2", "journal_section2");
+		journal3 = new Journal(3, "journal3", "journal_section3");
+		
+		when(journalDaoMock.getByName(journal1.getName())).thenReturn(journal1);
+		when(journalDaoMock.getByName(journal2.getName())).thenReturn(journal2);
+		when(journalDaoMock.getByName(journal3.getName())).thenReturn(journal3);
 	}
 
 	

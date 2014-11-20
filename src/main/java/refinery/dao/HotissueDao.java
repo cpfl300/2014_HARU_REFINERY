@@ -140,5 +140,24 @@ public class HotissueDao {
 		
 	}
 
+	public List<Hotissue> getLatestHotissues(int count) {
+		
+		return this.jdbcTemplate.query(
+					"SELECT * FROM hotissues ORDER BY timestamp DESC LIMIT ?",
+					new Object[] {count},
+					hotissueMapper
+				);
+		
+	}
+
+	public void addWithTimestamp(Hotissue hotissue) {
+		this.jdbcTemplate.update(
+				"insert into hotissues (id, name, timestamp) values (?, ?, ?)",
+				hotissue.getId(),
+				hotissue.getName(),
+				hotissue.getTimestamp()
+			);
+	}
+
 
 }

@@ -3,6 +3,8 @@ package refinery.dao;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,9 +39,9 @@ public class HotissueDaoTest {
 	
 	@Before
 	public void setup() {
-		hotissue1 = new Hotissue(1, "hotissue1");
-		hotissue2 = new Hotissue(2, "hotissue2");
-		hotissue3 = new Hotissue(3, "hotissue3");
+		hotissue1 = new Hotissue(1, "hotissue1", "1111-01-01 01:11:11");
+		hotissue2 = new Hotissue(2, "hotissue2", "1222-02-02 02:11:11");
+		hotissue3 = new Hotissue(3, "hotissue3", "1333-03-03 03:11:11");
 	}
 	
 	@Test
@@ -132,6 +134,44 @@ public class HotissueDaoTest {
 	}
 	
 	@Test
+	public void addWithTimestamp() {
+		hotissueDao.deleteAll();
+		assertThat(hotissueDao.getCount(), is(0));
+		
+		hotissueDao.addWithTimestamp(hotissue1);
+		hotissueDao.addWithTimestamp(hotissue2);
+		hotissueDao.addWithTimestamp(hotissue3);
+		assertThat(hotissueDao.getCount(), is(3));
+		
+		Hotissue actualHotissue1 = hotissueDao.get(hotissue1.getId());
+		assertSameHotissue(actualHotissue1, hotissue1);
+		
+		Hotissue actualHotissue2 = hotissueDao.get(hotissue2.getId());
+		assertSameHotissue(actualHotissue2, hotissue2);
+		
+		Hotissue actualHotissue3 = hotissueDao.get(hotissue3.getId());
+		assertSameHotissue(actualHotissue3, hotissue3);
+		
+	}
+	
+	@Test
+	public void getLatestHotissues() {
+		hotissueDao.deleteAll();
+		assertThat(hotissueDao.getCount(), is(0));
+		
+		hotissueDao.addWithTimestamp(hotissue1);
+		hotissueDao.addWithTimestamp(hotissue2);
+		hotissueDao.addWithTimestamp(hotissue3);
+		assertThat(hotissueDao.getCount(), is(3));
+		
+		List<Hotissue> actualHotissues = hotissueDao.getLatestHotissues(3);
+		assertSameHotissue(actualHotissues.get(0), hotissue3);
+		assertSameHotissue(actualHotissues.get(1), hotissue2);
+		assertSameHotissue(actualHotissues.get(2), hotissue1);
+		
+	}
+	
+	@Test
 	public void getByName() {
 		hotissueDao.deleteAll();
 		assertThat(hotissueDao.getCount(), is(0));
@@ -162,9 +202,7 @@ public class HotissueDaoTest {
 		hotissueDao.add(hotissue3);
 		assertThat(hotissueDao.getCount(), is(3));
 		
-		
 		Hotissue fakeHotissue = new Hotissue("face hotissue");
-		
 		Hotissue actualHotissue = hotissueDao.getByName(fakeHotissue.getName());
 		assertSameHotissue(actualHotissue, fakeHotissue);
 	}
@@ -209,6 +247,10 @@ public class HotissueDaoTest {
 
 	private void assertSameHotissue(Hotissue actual, Hotissue expected) {
 		assertThat(actual.getName(), is(expected.getName()));
+		
+		if(expected.getTimestamp().charAt(0) != '1') {
+			assertThat(actual.getTimestamp(), is(expected.getTimestamp()));
+		}
 	}
 
 }

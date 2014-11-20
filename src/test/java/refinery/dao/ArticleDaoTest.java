@@ -3,11 +3,15 @@ package refinery.dao;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -97,6 +101,25 @@ public class ArticleDaoTest {
 	}
 	
 	@Test
+	public void addBatch() {
+		hotissueDao.add(hotissue1);
+		hotissueDao.add(hotissue2);
+		hotissueDao.add(hotissue3);
+		
+		articleDao.deleteAll();
+		assertThat(articleDao.getCount(), is(0));
+		
+		List<Article> articles = new ArrayList<Article>();
+		articles.add(article1);
+		articles.add(article2);
+		articles.add(article3);
+		
+		articleDao.addBatch(articles);
+		assertThat(articleDao.getCount(), is(3));
+	}
+	
+	
+	@Test
 	public void add() {
 		hotissueDao.add(hotissue1);
 		hotissueDao.add(hotissue2);
@@ -150,6 +173,22 @@ public class ArticleDaoTest {
 		Article actualArticle3 = articleDao.get(3);
 		assertSameArticle(actualArticle3, this.article3);
 	}
+	
+	@Test(expected=EmptyResultDataAccessException.class)
+	public void notGet() {
+		hotissueDao.add(hotissue1);
+		hotissueDao.add(hotissue2);
+		hotissueDao.add(hotissue3);
+		
+		articleDao.deleteAll();
+		assertThat(articleDao.getCount(), is(0));
+		
+		articleDao.add(this.article1);
+		Article actualArticle1 = articleDao.get(4);
+		assertSameArticle(actualArticle1, this.article1);
+		
+	}
+	
 	
 	@Test
 	public void delete() {

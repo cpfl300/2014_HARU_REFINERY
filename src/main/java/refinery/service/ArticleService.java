@@ -4,11 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import refinery.dao.ArticleDao;
-import refinery.dao.HotissueDao;
 import refinery.dao.JournalDao;
 import refinery.dao.SectionDao;
 import refinery.model.Article;
@@ -25,9 +25,6 @@ public class ArticleService {
 	private ArticleDao articleDao;
 	
 	@Autowired
-	private HotissueDao hotissueDao;
-	
-	@Autowired
 	private HotissueService hotissueService;
 	
 	@Autowired
@@ -41,8 +38,6 @@ public class ArticleService {
 		Journal journal = article.getJournal();
 		Section section = article.getSection();
 		Hotissue hotissue = article.getHotissue();
-		
-		log.debug("articleServiceSectionMinor: " + section.getMinor());
 		
 		article.setJournal(journalDao.getByName(journal.getName()));
 		article.setSection(sectionDao.getByMinor(section.getMinor()));
@@ -59,6 +54,22 @@ public class ArticleService {
 		
 		return id;
 	}
+	
+
+	public boolean has(int id) {
+		
+		try {
+			articleDao.get(id);
+			
+			return true;
+			
+		} catch(EmptyResultDataAccessException e) {
+			
+			return false;
+		}
+		
+		
+	}
 
 	@Transactional
 	public void delete(int id) {
@@ -68,7 +79,7 @@ public class ArticleService {
 		hotissueService.delete(hotissue.getId());
 
 	}
-	
+
 
 
 }

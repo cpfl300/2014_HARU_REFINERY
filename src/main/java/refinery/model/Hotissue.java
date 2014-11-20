@@ -15,16 +15,21 @@ public class Hotissue {
 	}
 	
 	public Hotissue(int id) {
-		this(id, null);
+		this(id, null, null);
 	}
 	
 	public Hotissue(String name) {
-		this(0, name);
+		this(0, name, null);
 	}
 	
 	public Hotissue(int id, String name) {
+		this(id, name, null);
+	}
+
+	public Hotissue(int id, String name, String timestamp) {
 		this.id = id;
 		this.name = name;
+		this.timestamp = timestamp;
 	}
 
 	public int getId() {
@@ -106,6 +111,7 @@ public class Hotissue {
 
 	@Override
 	public String toString() {
+		
 		return "Hotissue [id=" + id + ", name=" + name + ", timestamp=" + timestamp + ", articles=" + articles + ", score=" + score + "]";
 	}
 	
