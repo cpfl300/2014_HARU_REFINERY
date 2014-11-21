@@ -90,10 +90,10 @@ public class ArticleDao {
 		
 	}
 
-	public void addBatch(final List<Article> articles) {
+	public int[] addArticles(final List<Article> articles) {
 		
-		this.jdbcTemplate.batchUpdate(
-					"insert into articles(id, hotissues_id, title, journals_id, minor_sections_id, date, content, hits, completed_reading_count) values (?,?,?,?,?,?,?,?,?)",
+		int[] updateCounts = this.jdbcTemplate.batchUpdate(
+					"INSERT IGNORE INTO articles(id, hotissues_id, title, journals_id, minor_sections_id, date, content, hits, completed_reading_count) VALUES (?,?,?,?,?,?,?,?,?)",
 					new BatchPreparedStatementSetter() {
 	
 						@Override
@@ -118,6 +118,8 @@ public class ArticleDao {
 						
 					}
 				);
+		
+		return updateCounts;
 		
 	}
 

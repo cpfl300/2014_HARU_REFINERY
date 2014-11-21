@@ -1,17 +1,35 @@
 package scheduler.task;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import refinery.model.Article;
+import refinery.service.ArticleService;
+import refinery.service.NaverNewsService;
 
 @Component
 public class NaverNewsTask {
 	
-	private static final Logger log = LoggerFactory.getLogger(NaverNewsTask.class);
-
-	public void getNews() {
+	@Autowired
+	private ArticleService articleService;
+	
+	@Autowired
+	private NaverNewsService naverNewsService;
+	
+	
+	public int getNews() {
 		
-		log.debug("naverNewsTask is OK");
+		if (naverNewsService.isUpdated()) {
+			
+			return 0;
+		}
+		
+		List<Article> articles = naverNewsService.getArticles();
+		
+		return articleService.addArticles(articles);
+		
 	}
 
 }

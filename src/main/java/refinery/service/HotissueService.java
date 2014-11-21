@@ -1,5 +1,8 @@
 package refinery.service;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -33,6 +36,15 @@ public class HotissueService {
 			
 	}
 
+	public int addHotissues(List<Hotissue> hotissues) {
+		
+		setId(hotissues);
+		int[] affectedRows = hotissueDao.addHotissues(hotissues);
+		
+		return getCount(affectedRows);
+	}
+
+
 	@Transactional
 	public int delete(int id) {
 			
@@ -46,6 +58,27 @@ public class HotissueService {
 		}
 
 	}
+	
+	private int getCount(int[] rows) {
+		int count = 0;
+		
+		for (int row : rows) {
+			count += row;
+		}
+		
+		return count;
+	}
+
+	private void setId(List<Hotissue> hotissues) {
+		
+		Iterator<Hotissue> ir = hotissues.iterator();
+		while(ir.hasNext()) {
+			Hotissue hotissue = ir.next();
+			hotissue.setId(hotissue.hashCode());
+		}
+		
+	}
+
 
 	
 }

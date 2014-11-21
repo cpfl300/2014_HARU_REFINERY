@@ -6,6 +6,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,6 +59,8 @@ public class ArticleServiceTest {
 	private Journal journal3;
 	private Section section3;
 	private Hotissue hotissue3;
+	
+	private List<Article> articles;
 
 	@Before
 	public void setup() {
@@ -145,21 +150,32 @@ public class ArticleServiceTest {
 	
 	@Test
 	public void addArticles() {
+		articles = new ArrayList<Article>();
+		articles.add(article1);
+		articles.add(article2);
+		articles.add(article3);
 		
+		when(articleDaoMock.addArticles(articles)).thenReturn(new int[] {1, 1, 1});
+		
+		int actualCount = articleService.addArticles(articles);
+		
+		assertThat(actualCount, is(3));
+	}
+	
+	@Test
+	public void addArticlesIncludedDuplicateKey() {
+		articles = new ArrayList<Article>();
+		articles.add(article1);
+		articles.add(article1);
+		articles.add(article1);
+		
+		when(articleDaoMock.addArticles(articles)).thenReturn(new int[] {1, 0, 0});
+		
+		int actualCount = articleService.addArticles(articles);
+		
+		assertThat(actualCount, is(1));
 	}
 
-	
-	private void assertSameArticle(Article actual, Article expected) {
-		assertThat(actual.getId(), is(expected.getId()));
-		assertThat(actual.getHotissue().getId(), is(expected.getHotissue().getId()));
-		assertThat(actual.getJournal().getId(), is(expected.getJournal().getId()));
-		assertThat(actual.getTitle(), is(expected.getTitle()));
-		assertThat(actual.getSection().getId(), is(expected.getSection().getId()));
-		assertThat(actual.getDate(), is(expected.getDate()));
-		assertThat(actual.getContent(), is(expected.getContent()));
-		assertThat(actual.getHits(), is(expected.getHits()));
-		assertThat(actual.getCompletedReadingCount(), is(expected.getCompletedReadingCount()));
-	}
 	
 	private void makeHotissueServiceMocks() {
 		hotissue1 = new Hotissue("hotissue1", "1001-01-01 01:11:11");

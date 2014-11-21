@@ -4,6 +4,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,11 +27,13 @@ public class HotissueServiceTest {
 	private HotissueService hotissueService;
 	
 	@Mock
-	private HotissueDao hotissueDao;
+	private HotissueDao hotissueDaoMock;
 	
 	private Hotissue hotissue1;
 	private Hotissue hotissue2;
 	private Hotissue hotissue3;
+	
+	private List<Hotissue> hotissues;
 	
 	@Before
 	public void setup() {
@@ -40,9 +45,9 @@ public class HotissueServiceTest {
 
 	@Test
 	public void add() {
-		when(hotissueDao.get(hotissue1.hashCode())).thenReturn(hotissue1);
-		when(hotissueDao.get(hotissue2.hashCode())).thenReturn(hotissue2);
-		when(hotissueDao.get(hotissue3.hashCode())).thenReturn(hotissue3);
+		when(hotissueDaoMock.get(hotissue1.hashCode())).thenReturn(hotissue1);
+		when(hotissueDaoMock.get(hotissue2.hashCode())).thenReturn(hotissue2);
+		when(hotissueDaoMock.get(hotissue3.hashCode())).thenReturn(hotissue3);
 		
 		int actualHotissue1Key = hotissueService.add(hotissue1); 
 		assertThat(actualHotissue1Key, is(hotissue1.hashCode()));
@@ -56,7 +61,7 @@ public class HotissueServiceTest {
 	
 	@Test
 	public void notAdd() {
-		when(hotissueDao.get(hotissue1.hashCode())).thenThrow(EmptyResultDataAccessException.class);
+		when(hotissueDaoMock.get(hotissue1.hashCode())).thenThrow(EmptyResultDataAccessException.class);
 		
 		int actualHotissue1Key = hotissueService.add(hotissue1); 
 		assertThat(actualHotissue1Key, is(hotissue1.hashCode()));
@@ -68,11 +73,38 @@ public class HotissueServiceTest {
 		assertThat(actualHotissue3Key, is(hotissue3.hashCode()));
 	}
 	
+	
+	@Test
+	public void addHotissues() {
+		hotissues = new ArrayList<Hotissue>();
+		hotissues.add(hotissue1);
+		hotissues.add(hotissue2);
+		hotissues.add(hotissue3);
+		
+		when(hotissueDaoMock.addHotissues(hotissues)).thenReturn(new int[] {1, 1, 1});
+		
+		int actualSize = hotissueService.addHotissues(hotissues);
+		assertThat(actualSize, is(3));
+	}
+	
+	@Test
+	public void addHotissuesIncludedDuplicateKey() {
+		hotissues = new ArrayList<Hotissue>();
+		hotissues.add(hotissue1);
+		hotissues.add(hotissue1);
+		hotissues.add(hotissue1);
+		
+		when(hotissueDaoMock.addHotissues(hotissues)).thenReturn(new int[] {1, 0, 0});
+		
+		int actualSize = hotissueService.addHotissues(hotissues);
+		assertThat(actualSize, is(1));
+	}
+	
 	@Test
 	public void delete() {
-		when(hotissueDao.delete(hotissue1.hashCode())).thenReturn(1);
-		when(hotissueDao.delete(hotissue2.hashCode())).thenReturn(1);
-		when(hotissueDao.delete(hotissue3.hashCode())).thenReturn(1);
+		when(hotissueDaoMock.delete(hotissue1.hashCode())).thenReturn(1);
+		when(hotissueDaoMock.delete(hotissue2.hashCode())).thenReturn(1);
+		when(hotissueDaoMock.delete(hotissue3.hashCode())).thenReturn(1);
 		
 		assertThat(hotissueService.delete(hotissue1.hashCode()), is(1));
 		assertThat(hotissueService.delete(hotissue2.hashCode()), is(1));
@@ -81,13 +113,13 @@ public class HotissueServiceTest {
 	
 	@Test
 	public void notDelete() {
-		when(hotissueDao.delete(hotissue1.hashCode())).thenThrow(DataIntegrityViolationException.class);
+		when(hotissueDaoMock.delete(hotissue1.hashCode())).thenThrow(DataIntegrityViolationException.class);
 		assertThat(hotissueService.delete(hotissue1.hashCode()), is(0));
 		
-		when(hotissueDao.delete(hotissue2.hashCode())).thenThrow(DataIntegrityViolationException.class);
+		when(hotissueDaoMock.delete(hotissue2.hashCode())).thenThrow(DataIntegrityViolationException.class);
 		assertThat(hotissueService.delete(hotissue2.hashCode()), is(0));
 		
-		when(hotissueDao.delete(hotissue3.hashCode())).thenThrow(DataIntegrityViolationException.class);
+		when(hotissueDaoMock.delete(hotissue3.hashCode())).thenThrow(DataIntegrityViolationException.class);
 		assertThat(hotissueService.delete(hotissue3.hashCode()), is(0));
 	}
 

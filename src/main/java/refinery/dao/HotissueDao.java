@@ -1,5 +1,6 @@
 package refinery.dao;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
@@ -157,6 +159,33 @@ public class HotissueDao {
 				hotissue.getName(),
 				hotissue.getTimestamp()
 			);
+	}
+
+	public int[] addHotissues(final List<Hotissue> hotissues) {
+		
+		return this.jdbcTemplate.batchUpdate(
+					"INSERT IGNORE INTO hotissues (id, name, timestamp) VALUES (?, ?, ?)",
+					new BatchPreparedStatementSetter() {
+
+						@Override
+						public void setValues(PreparedStatement ps, int i) throws SQLException {
+							
+							Hotissue hotissue = hotissues.get(i);
+							ps.setInt(1, hotissue.getId());
+							ps.setString(2, hotissue.getName());
+							ps.setString(3, hotissue.getTimestamp());
+						}
+
+						@Override
+						public int getBatchSize() {
+							
+							return hotissues.size();
+						}
+						
+					}
+				
+				);
+		
 	}
 
 

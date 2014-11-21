@@ -1,5 +1,9 @@
 package refinery.service;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -31,13 +35,8 @@ public class ArticleService {
 
 	@Transactional
 	public int add(Article article) {
-		Journal journal = article.getJournal();
-		Section section = article.getSection();
-		Hotissue hotissue = article.getHotissue();
-		
-		article.setJournal(journalDao.getByName(journal.getName()));
-		article.setSection(sectionDao.getByMinor(section.getMinor()));
-		hotissueService.add(hotissue);
+		setJournalAndSection(article);
+		hotissueService.add(article.getHotissue());
 		
 		int id = article.hashCode();
 		article.setId(id);
@@ -49,6 +48,25 @@ public class ArticleService {
 		}
 		
 		return id;
+	}
+	
+	@Transactional
+	public int addArticles(List<Article> articles) {
+		List<Hotissue> hotissues = new ArrayList<Hotissue>();
+		
+		Iterator<Article> ir = articles.iterator();
+		while(ir.hasNext()) {
+			Article article = ir.next();
+			setJournalAndSection(article);
+			hotissues.add(article.getHotissue());
+		}
+		
+		hotissueService.addHotissues(hotissues);
+		
+		int[] affectedRows = articleDao.addArticles(articles);
+		
+		return getCount(affectedRows);
+		
 	}
 	
 
@@ -76,6 +94,24 @@ public class ArticleService {
 		
 		return affectedRow;
 
+	}
+	
+	private void setJournalAndSection(Article article) {
+		Journal journal = article.getJournal();
+		Section section = article.getSection();
+		
+		article.setJournal(journalDao.getByName(journal.getName()));
+		article.setSection(sectionDao.getByMinor(section.getMinor()));
+	}
+	
+	private int getCount(int[] rows) {
+		int count = 0;
+		
+		for (int row : rows) {
+			count += row;
+		}
+		
+		return count;
 	}
 
 
