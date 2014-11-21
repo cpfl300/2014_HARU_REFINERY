@@ -7,8 +7,6 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -30,8 +28,6 @@ import scheduler.task.NaverNewsTask;
 @PropertySource(value="classpath:application-properties.xml")
 @EnableTransactionManagement
 public class Config {
-	
-	private static final Logger log = LoggerFactory.getLogger(Config.class);
 	
 	@Autowired
 	private NaverNewsTask naverNewsTask;
@@ -89,11 +85,11 @@ public class Config {
 	public CronTriggerFactoryBean cronTriggerFactoryBean() {
 		
 		CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
+		cronTriggerFactoryBean.setName("naverNewsTrigger");
 		cronTriggerFactoryBean.setJobDetail(jobBeanFactoryBean().getObject());
 		cronTriggerFactoryBean.setStartDelay(1000);
 		
 		String cronExp = env.getRequiredProperty("cron.exp.naverapi.news");
-		log.debug("cronExp: " + cronExp);
 		cronTriggerFactoryBean.setCronExpression(cronExp);
 		
 		return cronTriggerFactoryBean;
