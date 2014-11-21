@@ -4,9 +4,12 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.quartz.CronTrigger;
 import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
 import org.quartz.Trigger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
@@ -19,14 +22,19 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import refinery.job.detail.NaverNewsJobBean;
-import refinery.job.task.NaverNewsTask;
+import scheduler.job.NaverNewsJob;
+import scheduler.task.NaverNewsTask;
 
 @org.springframework.context.annotation.Configuration
-@ComponentScan(basePackages={"refinery", "core"})
+@ComponentScan(basePackages={"core", "refinery", "scheduler"})
 @PropertySource(value="classpath:application-properties.xml")
 @EnableTransactionManagement
 public class Config {
+	
+	private static final Logger log = LoggerFactory.getLogger(Config.class);
+	
+	@Autowired
+	private NaverNewsTask naverNewsTask;
 	
 	@Resource
 	private Environment env;
@@ -60,47 +68,48 @@ public class Config {
 		return env.getRequiredProperty("naver.news.api");
 	}
 	
+
 	@Bean
-	public JobDetailFactoryBean naverNewsJobBean() {
-		JobDetailFactoryBean jobBean = new JobDetailFactoryBean();
-		jobBean.setJobClass(NaverNewsJobBean.class);
-		jobBean.setDurability(true);
+	public JobDetailFactoryBean jobBeanFactoryBean() {
+		JobDetailFactoryBean jobBeanFactoryBean = new JobDetailFactoryBean();
+		jobBeanFactoryBean.setJobClass(NaverNewsJob.class);
+		jobBeanFactoryBean.setName("naverNewsJob");
+		jobBeanFactoryBean.setDurability(true);
 		
-		JobDataMap jobDataMap = new JobDataMap();
-		jobDataMap.put("NaverNewsTask", NaverNewsTask.class);
+		JobDataMap jobDataMap = new JobDataMap();		
+		jobDataMap.put("naverNewsTask", naverNewsTask);
 		
-		jobBean.setJobDataMap(jobDataMap);
+		jobBeanFactoryBean.setJobDataMap(jobDataMap);
 		
-		return jobBean;
+		return jobBeanFactoryBean;
 	}
 	
 	
 	@Bean
-	public CronTrigger cronTrigger() {
+	public CronTriggerFactoryBean cronTriggerFactoryBean() {
 		
-		CronTriggerFactoryBean cronTriggerFactory = new CronTriggerFactoryBean();
-		cronTriggerFactory.setStartDelay(1000);
-		cronTriggerFactory.setCronExpression("0/3 * * * * ?");
+		CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
+		cronTriggerFactoryBean.setJobDetail(jobBeanFactoryBean().getObject());
+		cronTriggerFactoryBean.setStartDelay(1000);
 		
-		return cronTriggerFactory.getObject();
+		String cronExp = env.getRequiredProperty("cron.exp.naverapi.news");
+		log.debug("cronExp: " + cronExp);
+		cronTriggerFactoryBean.setCronExpression(cronExp);
+		
+		return cronTriggerFactoryBean;
 		
 	}
 	
 	@Bean
 	public SchedulerFactoryBean schedulerFactoryBean() {
-		SchedulerFactoryBean scheduler = new SchedulerFactoryBean();
+		SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
 		
-		Trigger[] triggerArr = new Trigger[1];
-		triggerArr[0] = cronTrigger();
+		schedulerFactoryBean.setJobDetails(new JobDetail[]{jobBeanFactoryBean().getObject()});
+		schedulerFactoryBean.setTriggers(new Trigger[] {cronTriggerFactoryBean().getObject()});
 		
-		scheduler.setTriggers(triggerArr);
-		
-		return scheduler;
+		return schedulerFactoryBean;
 		
 	}
-	
-	
-	
 	
 	
 }
