@@ -9,6 +9,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -27,6 +29,8 @@ import refinery.model.Section;
 @ContextConfiguration(classes=Config.class, loader=AnnotationConfigContextLoader.class)
 @Transactional
 public class ArticleDaoTest {
+	
+	private static final Logger log = LoggerFactory.getLogger(ArticleDaoTest.class);
 	
 	@Autowired
 	private ArticleDao articleDao;
@@ -101,7 +105,7 @@ public class ArticleDaoTest {
 	}
 	
 	@Test
-	public void addBatch() {
+	public void addArticles() {
 		hotissueDao.add(hotissue1);
 		hotissueDao.add(hotissue2);
 		hotissueDao.add(hotissue3);
@@ -114,8 +118,31 @@ public class ArticleDaoTest {
 		articles.add(article2);
 		articles.add(article3);
 		
-		articleDao.addBatch(articles);
-		assertThat(articleDao.getCount(), is(3));
+		int[] actualCounts = articleDao.addArticles(articles);
+		assertThat(actualCounts.length, is(3));
+	}
+	
+	@Test
+	public void addArticlesIncludedDuplicateKey() {
+		hotissueDao.add(hotissue1);
+		hotissueDao.add(hotissue2);
+		hotissueDao.add(hotissue3);
+		
+		articleDao.deleteAll();
+		assertThat(articleDao.getCount(), is(0));
+		
+		List<Article> articles = new ArrayList<Article>();
+		articles.add(article1);
+		articles.add(article1);
+		articles.add(article1);
+		
+		int actualCounts[] = articleDao.addArticles(articles);
+		int actualCount = 0;
+		for (int affectedRow : actualCounts) {
+			actualCount += affectedRow;
+		}
+
+		assertThat(actualCount, is(1));
 	}
 	
 	
