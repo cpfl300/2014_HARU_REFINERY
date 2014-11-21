@@ -1,11 +1,12 @@
 package refinery.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import refinery.dao.ArticleDao;
-import refinery.dao.HotissueDao;
 import refinery.dao.JournalDao;
 import refinery.dao.SectionDao;
 import refinery.model.Article;
@@ -20,9 +21,6 @@ public class ArticleService {
 	private ArticleDao articleDao;
 	
 	@Autowired
-	private HotissueDao hotissueDao;
-	
-	@Autowired
 	private HotissueService hotissueService;
 	
 	@Autowired
@@ -32,27 +30,54 @@ public class ArticleService {
 	private SectionDao sectionDao;
 
 	@Transactional
-	public void add(Article article) {
+	public int add(Article article) {
 		Journal journal = article.getJournal();
 		Section section = article.getSection();
 		Hotissue hotissue = article.getHotissue();
 		
 		article.setJournal(journalDao.getByName(journal.getName()));
 		article.setSection(sectionDao.getByMinor(section.getMinor()));
-		hotissue.setId(hotissueService.add(hotissue));
+		hotissueService.add(hotissue);
+		
+		int id = article.hashCode();
+		article.setId(id);
 
-		articleDao.add(article);
+		try {			
+			articleDao.add(article);
+		} catch (DuplicateKeyException e) {
+			// do-nothing
+		}
+		
+		return id;
+	}
+	
+
+	public boolean has(int id) {
+		
+		try {
+			articleDao.get(id);
+			
+			return true;
+			
+		} catch(EmptyResultDataAccessException e) {
+			
+			return false;
+		}
+		
+		
 	}
 
 	@Transactional
-	public void delete(String id) {
+	public int delete(int id) {
 		Hotissue hotissue = articleDao.get(id).getHotissue();
 		
-		articleDao.delete(id);
+		int affectedRow = articleDao.delete(id);
 		hotissueService.delete(hotissue.getId());
+		
+		return affectedRow;
 
 	}
-	
+
 
 
 }

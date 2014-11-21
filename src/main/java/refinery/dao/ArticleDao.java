@@ -1,6 +1,11 @@
 package refinery.dao;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -27,7 +32,7 @@ public class ArticleDao {
 		article.setJournal(journal);
 		article.setSection(section);
 		
-		article.setId(rs.getString("id"));
+		article.setId(rs.getInt("id"));
 		article.setTitle(rs.getString("title"));
 		article.setDate(rs.getString("date"));
 		article.setContent(rs.getString("content"));
@@ -37,7 +42,6 @@ public class ArticleDao {
 		
 		return article;
 	};
-
 
 	public int getCount() {
 		
@@ -51,9 +55,9 @@ public class ArticleDao {
 
 	}
 
-	public int add(Article article) {
+	public void add(Article article) {
 
-		return this.jdbcTemplate.update(
+		this.jdbcTemplate.update(
 				"insert into articles(id, hotissues_id, title, journals_id, minor_sections_id, date, content, hits, completed_reading_count) values (?,?,?,?,?,?,?,?,?)",
 				article.getId(),
 				article.getHotissue().getId(),
@@ -68,7 +72,7 @@ public class ArticleDao {
 		
 	}
 
-	public Article get(String id) {
+	public Article get(int id) {
 		
 		return this.jdbcTemplate.queryForObject (
 					"SELECT * FROM articles WHERE id = ?",
@@ -77,11 +81,42 @@ public class ArticleDao {
 				);
 	}
 
-	public int delete(String id) {
+	public int delete(int id) {
 		
 		return this.jdbcTemplate.update(
 					"DELETE FROM articles WHERE id = ?",
 					new Object[] {id}
+				);
+		
+	}
+
+	public void addBatch(final List<Article> articles) {
+		
+		this.jdbcTemplate.batchUpdate(
+					"insert into articles(id, hotissues_id, title, journals_id, minor_sections_id, date, content, hits, completed_reading_count) values (?,?,?,?,?,?,?,?,?)",
+					new BatchPreparedStatementSetter() {
+	
+						@Override
+						public void setValues(PreparedStatement ps, int i) throws SQLException {
+							Article article = articles.get(i);
+							ps.setInt(1, article.getId());
+							ps.setInt(2, article.getHotissue().getId());
+							ps.setString(3, article.getTitle());
+							ps.setInt(4, article.getJournal().getId());
+							ps.setInt(5, article.getSection().getId());
+							ps.setString(6, article.getDate());
+							ps.setString(7, article.getContent());
+							ps.setInt(8, article.getHits());
+							ps.setInt(9, article.getCompletedReadingCount());
+						}
+	
+						@Override
+						public int getBatchSize() {
+							
+							return articles.size();
+						}
+						
+					}
 				);
 		
 	}

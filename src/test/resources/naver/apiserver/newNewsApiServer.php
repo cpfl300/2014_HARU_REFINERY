@@ -1,9 +1,10 @@
 <?php
+
 	date_default_timezone_set('Asia/Seoul');
 	header('Content-type: text/html; charset=utf8');
 // 	header('Content-type: application/json');
 	
-	$con = mysqli_connect("localhost","root","","haru");
+	$con = mysqli_connect("localhost","root","","harutestapiserver");
 	
 	// Check connection
 	if (mysqli_connect_errno()) {
@@ -29,6 +30,13 @@
 	while($row = mysqli_fetch_array($result)) {
 		$section = new Section();
 		$section->name = $row[name];
+		$section->minors = array();
+		
+		$sub_result = mysqli_query($con,"SELECT minor.name AS name FROM minor_sections AS minor JOIN major_sections AS major ON minor.major_sections_id = major.id WHERE major.name = \"".$section->name."\"");
+		while($sub_row = mysqli_fetch_array($sub_result)) {
+			array_push($section->minors, $sub_row[name]);
+		}
+		
 		$section->hotissues = array();
 		
 		array_push($sections, $section);
@@ -108,11 +116,12 @@
 				$journalRandNum = rand(0, $journal_count-1);
 				$hitsRandNum = rand(3000, 100000);
 				$article = new Article();
+				$minors_count = count($cur_section->minors);
 				
 				$article->hotissue = $cur_hotissues[$j%$cur_hotissues_count];
 				$article->title = "title".(string)$j;
 				$article->journal = $journals[$journalRandNum];
-				$article->section = $cur_section->name;
+				$article->section = $cur_section->minors[$j%$minors_count];
 				$article->date = $now->format('Y-m-d H:i:s');
 				$article->content = "content".(string)$j;
 				$article->hits = $hitsRandNum;
@@ -122,7 +131,7 @@
 			}
 		}
 		
-		$response->articles = $articles;
+		$response->responseArticles = $articles;
 		break;	
 	
 	default :

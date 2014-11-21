@@ -2,36 +2,29 @@ package refinery.service;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.transaction.annotation.Transactional;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 
-import refinery.config.Config;
 import refinery.dao.HotissueDao;
-import refinery.model.Article;
 import refinery.model.Hotissue;
-import refinery.model.Journal;
-import refinery.model.Section;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=Config.class, loader=AnnotationConfigContextLoader.class)
-@Transactional
+
+@RunWith(MockitoJUnitRunner.class)
 public class HotissueServiceTest {
 	
-	@Autowired
-	private HotissueDao hotissueDao;
-	
-	@Autowired
-	private ArticleService articleService;
-	
-	@Autowired
+	@InjectMocks
 	private HotissueService hotissueService;
+	
+	@Mock
+	private HotissueDao hotissueDao;
 	
 	private Hotissue hotissue1;
 	private Hotissue hotissue2;
@@ -47,53 +40,55 @@ public class HotissueServiceTest {
 
 	@Test
 	public void add() {
-		int initialCount = hotissueDao.getCount();
+		when(hotissueDao.get(hotissue1.hashCode())).thenReturn(hotissue1);
+		when(hotissueDao.get(hotissue2.hashCode())).thenReturn(hotissue2);
+		when(hotissueDao.get(hotissue3.hashCode())).thenReturn(hotissue3);
 		
-		long actualHotissue1Key = hotissueService.add(hotissue1);
-		assertThat(hotissueDao.getCount()-initialCount, is(1));
-		assertThat(hotissueDao.get(actualHotissue1Key).getName(), is(hotissue1.getName()));
+		int actualHotissue1Key = hotissueService.add(hotissue1); 
+		assertThat(actualHotissue1Key, is(hotissue1.hashCode()));
 		
-		long actualHotissue2Key = hotissueService.add(hotissue2);
-		assertThat(hotissueDao.getCount()-initialCount, is(2));
-		assertThat(hotissueDao.get(actualHotissue2Key).getName(), is(hotissue2.getName()));
+		int actualHotissue2Key = hotissueService.add(hotissue2); 
+		assertThat(actualHotissue2Key, is(hotissue2.hashCode()));
 		
-		long actualHotissue3Key = hotissueService.add(hotissue3);
-		assertThat(hotissueDao.getCount()-initialCount, is(3));
-		assertThat(hotissueDao.get(actualHotissue3Key).getName(), is(hotissue3.getName()));
+		int actualHotissue3Key = hotissueService.add(hotissue3); 
+		assertThat(actualHotissue3Key, is(hotissue3.hashCode()));
 	}
 	
 	@Test
-	public void addExistedHotissue() {
-		int initialCount = hotissueDao.getCount();
+	public void notAdd() {
+		when(hotissueDao.get(hotissue1.hashCode())).thenThrow(EmptyResultDataAccessException.class);
 		
-		hotissueService.add(hotissue1);
-		assertThat(hotissueDao.getCount()-initialCount, is(1));
+		int actualHotissue1Key = hotissueService.add(hotissue1); 
+		assertThat(actualHotissue1Key, is(hotissue1.hashCode()));
 		
-		hotissueService.add(hotissue1);
-		assertThat(hotissueDao.getCount()-initialCount, is(1));
+		int actualHotissue2Key = hotissueService.add(hotissue2); 
+		assertThat(actualHotissue2Key, is(hotissue2.hashCode()));
 		
-		hotissueService.add(hotissue1);
-		assertThat(hotissueDao.getCount()-initialCount, is(1));
+		int actualHotissue3Key = hotissueService.add(hotissue3); 
+		assertThat(actualHotissue3Key, is(hotissue3.hashCode()));
 	}
 	
 	@Test
 	public void delete() {
-		int initialCount = hotissueDao.getCount();
+		when(hotissueDao.delete(hotissue1.hashCode())).thenReturn(1);
+		when(hotissueDao.delete(hotissue2.hashCode())).thenReturn(1);
+		when(hotissueDao.delete(hotissue3.hashCode())).thenReturn(1);
 		
-		long hotissue1Id = hotissueDao.add(hotissue1);
-		long hotissue2Id = hotissueDao.add(hotissue2);
-		long hotissue3Id = hotissueDao.add(hotissue3);		
-		assertThat(hotissueDao.getCount() - initialCount, is(3));
-
+		assertThat(hotissueService.delete(hotissue1.hashCode()), is(1));
+		assertThat(hotissueService.delete(hotissue2.hashCode()), is(1));
+		assertThat(hotissueService.delete(hotissue3.hashCode()), is(1));
+	}
+	
+	@Test
+	public void notDelete() {
+		when(hotissueDao.delete(hotissue1.hashCode())).thenThrow(DataIntegrityViolationException.class);
+		assertThat(hotissueService.delete(hotissue1.hashCode()), is(0));
 		
-		assertThat(hotissueService.delete(hotissue1Id), is(1));
-		assertThat(hotissueDao.getCount() - initialCount, is(2));
+		when(hotissueDao.delete(hotissue2.hashCode())).thenThrow(DataIntegrityViolationException.class);
+		assertThat(hotissueService.delete(hotissue2.hashCode()), is(0));
 		
-		assertThat(hotissueService.delete(hotissue2Id), is(1));
-		assertThat(hotissueDao.getCount() - initialCount, is(1));
-		
-		assertThat(hotissueService.delete(hotissue3Id), is(1));
-		assertThat(hotissueDao.getCount() - initialCount, is(0));		
+		when(hotissueDao.delete(hotissue3.hashCode())).thenThrow(DataIntegrityViolationException.class);
+		assertThat(hotissueService.delete(hotissue3.hashCode()), is(0));
 	}
 
 }

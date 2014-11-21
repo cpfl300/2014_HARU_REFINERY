@@ -1,4 +1,4 @@
-package core.naver.api;
+package core.naver.news.api;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -13,23 +13,22 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import refinery.config.Config;
 import core.naver.model.Response;
 import core.naver.model.ResponseArticle;
-import refinery.config.Config;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=Config.class, loader=AnnotationConfigContextLoader.class)
-public class NaverAPITest {
-	
+public class NaverNewsAPITest {
 	
 	@Autowired
-	private NaverAPI naverApi;
+	private NaverNewsAPI naverNewsApi;
 
 	@Test
 	public void getArticles() {
-		Response actualResponse = naverApi.get("/article", Response.class);
+		Response actualResponse = naverNewsApi.get("/article", Response.class);
 		
-		List<ResponseArticle> articles = actualResponse.getArticles();
+		List<ResponseArticle> articles = actualResponse.getResponseArticles();
 		Iterator<ResponseArticle> ir = articles.iterator();
 		while(ir.hasNext()) {
 			ResponseArticle a = ir.next();

@@ -5,14 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import core.naver.api.NaverAPI;
+import core.naver.news.api.NaverNewsAPI;
 import refinery.dao.ArticleDao;
 
 @Component
 public class Engine {
 	
 	@Autowired
-	private NaverAPI naverAPI;
+	private NaverNewsAPI naverAPI;
 	
 	@Autowired
 	private ArticleDao articleDao;

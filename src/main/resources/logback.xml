@@ -21,6 +21,7 @@
 	<logger name="learningtest" level="DEBUG" />
 	<logger name="core" level="DEBUG" />
 	<logger name="refinery" level="DEBUG" />
+	<logger name="scheduler" level="DEBUG" />
 
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />

@@ -2,7 +2,7 @@ package refinery.model;
 
 public class Section {
 	
-	private long id;
+	private int id;
 	private String major;
 	private String minor;
 	
@@ -13,7 +13,7 @@ public class Section {
 		this(0, null, minor);
 	}
 
-	public Section(long id) {
+	public Section(int id) {
 		this(id, null, null);
 	}
 	
@@ -21,18 +21,18 @@ public class Section {
 		this(0, major, minor);
 	}
 	
-	public Section (long id, String major, String minor) {
+	public Section (int id, String major, String minor) {
 		this.id = id;
 		this.major = major;
 		this.minor = minor;
 	}
 
 
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -50,6 +50,32 @@ public class Section {
 
 	public void setMinor(String minor) {
 		this.minor = minor;
+	}
+	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((minor == null) ? 0 : minor.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Section other = (Section) obj;
+		if (minor == null) {
+			if (other.minor != null)
+				return false;
+		} else if (!minor.equals(other.minor))
+			return false;
+		return true;
 	}
 
 	@Override

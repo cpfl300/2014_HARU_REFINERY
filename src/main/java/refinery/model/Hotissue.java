@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Hotissue {
 	
-	private long id;
+	private int id;
 	private String name;
 	private String timestamp;
 	private List<Article> articles;
@@ -14,25 +14,33 @@ public class Hotissue {
 		
 	}
 	
-	public Hotissue(long id) {
-		this(id, null);
+	public Hotissue(int id) {
+		this(id, null, null);
 	}
 	
 	public Hotissue(String name) {
-		this(0, name);
+		this(0, name, null);
 	}
 	
-	public Hotissue(long id, String name) {
-		this.id = id;
-		this.name = name;
+	public Hotissue(int id, String name) {
+		this(id, name, null);
 	}
 
+	public Hotissue(int id, String name, String timestamp) {
+		this.id = id;
+		this.name = name;
+		this.timestamp = timestamp;
+	}
 
-	public long getId() {
+	public Hotissue(String name, String timestamp) {
+		this(0, name, timestamp);
+	}
+
+	public int getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -81,9 +89,34 @@ public class Hotissue {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Hotissue other = (Hotissue) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
+	}
+
+	@Override
 	public String toString() {
+		
 		return "Hotissue [id=" + id + ", name=" + name + ", timestamp=" + timestamp + ", articles=" + articles + ", score=" + score + "]";
 	}
-	
 	
 }
