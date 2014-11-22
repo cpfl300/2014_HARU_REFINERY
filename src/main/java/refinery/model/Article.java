@@ -13,8 +13,9 @@ public class Article {
 	private int completedReadingCount;
 	private double score;
 	private String timestamp;
+	private int sequence;
 
-	
+
 	public Article(int id, Hotissue hotissue, Journal journal, Section section, String title, String date, String content, int hits,
 			int completedReadingCount, double score) {
 		this.id = id;
@@ -44,9 +45,16 @@ public class Article {
 		this(0, hotissue, journal, section, title, date, null, 0, 0, 0);
 	}
 	
+	public Article(int id, int sequence, String timestamp) {
+		this.id = id;
+		this.sequence = sequence;
+		this.timestamp = timestamp;
+	}
+	
 	public Article() {
 
 	}
+
 
 	public int getId() {
 		return id;
@@ -163,6 +171,16 @@ public class Article {
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		return result;
 	}
+	
+	
+	public int getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(int sequence) {
+		this.sequence = sequence;
+	}
+
 
 	@Override
 	public boolean equals(Object obj) {
@@ -205,7 +223,9 @@ public class Article {
 	public String toString() {
 		return "Article [id=" + id + ", hotissue=" + hotissue + ", journal=" + journal + ", section=" + section + ", title=" + title + ", content="
 				+ content + ", date=" + date + ", hits=" + hits + ", completedReadingCount=" + completedReadingCount + ", score=" + score
-				+ ", timestamp=" + timestamp + "]";
+				+ ", timestamp=" + timestamp + ", order=" + sequence + "]";
 	}
+
+	
 	
 }
