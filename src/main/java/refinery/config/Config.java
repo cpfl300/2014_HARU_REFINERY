@@ -66,7 +66,7 @@ public class Config {
 	
 
 	@Bean
-	public JobDetailFactoryBean jobBeanFactoryBean() {
+	public JobDetailFactoryBean naverNewsJobFactoryBean() {
 		JobDetailFactoryBean jobBeanFactoryBean = new JobDetailFactoryBean();
 		jobBeanFactoryBean.setJobClass(NaverNewsJob.class);
 		jobBeanFactoryBean.setName("naverNewsJob");
@@ -86,7 +86,7 @@ public class Config {
 		
 		CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
 		cronTriggerFactoryBean.setName("naverNewsTrigger");
-		cronTriggerFactoryBean.setJobDetail(jobBeanFactoryBean().getObject());
+		cronTriggerFactoryBean.setJobDetail(naverNewsJobFactoryBean().getObject());
 		cronTriggerFactoryBean.setStartDelay(1000);
 		
 		String cronExp = env.getRequiredProperty("cron.exp.naverapi.news");
@@ -100,7 +100,7 @@ public class Config {
 	public SchedulerFactoryBean schedulerFactoryBean() {
 		SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
 		
-		schedulerFactoryBean.setJobDetails(new JobDetail[]{jobBeanFactoryBean().getObject()});
+		schedulerFactoryBean.setJobDetails(new JobDetail[]{naverNewsJobFactoryBean().getObject()});
 		schedulerFactoryBean.setTriggers(new Trigger[] {cronTriggerFactoryBean().getObject()});
 		
 		return schedulerFactoryBean;
