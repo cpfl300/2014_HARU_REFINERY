@@ -1,8 +1,13 @@
 package refinery.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
+
+import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -21,6 +26,12 @@ import refinery.model.Section;
 @Service
 public class ArticleService {
 	
+	private static final String BEFORE_DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";
+	private static final String AFTER_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	
+	private SimpleDateFormat beforeFormat;
+	private SimpleDateFormat afterFormat;
+	
 	@Autowired
 	private ArticleDao articleDao;
 	
@@ -32,6 +43,16 @@ public class ArticleService {
 	
 	@Autowired
 	private SectionDao sectionDao;
+	
+	@PostConstruct
+	public void postConstructer() {
+		TimeZone zone = TimeZone.getTimeZone("Asia/Seoul");
+		beforeFormat = new SimpleDateFormat(BEFORE_DATE_FORMAT);
+		
+		beforeFormat.setTimeZone(zone);
+		afterFormat = new SimpleDateFormat(AFTER_DATE_FORMAT);
+		afterFormat.setTimeZone(zone);
+	}
 
 	@Transactional
 	public int add(Article article) {
@@ -96,6 +117,29 @@ public class ArticleService {
 
 	}
 	
+	@Transactional
+	public int calcScore(String from, String to) {		
+		List<Article> articles = articleDao.getArticlesByDate(from, to);
+		Iterator<Article> ir = articles.iterator();
+		while (ir.hasNext()) {
+			ir.next().clacScore();
+		}
+		
+		int[] rowState = articleDao.updateScore(articles);
+		
+		return getCount(rowState);
+	}
+
+
+	String[] getBetweenDate(Calendar cal) {
+		String to  = beforeFormat.format(cal.getTime());
+		
+		cal.add(Calendar.HOUR_OF_DAY, -12);
+		String from = beforeFormat.format(cal.getTime());
+		
+		return new String[] {from, to};
+	}
+
 	private void setJournalAndSection(Article article) {
 		Journal journal = article.getJournal();
 		Section section = article.getSection();
@@ -113,7 +157,5 @@ public class ArticleService {
 		
 		return count;
 	}
-
-
 
 }
