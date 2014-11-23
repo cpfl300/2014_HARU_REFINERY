@@ -1,7 +1,8 @@
 package refinery.model;
 
-public class Article {
 
+public class Article {
+	
 	private int id;
 	private Hotissue hotissue;
 	private Journal journal;
@@ -55,6 +56,16 @@ public class Article {
 
 	}
 
+
+	public Article(int id, Hotissue hotissue, Journal journal, Section section, String title, String date, String content, int hits,
+			int completedReadingCount) {
+		this(id, hotissue, journal, section, title, date, content, hits, completedReadingCount, 0);
+	}
+
+	public Article(int id, double score) {
+		this.id = id;
+		this.score = score;
+	}
 
 	public int getId() {
 		return id;
@@ -180,6 +191,11 @@ public class Article {
 	public void setSequence(int sequence) {
 		this.sequence = sequence;
 	}
+	
+	public void clacScore() {
+		this.score = (double) this.completedReadingCount / this.hits;
+		
+	}
 
 
 	@Override
@@ -225,6 +241,8 @@ public class Article {
 				+ content + ", date=" + date + ", hits=" + hits + ", completedReadingCount=" + completedReadingCount + ", score=" + score
 				+ ", timestamp=" + timestamp + ", order=" + sequence + "]";
 	}
+
+
 
 	
 	

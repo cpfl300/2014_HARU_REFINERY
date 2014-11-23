@@ -6,8 +6,12 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +32,11 @@ import refinery.model.Section;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ArticleServiceTest {
+	
+	private static final String BEFORE_DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";
+	private static final String AFTER_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	private SimpleDateFormat beforeFormat;
+	private SimpleDateFormat afterFormat;
 	
 	@InjectMocks
 	private ArticleService articleService;
@@ -70,6 +79,13 @@ public class ArticleServiceTest {
 		article1 = new Article(hotissue1, journal1, section1, "title1", "1111-01-01 01:11:11", "content1", 10000, 7000, 10.1);		
 		article2 = new Article(hotissue2, journal2, section2, "title2", "1222-02-02 02:11:11", "content2", 20000, 8000, 20.1);
 		article3 = new Article(hotissue3, journal3, section3, "title3", "1333-03-03 03:11:11", "content3", 30000, 9000, 10.1);
+		
+		TimeZone zone = TimeZone.getTimeZone("Asia/Seoul");
+		beforeFormat = new SimpleDateFormat(BEFORE_DATE_FORMAT);
+		
+		beforeFormat.setTimeZone(zone);
+		afterFormat = new SimpleDateFormat(AFTER_DATE_FORMAT);
+		afterFormat.setTimeZone(zone);
 	}
 
 	@Test
@@ -175,7 +191,29 @@ public class ArticleServiceTest {
 		
 		assertThat(actualCount, is(1));
 	}
-
+	
+	@Test
+	public void calcScore() {
+		TimeZone zone = TimeZone.getTimeZone("Asia/Seoul");
+		Calendar specificCalendar = Calendar.getInstance(zone);
+		
+		specificCalendar.set(2014, Calendar.DECEMBER, 7, 6, 0, 0);
+		String to  = beforeFormat.format(specificCalendar.getTime());
+		
+		specificCalendar.add(Calendar.HOUR_OF_DAY, -12);
+		String from = beforeFormat.format(specificCalendar.getTime());
+		
+		
+		articles = new ArrayList<Article>();
+		articles.add(article1);
+		articles.add(article2);
+		articles.add(article3);
+		
+		when(articleDaoMock.getArticlesByDate(from, to)).thenReturn(articles);
+		when(articleDaoMock.updateScore(articles)).thenReturn(new int[] {1, 1, 1});
+		assertThat(articleService.calcScore(from, to), is(3));
+		
+	}
 	
 	private void makeHotissueServiceMocks() {
 		hotissue1 = new Hotissue("hotissue1", "1001-01-01 01:11:11");
