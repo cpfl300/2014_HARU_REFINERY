@@ -154,7 +154,7 @@ public class ArticleDao {
 				);
 	}
 
-	public List<Article> getArticlesByDate(String from, String to) {
+	public List<Article> getArticlesBetweenDates(String from, String to) {
 		log.debug("from: " + from);
 		log.debug("to: " + to);
 		

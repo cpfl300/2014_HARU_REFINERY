@@ -1,6 +1,9 @@
 package refinery.model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Hotissue {
 	
@@ -81,7 +84,30 @@ public class Hotissue {
 	public void setArticles(List<Article> articles) {
 		this.articles = articles;
 	}
+	
+	public void addArticle(Article article) {
+		
+		if (articles == null) {
+			articles = new ArrayList<Article>();
+		}
+		
+		articles.add(article);
+	}
 
+
+	public void calcScore() {
+		
+		if (articles == null) throw new EmptyArticleListException("article list is null");
+		
+		double score = 0;
+		for (Article a : articles) {
+			score += a.getScore();
+		}
+		
+		this.score = score/articles.size();
+		
+	}
+	
 	
 	private String usableDateStr(String dateStr) {
 		
@@ -118,5 +144,23 @@ public class Hotissue {
 		
 		return "Hotissue [id=" + id + ", name=" + name + ", timestamp=" + timestamp + ", articles=" + articles + ", score=" + score + "]";
 	}
+
+	
+	public static List<Hotissue> orderByHotissue(List<Article> articles) {
+		// 자칫 많아질 수 있는 key검색을 O(1)로 계산위해 map 사용
+		Map<Hotissue, Hotissue> hotissueMap = new HashMap<Hotissue, Hotissue>();
+		
+		for (Article article : articles) {
+			Hotissue hotissue = article.getHotissue();
+			if (!hotissueMap.containsKey(hotissue)) {
+				hotissueMap.put(hotissue, null);
+			}
+			
+			hotissue.addArticle(article);
+		}
+		
+		return new ArrayList<Hotissue>(hotissueMap.keySet());
+	}
+	
 	
 }

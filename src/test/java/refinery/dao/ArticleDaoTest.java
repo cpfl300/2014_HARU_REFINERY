@@ -222,7 +222,7 @@ public class ArticleDaoTest {
 	    String from = toString(fromCalendar);
 	    String to = toString(toCalendar);
 
-		List<Article> actualArticles = articleDao.getArticlesByDate(from, to);
+		List<Article> actualArticles = articleDao.getArticlesBetweenDates(from, to);
 		
 		assertThat(actualArticles.size(), is(2));
 		for (Article a : actualArticles) {

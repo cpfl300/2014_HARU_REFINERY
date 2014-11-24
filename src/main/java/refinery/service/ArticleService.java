@@ -3,12 +3,15 @@ package refinery.service;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -25,6 +28,8 @@ import refinery.model.Section;
 
 @Service
 public class ArticleService {
+	
+	private static final Logger log = LoggerFactory.getLogger(ArticleService.class);
 	
 	private static final String BEFORE_DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";
 	private static final String AFTER_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
@@ -119,7 +124,7 @@ public class ArticleService {
 	
 	@Transactional
 	public int calcScore(String from, String to) {		
-		List<Article> articles = articleDao.getArticlesByDate(from, to);
+		List<Article> articles = articleDao.getArticlesBetweenDates(from, to);
 		Iterator<Article> ir = articles.iterator();
 		while (ir.hasNext()) {
 			ir.next().clacScore();
@@ -157,5 +162,20 @@ public class ArticleService {
 		
 		return count;
 	}
+
+	public List<Article> getArticlesOfHalfDayByCalendarTo(Calendar to) {
+		String[] dates = new String[2];
+		
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		dates[1] = format.format(to.getTime());
+		
+		to.add(Calendar.HOUR, -12);
+		dates[0] = format.format(to.getTime());
+		
+		List<Article> articles = articleDao.getArticlesBetweenDates(dates[0], dates[1]);
+		
+		return articles;
+	}
+	
 
 }
