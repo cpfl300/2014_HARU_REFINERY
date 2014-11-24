@@ -6,12 +6,21 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
+import java.util.TimeZone;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
@@ -25,6 +34,13 @@ import refinery.model.Section;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ArticleServiceTest {
+	
+	private static final Logger log = LoggerFactory.getLogger(ArticleServiceTest.class);
+	
+	private static final String BEFORE_DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";
+	private static final String AFTER_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	private SimpleDateFormat beforeFormat;
+	private SimpleDateFormat afterFormat;
 	
 	@InjectMocks
 	private ArticleService articleService;
@@ -56,6 +72,8 @@ public class ArticleServiceTest {
 	private Journal journal3;
 	private Section section3;
 	private Hotissue hotissue3;
+	
+	private List<Article> articles;
 
 	@Before
 	public void setup() {
@@ -65,6 +83,13 @@ public class ArticleServiceTest {
 		article1 = new Article(hotissue1, journal1, section1, "title1", "1111-01-01 01:11:11", "content1", 10000, 7000, 10.1);		
 		article2 = new Article(hotissue2, journal2, section2, "title2", "1222-02-02 02:11:11", "content2", 20000, 8000, 20.1);
 		article3 = new Article(hotissue3, journal3, section3, "title3", "1333-03-03 03:11:11", "content3", 30000, 9000, 10.1);
+		
+		TimeZone zone = TimeZone.getTimeZone("Asia/Seoul");
+		beforeFormat = new SimpleDateFormat(BEFORE_DATE_FORMAT);
+		
+		beforeFormat.setTimeZone(zone);
+		afterFormat = new SimpleDateFormat(AFTER_DATE_FORMAT);
+		afterFormat.setTimeZone(zone);
 	}
 
 	@Test
@@ -145,22 +170,93 @@ public class ArticleServiceTest {
 	
 	@Test
 	public void addArticles() {
+		articles = new ArrayList<Article>();
+		articles.add(article1);
+		articles.add(article2);
+		articles.add(article3);
 		
+		when(articleDaoMock.addArticles(articles)).thenReturn(new int[] {1, 1, 1});
+		
+		int actualCount = articleService.addArticles(articles);
+		
+		assertThat(actualCount, is(3));
 	}
+	
+	@Test
+	public void addArticlesIncludedDuplicateKey() {
+		articles = new ArrayList<Article>();
+		articles.add(article1);
+		articles.add(article1);
+		articles.add(article1);
+		
+		when(articleDaoMock.addArticles(articles)).thenReturn(new int[] {1, 0, 0});
+		
+		int actualCount = articleService.addArticles(articles);
+		
+		assertThat(actualCount, is(1));
+	}
+	
+	@Test
+	public void calcScore() {
+		TimeZone zone = TimeZone.getTimeZone("Asia/Seoul");
+		Calendar specificCalendar = Calendar.getInstance(zone);
+		
+		specificCalendar.set(2014, Calendar.DECEMBER, 7, 6, 0, 0);
+		String to  = beforeFormat.format(specificCalendar.getTime());
+		
+		specificCalendar.add(Calendar.HOUR_OF_DAY, -12);
+		String from = beforeFormat.format(specificCalendar.getTime());
+		
+		
+		articles = new ArrayList<Article>();
+		articles.add(article1);
+		articles.add(article2);
+		articles.add(article3);
+		
+		when(articleDaoMock.getArticlesBetweenDates(from, to)).thenReturn(articles);
+		when(articleDaoMock.updateScore(articles)).thenReturn(new int[] {1, 1, 1});
+		assertThat(articleService.calcScore(from, to), is(3));
+	}
+	
+	@Test
+	public void getArticlesOfHalfDayByCalendarTo() {
+		TimeZone zone = TimeZone.getTimeZone("Asia/Seoul");
+		Calendar morningServiceCalendar = Calendar.getInstance(zone);
+		morningServiceCalendar.set(2014, Calendar.DECEMBER , 7, 6, 0, 0); 
+		
+		Calendar afternoonServiceCalendar = Calendar.getInstance(zone);
+		afternoonServiceCalendar.set(2014, Calendar.DECEMBER , 7, 18, 0, 0);
+		
+		// fixtures
+		List<Article> articles = new ArrayList<Article>();
+		articles.add(new Article(1, hotissue1, journal1, section1, "title1", "2014-12-06 17:59:59", "content1", 10000, 11000));
+		articles.add(new Article(2, hotissue2, journal2, section2, "title2", "2014-12-06 18:00:00", "content2", 20000, 12000));
+		articles.add(new Article(3, hotissue3, journal3, section3, "title3", "2014-12-07 05:59:59", "content3", 30000, 13000));
+		articles.add(new Article(4, hotissue1, journal1, section1, "title4", "2014-12-07 06:00:00", "content4", 40000, 14000));
+		articles.add(new Article(5, hotissue2, journal2, section2, "title5", "2014-12-07 17:59:59", "content5", 50000, 15000));
+		articles.add(new Article(6, hotissue3, journal3, section3, "title6", "2014-12-07 18:00:00", "content6", 60000, 16000));
+		
+		List<Article> morningArticles = Arrays.asList(new Article[] {articles.get(1), articles.get(2)});		
+		List<Article> afternoonArticles = Arrays.asList(new Article[] {articles.get(3), articles.get(4)});
 
-	
-	private void assertSameArticle(Article actual, Article expected) {
-		assertThat(actual.getId(), is(expected.getId()));
-		assertThat(actual.getHotissue().getId(), is(expected.getHotissue().getId()));
-		assertThat(actual.getJournal().getId(), is(expected.getJournal().getId()));
-		assertThat(actual.getTitle(), is(expected.getTitle()));
-		assertThat(actual.getSection().getId(), is(expected.getSection().getId()));
-		assertThat(actual.getDate(), is(expected.getDate()));
-		assertThat(actual.getContent(), is(expected.getContent()));
-		assertThat(actual.getHits(), is(expected.getHits()));
-		assertThat(actual.getCompletedReadingCount(), is(expected.getCompletedReadingCount()));
+
+		when(articleDaoMock.getArticlesBetweenDates("2014-12-06 18:00:00", "2014-12-07 06:00:00")).thenReturn(morningArticles);		
+		when(articleDaoMock.getArticlesBetweenDates("2014-12-07 06:00:00", "2014-12-07 18:00:00")).thenReturn(afternoonArticles);
+		
+		
+		List<Article> actualMorningArticles = articleService.getArticlesOfHalfDayByCalendarTo(morningServiceCalendar);
+		assertThat(actualMorningArticles.size(), is(2));
+		assertThat(actualMorningArticles.get(0).getId(), is(2));
+		assertThat(actualMorningArticles.get(1).getId(), is(3));
+		
+		List<Article> actualAfternoonArticles = articleService.getArticlesOfHalfDayByCalendarTo(afternoonServiceCalendar);
+		assertThat(actualAfternoonArticles.size(), is(2));
+		assertThat(actualAfternoonArticles.get(0).getId(), is(4));
+		assertThat(actualAfternoonArticles.get(1).getId(), is(5));
 	}
 	
+
+
 	private void makeHotissueServiceMocks() {
 		hotissue1 = new Hotissue("hotissue1", "1001-01-01 01:11:11");
 		hotissue1.setId(hotissue1.hashCode());
@@ -194,6 +290,20 @@ public class ArticleServiceTest {
 		when(journalDaoMock.getByName(journal1.getName())).thenReturn(journal1);
 		when(journalDaoMock.getByName(journal2.getName())).thenReturn(journal2);
 		when(journalDaoMock.getByName(journal3.getName())).thenReturn(journal3);
+	}
+	
+	private String[] getDateStrArr(Calendar calendar) {		
+		String[] dates = new String[2];
+		
+		SimpleDateFormat format = new SimpleDateFormat(AFTER_DATE_FORMAT);
+		dates[1] = format.format(calendar.getTime());
+		
+		calendar.add(Calendar.HOUR, -12);
+		dates[0] = format.format(calendar.getTime());
+		
+		log.debug("dates- from[" + dates[0] + "] to[" + dates[1] + "]");
+		
+		return dates;
 	}
 
 	

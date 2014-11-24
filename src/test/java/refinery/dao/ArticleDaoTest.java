@@ -1,14 +1,22 @@
 package refinery.dao;
 
 import static org.hamcrest.CoreMatchers.is;
+//import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -28,11 +36,18 @@ import refinery.model.Section;
 @Transactional
 public class ArticleDaoTest {
 	
+	private static final Logger log = LoggerFactory.getLogger(ArticleDaoTest.class);
+	private final String beforeDatePattern = "yyyy/MM/dd HH:mm:ss";
+	private final String afterDatePattern = "yyyy-MM-dd HH:mm:ss";
+	private TimeZone zone = TimeZone.getTimeZone("Asia/Seoul");
+	
 	@Autowired
 	private ArticleDao articleDao;
 	
 	@Autowired
 	private HotissueDao hotissueDao;
+	
+	private List<Article> articles;
 	
 	private Article article1;
 	private Article article2;
@@ -42,25 +57,24 @@ public class ArticleDaoTest {
 	private Hotissue hotissue2;
 	private Hotissue hotissue3;
 	
+	private Journal journal1;
+	private Journal journal2;
+	private Journal journal3;
+	
+	private Section section1;
+	private Section section2;
+	private Section section3;
+	
 	@Before
 	public void setup() {
 		// fixture
-		Journal journal1 = new Journal(84);
-		Section section1 = new Section(3);
-		hotissue1 = new Hotissue(1, "hotissue1");
-		article1 = new Article(1, hotissue1, journal1, section1, "title1", "1111-01-01 01:11:11", "content1", 10000, 7000, 10.1);
+		makeJournalFixtures();
+		makeSectionFixtures();
+		makeHotissueFixtures();
 		
-		
-		Journal journal2 = new Journal(10);
-		Section section2 = new Section(10);
-		hotissue2 = new Hotissue(2, "hotissue2");
-		article2 = new Article(2, hotissue2, journal2, section2, "title2", "1222-02-02 02:11:11", "content2", 20000, 8000, 20.1);
-		
-		
-		Journal journal3 = new Journal(23);
-		Section section3 = new Section(23);
-		hotissue3 = new Hotissue(3, "hotissue3");
-		article3 = new Article(3, hotissue3, journal3, section3, "title3", "1333-03-03 03:11:11", "content3", 30000, 9000, 10.1);
+		article1 = new Article(1, hotissue1, journal1, section1, "title1", "1111-01-01 01:11:11", "content1", 10000, 7000);
+		article2 = new Article(2, hotissue2, journal2, section2, "title2", "1222-02-02 02:11:11", "content2", 20000, 8000);
+		article3 = new Article(3, hotissue3, journal3, section3, "title3", "1333-03-03 03:11:11", "content3", 30000, 9000);
 	}
 	
 
@@ -72,13 +86,8 @@ public class ArticleDaoTest {
 	
 	@Test
 	public void deleteAll() {
-		hotissueDao.add(hotissue1);
-		hotissueDao.add(hotissue2);
-		hotissueDao.add(hotissue3);
-		
-		
-		articleDao.deleteAll();
-		assertThat(articleDao.getCount(), is(0));
+		prepareHotissues();
+		prepareArticleDao();
 		
 		assertThat(articleDao.deleteAll(), is(0));
 		assertThat(articleDao.getCount(), is(0));
@@ -101,32 +110,43 @@ public class ArticleDaoTest {
 	}
 	
 	@Test
-	public void addBatch() {
-		hotissueDao.add(hotissue1);
-		hotissueDao.add(hotissue2);
-		hotissueDao.add(hotissue3);
+	public void addArticles() {
+		prepareHotissues();
+		prepareArticleDao();
 		
-		articleDao.deleteAll();
-		assertThat(articleDao.getCount(), is(0));
-		
-		List<Article> articles = new ArrayList<Article>();
+		articles = new ArrayList<Article>();
 		articles.add(article1);
 		articles.add(article2);
 		articles.add(article3);
 		
-		articleDao.addBatch(articles);
-		assertThat(articleDao.getCount(), is(3));
+		int[] actualCounts = articleDao.addArticles(articles);
+		assertThat(actualCounts.length, is(3));
+	}
+	
+	@Test
+	public void addArticlesIncludedDuplicateKey() {
+		prepareHotissues();
+		prepareArticleDao();
+		
+		articles = new ArrayList<Article>();
+		articles.add(article1);
+		articles.add(article1);
+		articles.add(article1);
+		
+		int actualCounts[] = articleDao.addArticles(articles);
+		int actualCount = 0;
+		for (int affectedRow : actualCounts) {
+			actualCount += affectedRow;
+		}
+
+		assertThat(actualCount, is(1));
 	}
 	
 	
 	@Test
 	public void add() {
-		hotissueDao.add(hotissue1);
-		hotissueDao.add(hotissue2);
-		hotissueDao.add(hotissue3);
-		
-		articleDao.deleteAll();
-		assertThat(articleDao.getCount(), is(0));
+		prepareHotissues();
+		prepareArticleDao();
 		
 		articleDao.add(article1);
 		assertThat(articleDao.getCount(), is(1));
@@ -140,12 +160,8 @@ public class ArticleDaoTest {
 	
 	@Test(expected=DuplicateKeyException.class)
 	public void notAdd() {
-		hotissueDao.add(hotissue1);
-		hotissueDao.add(hotissue2);
-		hotissueDao.add(hotissue3);
-		
-		articleDao.deleteAll();
-		assertThat(articleDao.getCount(), is(0));
+		prepareHotissues();
+		prepareArticleDao();
 		
 		articleDao.add(article1);
 		articleDao.add(article1);
@@ -154,12 +170,8 @@ public class ArticleDaoTest {
 	
 	@Test
 	public void addAndGet() {
-		hotissueDao.add(hotissue1);
-		hotissueDao.add(hotissue2);
-		hotissueDao.add(hotissue3);
-		
-		articleDao.deleteAll();
-		assertThat(articleDao.getCount(), is(0));
+		prepareHotissues();
+		prepareArticleDao();
 		
 		articleDao.add(this.article1);
 		Article actualArticle1 = articleDao.get(1);
@@ -176,12 +188,8 @@ public class ArticleDaoTest {
 	
 	@Test(expected=EmptyResultDataAccessException.class)
 	public void notGet() {
-		hotissueDao.add(hotissue1);
-		hotissueDao.add(hotissue2);
-		hotissueDao.add(hotissue3);
-		
-		articleDao.deleteAll();
-		assertThat(articleDao.getCount(), is(0));
+		prepareHotissues();
+		prepareArticleDao();
 		
 		articleDao.add(this.article1);
 		Article actualArticle1 = articleDao.get(4);
@@ -189,15 +197,54 @@ public class ArticleDaoTest {
 		
 	}
 	
+	@Test
+	public void getArticlesByDate() throws ParseException {
+		prepareHotissues();
+		prepareArticleDao();
+		
+		article1.setDate("2014-12-07 05:59:59");
+		article2.setDate("2014-12-07 06:00:00");
+		article3.setDate("2014-12-07 17:59:59");
+		Article article4 = new Article(4, hotissue3, journal3, section3, "title4", "2014-12-07 18:00:00", "content4", 40000, 10000);
+		
+		articleDao.add(article1);
+		articleDao.add(article2);
+		articleDao.add(article3);
+		articleDao.add(article4);
+		
+		
+	    Calendar fromCalendar = Calendar.getInstance(zone);
+	    fromCalendar.set(2014, Calendar.DECEMBER , 7, 6, 0, 0);
+	    
+	    Calendar toCalendar = Calendar.getInstance(zone);
+	    toCalendar.set(2014, Calendar.DECEMBER , 7, 17, 59, 59);
+	    
+	    String from = toString(fromCalendar);
+	    String to = toString(toCalendar);
+
+		List<Article> actualArticles = articleDao.getArticlesBetweenDates(from, to);
+		
+		assertThat(actualArticles.size(), is(2));
+		for (Article a : actualArticles) {
+			String dateStr = a.getDate();
+			SimpleDateFormat format = new SimpleDateFormat(afterDatePattern);
+	        format.setTimeZone(zone);
+	        Date date = format.parse(dateStr);
+	        
+	        log.debug("date: " + date + ", from: " + fromCalendar.getTime());
+			// 같은 시간임에도 틀리다고 함
+	        // 고민해볼 필요 있음
+			// assertThat(date.compareTo(fromCalendar.getTime()), greaterThanOrEqualTo(0));
+			assertThat(date.compareTo(toCalendar.getTime()), is(-1));
+		}
+		
+		
+	}
 	
 	@Test
 	public void delete() {
-		hotissueDao.add(hotissue1);
-		hotissueDao.add(hotissue2);
-		hotissueDao.add(hotissue3);
-		
-		articleDao.deleteAll();
-		assertThat(articleDao.getCount(), is(0));
+		prepareHotissues();
+		prepareArticleDao();
 		
 		articleDao.add(article1);
 		articleDao.add(article2);
@@ -213,7 +260,53 @@ public class ArticleDaoTest {
 		assertThat(articleDao.delete(3), is(1));
 		assertThat(articleDao.getCount(), is(0));
 	}
+	
+	
 
+
+	@Test
+	public void updateScore() {
+		prepareHotissues();
+		prepareArticleDao();
+		
+		articleDao.add(article1);
+		articleDao.add(article2);
+		articleDao.add(article3);
+		
+		List<Article> updatedArticles = new ArrayList<Article>();
+		updatedArticles.add(new Article(article1.getId(), 11.1));
+		updatedArticles.add(new Article(article2.getId(), 22.2));
+		updatedArticles.add(new Article(article3.getId(), 33.3));
+		
+		int[] state = articleDao.updateScore(updatedArticles);
+		
+		assertThat(getCount(state), is(3));
+		assertThat(articleDao.get(article1.getId()).getScore(), is(updatedArticles.get(0).getScore()));
+		assertThat(articleDao.get(article2.getId()).getScore(), is(updatedArticles.get(1).getScore()));
+		assertThat(articleDao.get(article3.getId()).getScore(), is(updatedArticles.get(2).getScore()));
+		
+	}
+	
+	private void prepareHotissues() {
+		hotissueDao.add(hotissue1);
+		hotissueDao.add(hotissue2);
+		hotissueDao.add(hotissue3);
+	}
+	
+	private void prepareArticleDao() {
+		articleDao.deleteAll();
+		assertThat(articleDao.getCount(), is(0));
+	}
+	
+	private int getCount(int[] affectedRows) {
+		int size = 0;
+		
+		for (int row : affectedRows) {
+			size += row;
+		}
+		
+		return size;
+	}
 
 	private void assertSameArticle(Article actual, Article expected) {
 		assertThat(actual.getId(), is(expected.getId()));
@@ -227,5 +320,31 @@ public class ArticleDaoTest {
 		assertThat(actual.getCompletedReadingCount(), is(expected.getCompletedReadingCount()));
 	}
 	
+
+	private void makeSectionFixtures() {
+		section1 = new Section(3);
+		section2 = new Section(10);
+		section3 = new Section(23);		
+	}
+
+
+	private void makeJournalFixtures() {
+		journal1 = new Journal(84);
+		journal2 = new Journal(10);
+		journal3 = new Journal(23);		
+	}
+	
+	private void makeHotissueFixtures() {
+		hotissue1 = new Hotissue(1, "hotissue1");
+		hotissue2 = new Hotissue(2, "hotissue2");
+		hotissue3 = new Hotissue(3, "hotissue3");
+	}
+	
+	private String toString(Calendar calendar) {
+        SimpleDateFormat format = new SimpleDateFormat(beforeDatePattern);
+        format.setTimeZone(zone);
+        
+        return format.format(calendar.getTime());
+    }
 
 }

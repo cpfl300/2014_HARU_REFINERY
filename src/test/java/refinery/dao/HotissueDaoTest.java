@@ -3,6 +3,7 @@ package refinery.dao;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -37,8 +38,11 @@ public class HotissueDaoTest {
 	private Hotissue hotissue2;
 	private Hotissue hotissue3;
 	
+	private List<Hotissue> hotissues;
+	
 	@Before
 	public void setup() {
+		
 		hotissue1 = new Hotissue(1, "hotissue1", "1111-01-01 01:11:11");
 		hotissue2 = new Hotissue(2, "hotissue2", "1222-02-02 02:11:11");
 		hotissue3 = new Hotissue(3, "hotissue3", "1333-03-03 03:11:11");
@@ -71,6 +75,41 @@ public class HotissueDaoTest {
 		hotissueDao.add(hotissue3);
 		assertThat(hotissueDao.getCount(), is(3));
 	}
+	
+	@Test
+	public void addHotissue() {
+		hotissueDao.deleteAll();
+		assertThat(hotissueDao.getCount(), is(0));
+		
+		hotissues = new ArrayList<Hotissue>();
+		hotissues.add(hotissue1);
+		hotissues.add(hotissue2);
+		hotissues.add(hotissue3);
+		
+		hotissueDao.addHotissues(hotissues);
+		assertThat(hotissueDao.getCount(), is(3));
+	
+	}
+	
+	@Test
+	public void addHotissueIncludedDucplicateKey() {
+		hotissueDao.deleteAll();
+		assertThat(hotissueDao.getCount(), is(0));
+		
+		hotissues = new ArrayList<Hotissue>();
+		hotissues.add(hotissue1);
+		hotissues.add(hotissue1);
+		hotissues.add(hotissue1);
+		
+		int actualCounts[] = hotissueDao.addHotissues(hotissues);
+		int actualCount = 0;
+		for (int affectedRow : actualCounts) {
+			actualCount += affectedRow;
+		}
+
+		assertThat(actualCount, is(1));
+	}
+	
 	
 	@Test
 	public void getWithArticles() {
