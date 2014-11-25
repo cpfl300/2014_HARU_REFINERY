@@ -176,6 +176,11 @@ public class ArticleService {
 		
 		return articles;
 	}
+
+	public List<Article> getByOrderedScore(int size) {
+		
+		return articleDao.getByOrderedScore(size);
+	}
 	
 
 }

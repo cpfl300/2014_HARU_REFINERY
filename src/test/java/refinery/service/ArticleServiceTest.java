@@ -255,6 +255,22 @@ public class ArticleServiceTest {
 		assertThat(actualAfternoonArticles.get(1).getId(), is(5));
 	}
 	
+	
+	@Test
+	public void getByOrderedScore() {
+		final int size = 2;
+		
+		article1.setScore(10.1);
+		article2.setScore(20.1);
+		article3.setScore(30.1);
+		
+		when(articleDaoMock.getByOrderedScore(size)).thenReturn(Arrays.asList(new Article[]{article3, article2}));
+		
+		List<Article> actualArticles = articleService.getByOrderedScore(size);
+		assertThat(actualArticles.size(), is(size));
+		assertThat(actualArticles.get(0).getScore(), is(30.1));
+		assertThat(actualArticles.get(1).getScore(), is(20.1));
+	}
 
 
 	private void makeHotissueServiceMocks() {

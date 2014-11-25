@@ -287,6 +287,28 @@ public class ArticleDaoTest {
 		
 	}
 	
+	@Test
+	public void getByOrderedScore() {
+		prepareHotissues();
+		prepareArticleDao();
+		
+		article1.setScore(10.1);
+		article2.setScore(20.1);
+		article3.setScore(30.1);
+		
+		articleDao.add(article1);
+		articleDao.add(article2);
+		articleDao.add(article3);
+		
+		final int size = 2;
+		List<Article> actualArticles = articleDao.getByOrderedScore(size);
+		
+		assertThat(actualArticles.size(), is(size));
+		assertThat(actualArticles.get(0).getScore(), is(30.1));
+		assertThat(actualArticles.get(1).getScore(), is(20.1));
+	}
+	
+	
 	private void prepareHotissues() {
 		hotissueDao.add(hotissue1);
 		hotissueDao.add(hotissue2);
