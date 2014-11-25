@@ -7,8 +7,6 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.junit.Before;
@@ -182,24 +180,7 @@ public class HotissueServiceTest {
 		assertThat(actualHotissues.get(1).getArticles().get(0).getId(), is(2));
 		
 	}
-	
-	
-	private double[] getHotissueScores(List<Article> articles) {
-		double[] expected = new double[3];
-		
-		for (int i=0; i<3; i++) {
-			double tmp = 0;
-			
-			for (int j=i*3; j<(i+1)*3; j++) {
-				tmp += articles.get(j).getScore();
-			}
-			
-			expected[i] = tmp/3;
-		}
-		
-		return expected;
-		
-	}
+
 
 	private List<Article> makeArticleFixtures() {
 		List<Article> articles = new ArrayList<Article>();

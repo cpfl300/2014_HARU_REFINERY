@@ -1,4 +1,4 @@
-	package scheduler.job;
+package scheduler.job;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -24,26 +24,26 @@ import refinery.utility.RefineryUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=Config.class, loader=AnnotationConfigContextLoader.class)
-public class NaverNewsJobTest {
-	
+public class HalfDayJobTest {
+
 	@Autowired
 	private Scheduler scheduler;
 	
 	private Trigger trigger;
-
+	
 	@Before
 	public void setup() throws SchedulerException {
-		trigger = scheduler.getTrigger(new TriggerKey("naverNewsTrigger"));
+		trigger = scheduler.getTrigger(new TriggerKey("halfDayTrigger"));
 	}
 	
 	@Test
-	public void naverNewsJobSchedule() throws SchedulerException {
-		String initialTime = "2014-12-07 12:00:00";
+	public void halfDayJobSchedule() throws SchedulerException {
+		String initialTime = "2014-12-07 06:00:00";
         List<String> expectedTimes = Arrays.asList(
-        		"2014-12-07 12:10:00",
-                "2014-12-07 12:20:00",
-                "2014-12-07 12:30:00",
-                "2014-12-07 12:40:00");
+        		"2014-12-07 18:00:00",
+                "2014-12-08 06:00:00",
+                "2014-12-08 18:00:00",
+                "2014-12-09 06:00:00");
         
         assertSchedule(initialTime, expectedTimes);
 	}
@@ -51,7 +51,7 @@ public class NaverNewsJobTest {
 	private void assertSchedule(String initialTime, List<String> expectedTimes) {
 		Date startTime = null;
 		startTime = RefineryUtils.parseFormattedDate(initialTime);
-		
+
 		for (String exptectedTime : expectedTimes) {
 			Date nextExecutionTime = trigger.getFireTimeAfter(startTime);
 			String actualTime = RefineryUtils.formatDate(nextExecutionTime);
@@ -61,4 +61,5 @@ public class NaverNewsJobTest {
 			startTime = nextExecutionTime;
 		}
 	}
+
 }

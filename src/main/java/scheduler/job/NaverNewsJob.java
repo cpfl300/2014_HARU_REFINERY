@@ -24,7 +24,4 @@ public class NaverNewsJob extends QuartzJobBean {
 		naverNewsTask.getNews();
 		
 	}
-
-
-
 }
