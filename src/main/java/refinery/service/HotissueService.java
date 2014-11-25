@@ -82,6 +82,12 @@ public class HotissueService {
 		return hotissues;
 	}
 	
+
+	public List<Hotissue> getByOrderedScore(int size) {
+		
+		return this.hotissueDao.getWithArticlesByOrderedScore(size);
+	}
+	
 	
 	private int getCount(int[] rows) {
 		int count = 0;
@@ -102,5 +108,6 @@ public class HotissueService {
 		}
 		
 	}
+
 	
 }

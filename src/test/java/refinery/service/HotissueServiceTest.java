@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -173,17 +174,37 @@ public class HotissueServiceTest {
 		
 		
 		assertThat(actualHotissues.size(), is(3));
-		
 		double[] expectedValues = getHotissueScores(articles);
-		for (double d : expectedValues) {
-			log.debug("d: " + d);
-		}
 		
 		for (int i=0; i<3; i++) {
 			double actual = actualHotissues.get(i).getScore();
-			log.debug("actual d: " + actual);
 			assertThat(actual, is(expectedValues[i]));
 		}		
+	}
+	
+	@Test
+	public void getWithArticlesByOrderedScore() {
+		final int size = 2;
+		
+		hotissue1.setScore(10.1);
+		hotissue1.addArticle(new Article(1, 0.9));
+		
+		hotissue2.setScore(20.1);
+		hotissue2.addArticle(new Article(2, 0.8));
+		
+		hotissue3.setScore(30.1);
+		hotissue3.addArticle(new Article(3, 0.7));
+		
+		when(hotissueDaoMock.getWithArticlesByOrderedScore(size)).thenReturn(Arrays.asList(new Hotissue[]{hotissue3, hotissue2}));
+		
+		List<Hotissue> actualHotissues = hotissueService.getByOrderedScore(size);
+		assertThat(actualHotissues.size(), is(size));
+		assertThat(actualHotissues.get(0).getScore(), is(30.1));
+		assertThat(actualHotissues.get(0).getArticles().get(0).getId(), is(3));
+		
+		assertThat(actualHotissues.get(1).getScore(), is(20.1));
+		assertThat(actualHotissues.get(1).getArticles().get(0).getId(), is(2));
+		
 	}
 	
 	
