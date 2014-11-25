@@ -1,17 +1,9 @@
 package refinery.service;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.TimeZone;
 
-import javax.annotation.PostConstruct;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -29,14 +21,6 @@ import refinery.model.Section;
 @Service
 public class ArticleService {
 	
-	private static final Logger log = LoggerFactory.getLogger(ArticleService.class);
-	
-	private static final String BEFORE_DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";
-	private static final String AFTER_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-	
-	private SimpleDateFormat beforeFormat;
-	private SimpleDateFormat afterFormat;
-	
 	@Autowired
 	private ArticleDao articleDao;
 	
@@ -48,16 +32,6 @@ public class ArticleService {
 	
 	@Autowired
 	private SectionDao sectionDao;
-	
-	@PostConstruct
-	public void postConstructer() {
-		TimeZone zone = TimeZone.getTimeZone("Asia/Seoul");
-		beforeFormat = new SimpleDateFormat(BEFORE_DATE_FORMAT);
-		
-		beforeFormat.setTimeZone(zone);
-		afterFormat = new SimpleDateFormat(AFTER_DATE_FORMAT);
-		afterFormat.setTimeZone(zone);
-	}
 
 	@Transactional
 	public int add(Article article) {
@@ -130,19 +104,9 @@ public class ArticleService {
 			ir.next().clacScore();
 		}
 		
-		int[] rowState = articleDao.updateScore(articles);
+		int[] rowState = articleDao.updateScores(articles);
 		
 		return getCount(rowState);
-	}
-
-
-	String[] getBetweenDate(Calendar cal) {
-		String to  = beforeFormat.format(cal.getTime());
-		
-		cal.add(Calendar.HOUR_OF_DAY, -12);
-		String from = beforeFormat.format(cal.getTime());
-		
-		return new String[] {from, to};
 	}
 
 	private void setJournalAndSection(Article article) {
@@ -163,23 +127,14 @@ public class ArticleService {
 		return count;
 	}
 
-	public List<Article> getArticlesOfHalfDayByCalendarTo(Calendar to) {
-		String[] dates = new String[2];
-		
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		dates[1] = format.format(to.getTime());
-		
-		to.add(Calendar.HOUR, -12);
-		dates[0] = format.format(to.getTime());
-		
-		List<Article> articles = articleDao.getArticlesBetweenDates(dates[0], dates[1]);
-		
-		return articles;
-	}
-
 	public List<Article> getByOrderedScore(int size) {
 		
 		return articleDao.getByOrderedScore(size);
+	}
+
+	public List<Article> getArticlesBetweenDates(String from, String to) {
+		
+		return articleDao.getArticlesBetweenDates(from, to);
 	}
 	
 

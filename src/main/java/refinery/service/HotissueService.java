@@ -1,11 +1,8 @@
 package refinery.service;
 
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -18,8 +15,6 @@ import refinery.model.Hotissue;
 
 @Service
 public class HotissueService {
-	
-	private static final Logger log = LoggerFactory.getLogger(HotissueService.class);
 	
 	@Autowired
 	private HotissueDao hotissueDao;
@@ -70,20 +65,20 @@ public class HotissueService {
 	
 	
 	@Transactional
-	public List<Hotissue> calcScore(Calendar calendar) {
+	public int calcScore(String from, String to) {
 
-		List<Article> articles = articleService.getArticlesOfHalfDayByCalendarTo(calendar);
+		List<Article> articles = articleService.getArticlesBetweenDates(from, to);
 		List<Hotissue> hotissues = Hotissue.orderByHotissue(articles);
 		
 		for (Hotissue hotissue : hotissues) {			
 			hotissue.calcScore();
 		}
 		
-		return hotissues;
+		return getCount(hotissueDao.updateScores(hotissues));
 	}
 	
 
-	public List<Hotissue> getByOrderedScore(int size) {
+	public List<Hotissue> getWithArticlesByOrderedScore(int size) {
 		
 		return this.hotissueDao.getWithArticlesByOrderedScore(size);
 	}

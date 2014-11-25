@@ -3,22 +3,31 @@ package refinery.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import refinery.dao.HalfDayDao;
 import refinery.model.Article;
 
 @Service
 public class HalfDayService {
 	
 	@Autowired
-	private JdbcTemplate jdbcTemplate;
+	private HalfDayDao halfDayDao;
 
-	public List<Article> save(int n) {
+	
+	public int addArticles(List<Article> articles) {
+
+		return getCount(halfDayDao.addArticles(articles));
+	}
+	
+	private int getCount(int[] rows) {
+		int count = 0;
 		
+		for (int row : rows) {
+			count += row;
+		}
 		
-		
-		return null;
+		return count;
 	}
 
 }

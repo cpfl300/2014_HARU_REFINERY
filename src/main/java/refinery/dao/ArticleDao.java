@@ -4,8 +4,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,9 +18,6 @@ import refinery.model.Section;
 
 @Repository
 public class ArticleDao {
-	
-	private static final String DATE_PATTERN = "yyyy/MM/dd hh:mm:ss";
-	private static final Logger log = LoggerFactory.getLogger(ArticleDao.class);
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -62,8 +57,6 @@ public class ArticleDao {
 	}
 
 	public void add(Article article) {
-
-		log.debug("a score: " + article.getScore());
 		
 		this.jdbcTemplate.update(
 				"insert into articles(id, hotissues_id, title, journals_id, minor_sections_id, date, content, hits, completed_reading_count, score) values (?,?,?,?,?,?,?,?,?,?)",
@@ -132,7 +125,7 @@ public class ArticleDao {
 		
 	}
 
-	public int[] updateScore(final List<Article> articles) {
+	public int[] updateScores(final List<Article> articles) {
 		
 		return this.jdbcTemplate.batchUpdate(
 					"UPDATE articles SET score = ? WHERE id = ?",
@@ -156,8 +149,6 @@ public class ArticleDao {
 	}
 
 	public List<Article> getArticlesBetweenDates(String from, String to) {
-		log.debug("from: " + from);
-		log.debug("to: " + to);
 		
 		return this.jdbcTemplate.query(
 					"SELECT * FROM articles WHERE (date BETWEEN ? AND ?)",
