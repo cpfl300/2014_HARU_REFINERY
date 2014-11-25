@@ -63,8 +63,7 @@ public class HotissueDaoTest {
 	
 	@Test
 	public void add() {
-		hotissueDao.deleteAll();
-		assertThat(hotissueDao.getCount(), is(0));
+		prepareHotissueDao();
 		
 		hotissueDao.add(hotissue1);
 		assertThat(hotissueDao.getCount(), is(1));
@@ -78,8 +77,7 @@ public class HotissueDaoTest {
 	
 	@Test
 	public void addHotissue() {
-		hotissueDao.deleteAll();
-		assertThat(hotissueDao.getCount(), is(0));
+		prepareHotissueDao();
 		
 		hotissues = new ArrayList<Hotissue>();
 		hotissues.add(hotissue1);
@@ -93,8 +91,7 @@ public class HotissueDaoTest {
 	
 	@Test
 	public void addHotissueIncludedDucplicateKey() {
-		hotissueDao.deleteAll();
-		assertThat(hotissueDao.getCount(), is(0));
+		prepareHotissueDao();
 		
 		hotissues = new ArrayList<Hotissue>();
 		hotissues.add(hotissue1);
@@ -113,6 +110,8 @@ public class HotissueDaoTest {
 	
 	@Test
 	public void getWithArticles() {
+		prepareHotissueDao();
+		
 		Journal journal = new Journal(84);
 		Section section = new Section(3);
 		Hotissue hotissue = new Hotissue(1, "hotissue1");
@@ -121,9 +120,6 @@ public class HotissueDaoTest {
 		Article article1 = new Article(1, hotissue, journal, section, "title1", "1111-01-01 01:11:11", "content1", 10000, 7000, 10.1);
 		Article article2 = new Article(2, hotissue, journal, section, "title2", "1222-02-02 02:11:11", "content2", 20000, 8000, 20.1);
 		Article article3 = new Article(3, hotissue, journal, section, "title3", "1333-03-03 03:11:11", "content3", 30000, 9000, 10.1);
-		
-		articleDao.deleteAll();
-		assertThat(articleDao.getCount(), is(0));
 		
 		articleDao.add(article1);
 		articleDao.add(article2);
@@ -136,8 +132,7 @@ public class HotissueDaoTest {
 	
 	@Test
 	public void addAndGet() {
-		hotissueDao.deleteAll();
-		assertThat(hotissueDao.getCount(), is(0));
+		prepareHotissueDao();
 		
 		hotissueDao.add(hotissue1);
 		Hotissue actualHotissue1 = hotissueDao.get(1);
@@ -154,8 +149,7 @@ public class HotissueDaoTest {
 	
 	@Test
 	public void get() {
-		hotissueDao.deleteAll();
-		assertThat(hotissueDao.getCount(), is(0));
+		prepareHotissueDao();
 		
 		hotissueDao.add(hotissue1);
 		hotissueDao.add(hotissue2);
@@ -171,11 +165,31 @@ public class HotissueDaoTest {
 		Hotissue actualHotissue3 = hotissueDao.get(hotissue3.getId());
 		assertSameHotissue(actualHotissue3, hotissue3);
 	}
+
+
+	@Test
+	public void getByOrderedScore() {
+		prepareHotissueDao();
+		
+		hotissue1.setScore(10.1);
+		hotissue2.setScore(20.1);
+		hotissue3.setScore(30.1);
+		
+		hotissueDao.add(hotissue1);
+		hotissueDao.add(hotissue2);
+		hotissueDao.add(hotissue3);
+		
+		final int size = 2;
+		List<Hotissue> actualHotissues = hotissueDao.getByOrderedScore(size);
+		
+		assertThat(actualHotissues.size(), is(size));
+		assertThat(actualHotissues.get(0).getScore(), is(30.1));
+		assertThat(actualHotissues.get(1).getScore(), is(20.1));
+	}
 	
 	@Test
 	public void addWithTimestamp() {
-		hotissueDao.deleteAll();
-		assertThat(hotissueDao.getCount(), is(0));
+		prepareHotissueDao();
 		
 		hotissueDao.addWithTimestamp(hotissue1);
 		hotissueDao.addWithTimestamp(hotissue2);
@@ -195,8 +209,7 @@ public class HotissueDaoTest {
 	
 	@Test
 	public void getLatestHotissues() {
-		hotissueDao.deleteAll();
-		assertThat(hotissueDao.getCount(), is(0));
+		prepareHotissueDao();
 		
 		hotissueDao.addWithTimestamp(hotissue1);
 		hotissueDao.addWithTimestamp(hotissue2);
@@ -212,8 +225,7 @@ public class HotissueDaoTest {
 	
 	@Test
 	public void getByName() {
-		hotissueDao.deleteAll();
-		assertThat(hotissueDao.getCount(), is(0));
+		prepareHotissueDao();
 		
 		hotissueDao.add(hotissue1);
 		hotissueDao.add(hotissue2);
@@ -233,8 +245,7 @@ public class HotissueDaoTest {
 	
 	@Test(expected=EmptyResultDataAccessException.class)
 	public void notGetByName() {
-		hotissueDao.deleteAll();
-		assertThat(hotissueDao.getCount(), is(0));
+		prepareHotissueDao();
 		
 		hotissueDao.add(hotissue1);
 		hotissueDao.add(hotissue2);
@@ -248,8 +259,7 @@ public class HotissueDaoTest {
 	
 	@Test
 	public void delete() {
-		hotissueDao.deleteAll();
-		assertThat(hotissueDao.getCount(), is(0));
+		prepareHotissueDao();
 		
 		hotissueDao.add(hotissue1);
 		hotissueDao.add(hotissue2);
@@ -268,8 +278,7 @@ public class HotissueDaoTest {
 	
 	@Test(expected=DataIntegrityViolationException.class)
 	public void notDelete() {
-		hotissueDao.deleteAll();
-		assertThat(hotissueDao.getCount(), is(0));
+		prepareHotissueDao();
 		
 		hotissueDao.add(hotissue1);
 		
@@ -290,6 +299,11 @@ public class HotissueDaoTest {
 		if(expected.getTimestamp().charAt(0) != '1') {
 			assertThat(actual.getTimestamp(), is(expected.getTimestamp()));
 		}
+	}
+	
+	private void prepareHotissueDao() {
+		hotissueDao.deleteAll();
+		assertThat(hotissueDao.getCount(), is(0));
 	}
 
 }

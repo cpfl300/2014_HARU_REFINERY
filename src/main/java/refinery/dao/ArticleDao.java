@@ -2,10 +2,8 @@ package refinery.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +64,7 @@ public class ArticleDao {
 	public void add(Article article) {
 
 		this.jdbcTemplate.update(
-				"insert into articles(id, hotissues_id, title, journals_id, minor_sections_id, date, content, hits, completed_reading_count) values (?,?,?,?,?,?,?,?,?)",
+				"insert into articles(id, hotissues_id, title, journals_id, minor_sections_id, date, content, hits, completed_reading_count, score) values (?,?,?,?,?,?,?,?,?,?)",
 				article.getId(),
 				article.getHotissue().getId(),
 				article.getTitle(),
@@ -75,7 +73,8 @@ public class ArticleDao {
 				article.getDate(),
 				article.getContent(),
 				article.getHits(),
-				article.getCompletedReadingCount()
+				article.getCompletedReadingCount(),
+				article.getScore()
 		);
 		
 	}
@@ -161,7 +160,17 @@ public class ArticleDao {
 		return this.jdbcTemplate.query(
 					"SELECT * FROM articles WHERE (date BETWEEN ? AND ?)",
 					new Object[] {from, to},
-					articleMapper
+					this.articleMapper
 				);
+	}
+
+	public List<Article> getByOrderedScore(int size) {
+		
+		return this.jdbcTemplate.query(
+					"SELECT * FROM articles ORDER BY score DESC LIMIT ?",
+					new Object[] {size},
+					this.articleMapper
+				);
+				
 	}
 }

@@ -91,9 +91,10 @@ public class HotissueDao {
 
 	public void add(final Hotissue hotissue) {
 		this.jdbcTemplate.update(
-					"insert into hotissues (id, name) values (?, ?)",
+					"insert into hotissues (id, name, score) values (?, ?, ?)",
 					hotissue.getId(),
-					hotissue.getName()
+					hotissue.getName(),
+					hotissue.getScore()
 				);
 	}
 
@@ -186,6 +187,15 @@ public class HotissueDao {
 				
 				);
 		
+	}
+
+	public List<Hotissue> getByOrderedScore(int size) {
+		
+		return this.jdbcTemplate.query(
+					"SELECT * FROM hotissues ORDER BY score DESC LIMIT ?",
+					new Object[] {size},
+					this.hotissueMapper
+				);
 	}
 
 
