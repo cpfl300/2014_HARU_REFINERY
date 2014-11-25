@@ -125,8 +125,7 @@ public class HotissueDao {
 
 	}
 
-	public void add(final Hotissue hotissue) {
-		log.debug("score: " + hotissue.getScore());
+	public void add(Hotissue hotissue) {
 		this.jdbcTemplate.update(
 					"insert into hotissues (id, name, score) values (?, ?, ?)",
 					hotissue.getId(),
@@ -249,6 +248,29 @@ public class HotissueDao {
 				+ "ON hotissues.id = articles.hotissues_id ORDER BY hotissues.score DESC",
 				new Object[]{size},
 				this.hotissueWithArticleMapper
+			);
+	}
+
+	public int[] updateScores(final List<Hotissue> hotissues) {
+		
+		return this.jdbcTemplate.batchUpdate(
+				"UPDATE hotissues SET score = ? WHERE id = ?",
+				new BatchPreparedStatementSetter() {
+
+					@Override
+					public void setValues(PreparedStatement ps, int i) throws SQLException {
+						Hotissue hotissue = hotissues.get(i);
+						ps.setDouble(1, hotissue.getScore());
+						ps.setInt(2, hotissue.getId());
+					}
+
+					@Override
+					public int getBatchSize() {
+						
+						return hotissues.size();
+					}
+					
+				}
 			);
 	}
 }

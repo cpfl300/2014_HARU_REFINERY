@@ -5,10 +5,13 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import refinery.utility.RefineryUtils;
 
 public class ArticleTest {
 	private static final String FACK_STR = "-----";
@@ -120,6 +123,48 @@ public class ArticleTest {
 			double expectedScore = (double) article.getCompletedReadingCount() / article.getHits();
 			
 			assertThat(actualScore, is(expectedScore));
+		}
+	}
+	
+	@Test
+	public void asList() {
+		List<Hotissue> hotissues = new ArrayList<Hotissue>();
+		hotissue1.addArticle(article1);
+		hotissue2.addArticle(article2);
+		hotissue3.addArticle(article3);
+		hotissues.add(hotissue1);
+		hotissues.add(hotissue2);
+		hotissues.add(hotissue3);
+		
+		List<Article> actualArticles = Article.asList(hotissues);
+		
+		for (int i=0; i<3; i++) {
+			Article actual = actualArticles.get(i);
+			assertThat(actual, is(articles.get(i)));
+		}
+		
+	}
+	
+	@Test
+	public void asListWithSequenceIncludeTimestamp() {
+		List<Hotissue> hotissues = new ArrayList<Hotissue>();
+		hotissue1.addArticle(article1);
+		hotissue2.addArticle(article2);
+		hotissue3.addArticle(article3);
+		hotissues.add(hotissue1);
+		hotissues.add(hotissue2);
+		hotissues.add(hotissue3);
+		
+		String timestamp = RefineryUtils.getDate(2014, Calendar.DECEMBER, 7, 6);
+		
+		List<Article> actualArticles = Article.asListWithSequenceIncludeTimestamp(hotissues, timestamp);
+		
+		for (int i=0; i<3; i++) {
+			Article actual = actualArticles.get(i);
+			Article expected = articles.get(i);
+			assertThat(actual.getId(), is(expected.getId()));
+			assertThat(actual.getSequence(), is(i+1));
+			assertThat(actual.getTimestamp(), is(timestamp));
 		}
 	}
 	

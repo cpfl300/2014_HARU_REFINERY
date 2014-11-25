@@ -265,7 +265,7 @@ public class ArticleDaoTest {
 
 
 	@Test
-	public void updateScore() {
+	public void updateScores() {
 		prepareHotissues();
 		prepareArticleDao();
 		
@@ -278,7 +278,7 @@ public class ArticleDaoTest {
 		updatedArticles.add(new Article(article2.getId(), 22.2));
 		updatedArticles.add(new Article(article3.getId(), 33.3));
 		
-		int[] state = articleDao.updateScore(updatedArticles);
+		int[] state = articleDao.updateScores(updatedArticles);
 		
 		assertThat(getCount(state), is(3));
 		assertThat(articleDao.get(article1.getId()).getScore(), is(updatedArticles.get(0).getScore()));

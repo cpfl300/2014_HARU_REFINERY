@@ -9,8 +9,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -29,8 +27,6 @@ import refinery.model.Section;
 @ContextConfiguration(classes=Config.class, loader=AnnotationConfigContextLoader.class)
 @Transactional
 public class HotissueDaoTest {
-	
-	private static final Logger log = LoggerFactory.getLogger(HotissueDaoTest.class);
 	
 	@Autowired
 	private HotissueDao hotissueDao;
@@ -339,6 +335,28 @@ public class HotissueDaoTest {
 		hotissueDao.delete(1);
 	}
 	
+	@Test
+	public void updateScores() {
+		prepareHotissueDao();
+		
+		hotissueDao.add(hotissue1);
+		hotissueDao.add(hotissue2);
+		hotissueDao.add(hotissue3);
+		
+		List<Hotissue> updatedHotissues = new ArrayList<Hotissue>();
+		updatedHotissues.add(new Hotissue(hotissue1.getId(), 11.1));
+		updatedHotissues.add(new Hotissue(hotissue2.getId(), 22.2));
+		updatedHotissues.add(new Hotissue(hotissue3.getId(), 33.3));
+		
+		int[] state = hotissueDao.updateScores(updatedHotissues);
+		
+		assertThat(getCount(state), is(3));
+		assertThat(hotissueDao.get(hotissue1.getId()).getScore(), is(updatedHotissues.get(0).getScore()));
+		assertThat(hotissueDao.get(hotissue2.getId()).getScore(), is(updatedHotissues.get(1).getScore()));
+		assertThat(hotissueDao.get(hotissue3.getId()).getScore(), is(updatedHotissues.get(2).getScore()));
+		
+	}
+	
 
 	private void assertSameHotissue(Hotissue actual, Hotissue expected) {
 		assertThat(actual.getName(), is(expected.getName()));
@@ -351,6 +369,16 @@ public class HotissueDaoTest {
 	private void prepareHotissueDao() {
 		hotissueDao.deleteAll();
 		assertThat(hotissueDao.getCount(), is(0));
+	}
+	
+	private int getCount(int[] affectedRows) {
+		int size = 0;
+		
+		for (int row : affectedRows) {
+			size += row;
+		}
+		
+		return size;
 	}
 
 }

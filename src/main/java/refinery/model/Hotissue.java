@@ -39,6 +39,11 @@ public class Hotissue {
 		this(0, name, timestamp);
 	}
 
+	public Hotissue(int id, double score) {
+		this.id = id;
+		this.score = score;
+	}
+
 	public int getId() {
 		return id;
 	}
