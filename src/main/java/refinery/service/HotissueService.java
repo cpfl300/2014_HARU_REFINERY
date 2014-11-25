@@ -85,7 +85,7 @@ public class HotissueService {
 
 	public List<Hotissue> getByOrderedScore(int size) {
 		
-		return this.hotissueDao.getByOrderedScore(size);
+		return this.hotissueDao.getWithArticlesByOrderedScore(size);
 	}
 	
 	

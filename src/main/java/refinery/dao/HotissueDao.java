@@ -198,5 +198,26 @@ public class HotissueDao {
 				);
 	}
 
+	public List<Hotissue> getWithArticlesByOrderedScore(int size) {
+		
+		return this.jdbcTemplate.query(
+//				"SELECT * FROM"
+//				+ "(SELECT * FROM hotissues ORDER BY score DESC LIMIT ?) AS hotissues"
+//				+ "INNER JOIN"
+//				+ "(SELECT * FROM articles GROUP BY hotissues_id ORDER BY score DESC LIMIT 1) AS articles"
+//				+ "ON articles.hotissues_id = hotissues.id",
+				"SELECT * FROM"
+				+ "(SELECT * FROM hotissues ORDER BY score DESC LIMIT ?) AS hotissues "
+				+ "INNER JOIN "
+				+ "(SELECT id, title, date, content, timestamp, journals_id, hotissues_id, minor_sections_id, hits, completed_reading_count, score FROM articles) AS articles "
+				+ "ON articles.hotissues_id = hotissues.id",
+				
+				
+				new Object[]{size},
+				this.hotissueWithArticleMapper
+//				this.hotissueMapper
+			);
+	}
+
 
 }

@@ -9,6 +9,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -28,6 +30,8 @@ import refinery.model.Section;
 @Transactional
 public class HotissueDaoTest {
 	
+	private static final Logger log = LoggerFactory.getLogger(HotissueDaoTest.class);
+	
 	@Autowired
 	private HotissueDao hotissueDao;
 	
@@ -38,6 +42,9 @@ public class HotissueDaoTest {
 	private Hotissue hotissue2;
 	private Hotissue hotissue3;
 	
+	private Journal journal;
+	private Section section;
+	
 	private List<Hotissue> hotissues;
 	
 	@Before
@@ -46,6 +53,9 @@ public class HotissueDaoTest {
 		hotissue1 = new Hotissue(1, "hotissue1", "1111-01-01 01:11:11");
 		hotissue2 = new Hotissue(2, "hotissue2", "1222-02-02 02:11:11");
 		hotissue3 = new Hotissue(3, "hotissue3", "1333-03-03 03:11:11");
+		
+		journal = new Journal(84);
+		section = new Section(3);
 	}
 	
 	@Test
@@ -111,23 +121,61 @@ public class HotissueDaoTest {
 	@Test
 	public void getWithArticles() {
 		prepareHotissueDao();
-		
-		Journal journal = new Journal(84);
-		Section section = new Section(3);
-		Hotissue hotissue = new Hotissue(1, "hotissue1");
-		hotissueDao.add(hotissue);
-		
-		Article article1 = new Article(1, hotissue, journal, section, "title1", "1111-01-01 01:11:11", "content1", 10000, 7000, 10.1);
-		Article article2 = new Article(2, hotissue, journal, section, "title2", "1222-02-02 02:11:11", "content2", 20000, 8000, 20.1);
-		Article article3 = new Article(3, hotissue, journal, section, "title3", "1333-03-03 03:11:11", "content3", 30000, 9000, 10.1);
+		hotissueDao.add(hotissue1);
+		hotissueDao.add(hotissue2);
+		hotissueDao.add(hotissue3);
+
+		Article article1 = new Article(1, hotissue1, journal, section, "title1", "1111-01-01 01:11:11", "content1", 10000, 7000, 10.1);
+		Article article2 = new Article(2, hotissue1, journal, section, "title2", "1222-02-02 02:11:11", "content2", 20000, 8000, 20.1);
+		Article article3 = new Article(3, hotissue1, journal, section, "title3", "1333-03-03 03:11:11", "content3", 30000, 9000, 10.1);
 		
 		articleDao.add(article1);
 		articleDao.add(article2);
 		articleDao.add(article3);
 		assertThat(articleDao.getCount(), is(3));
 		
-		Hotissue actualHotissue = hotissueDao.getWithArticles(hotissue.getId());
+		Hotissue actualHotissue = hotissueDao.getWithArticles(hotissue1.getId());
 		assertThat(actualHotissue.getArticles().size(), is(3));
+	}
+	
+	@Test
+	public void getWithArticlesByOrderedScore() {
+		final int size = 2;
+		
+		prepareHotissueDao();
+		hotissue1.setScore(10.1);
+		hotissue2.setScore(20.1);
+		hotissue3.setScore(30.1);
+		hotissueDao.add(hotissue1);
+		hotissueDao.add(hotissue2);
+		hotissueDao.add(hotissue3);
+		
+		log.debug("id: " + hotissue1.getId());
+		log.debug("id: " + hotissue2.getId());
+		log.debug("id: " + hotissue3.getId());
+
+		Article article11 = new Article(11, hotissue1, journal, section, "title11", "1111-01-01 01:11:11", "content11", 11000, 7100, 10.1);
+		Article article12 = new Article(12, hotissue1, journal, section, "title12", "1111-01-01 01:11:12", "content12", 12000, 7200, 20.1);
+		Article article21 = new Article(21, hotissue2, journal, section, "title21", "1222-02-02 02:11:11", "content21", 21000, 8100, 10.1);
+		Article article22 = new Article(22, hotissue2, journal, section, "title22", "1222-02-02 02:11:12", "content22", 22000, 8200, 20.1);
+		Article article31 = new Article(31, hotissue3, journal, section, "title31", "1333-03-03 03:11:11", "content31", 31000, 9100, 10.1);
+		Article article32 = new Article(32, hotissue3, journal, section, "title32", "1333-03-03 03:11:12", "content32", 32000, 9200, 20.1);
+		
+		articleDao.add(article11);
+		articleDao.add(article12);
+		articleDao.add(article21);
+		articleDao.add(article22);
+		articleDao.add(article31);
+		articleDao.add(article32);
+		
+		List<Hotissue> actualHotissues = hotissueDao.getWithArticlesByOrderedScore(size);
+//		log.debug("a1: " + actualHotissues.get(0));
+//		log.debug("a2: " + actualHotissues.get(1));
+		
+//		assertThat(actualHotissues.size(), is(size));
+		assertThat(actualHotissues.get(0).getArticles().size(), is(1));
+		
+		
 	}
 	
 	@Test
