@@ -119,7 +119,7 @@ public class HotissueDaoTest {
 	
 	
 	@Test
-	public void getWithArticles() {
+	public void getWithArticlesById() {
 		prepareHotissueDao();
 		hotissueDao.add(hotissue1);
 		hotissueDao.add(hotissue2);
@@ -134,9 +134,10 @@ public class HotissueDaoTest {
 		articleDao.add(article3);
 		assertThat(articleDao.getCount(), is(3));
 		
-		Hotissue actualHotissue = hotissueDao.getWithArticles(hotissue1.getId());
+		Hotissue actualHotissue = hotissueDao.getWithArticlesById(hotissue1.getId());
 		assertThat(actualHotissue.getArticles().size(), is(3));
 	}
+	
 	
 	@Test
 	public void getWithArticlesByOrderedScore() {
@@ -149,10 +150,6 @@ public class HotissueDaoTest {
 		hotissueDao.add(hotissue1);
 		hotissueDao.add(hotissue2);
 		hotissueDao.add(hotissue3);
-		
-		log.debug("id: " + hotissue1.getId());
-		log.debug("id: " + hotissue2.getId());
-		log.debug("id: " + hotissue3.getId());
 
 		Article article11 = new Article(11, hotissue1, journal, section, "title11", "1111-01-01 01:11:11", "content11", 11000, 7100, 10.1);
 		Article article12 = new Article(12, hotissue1, journal, section, "title12", "1111-01-01 01:11:12", "content12", 12000, 7200, 20.1);
@@ -168,15 +165,17 @@ public class HotissueDaoTest {
 		articleDao.add(article31);
 		articleDao.add(article32);
 		
+		assertThat(articleDao.getCount(), is(6));
+		assertThat(hotissueDao.getCount(), is(3));
+		
 		List<Hotissue> actualHotissues = hotissueDao.getWithArticlesByOrderedScore(size);
-//		log.debug("a1: " + actualHotissues.get(0));
-//		log.debug("a2: " + actualHotissues.get(1));
 		
-//		assertThat(actualHotissues.size(), is(size));
-		assertThat(actualHotissues.get(0).getArticles().size(), is(1));
-		
+		assertThat(actualHotissues.size(), is(size));
+		assertThat(actualHotissues.get(0).getArticles().get(0).getScore(), is(20.1));
+		assertThat(actualHotissues.get(1).getArticles().get(0).getScore(), is(20.1));
 		
 	}
+	
 	
 	@Test
 	public void addAndGet() {

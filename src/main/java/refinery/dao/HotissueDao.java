@@ -6,11 +6,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -21,6 +24,8 @@ import refinery.model.Section;
 
 @Repository
 public class HotissueDao {
+	
+	private static final Logger log = LoggerFactory.getLogger(HotissueDao.class);
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -36,7 +41,7 @@ public class HotissueDao {
 	};
 	
 	
-	private RowMapper<Hotissue> hotissueWithArticleMapper = (rs, rowNum) -> {
+	private RowMapper<Hotissue> hotissueWithArticlesMapper = (rs, rowNum) -> {
 		
 		ResultSetExtractor<Hotissue> hotissueResultSetExtractor = new ResultSetExtractor<Hotissue>() {
 
@@ -77,6 +82,37 @@ public class HotissueDao {
 		return hotissueResultSetExtractor.extractData(rs);
 	};
 
+	private RowMapper<Hotissue> hotissueWithArticleMapper = (rs, rowNum) -> {		
+		Hotissue hotissue = new Hotissue();
+		hotissue.setId(rs.getInt("hotissues.id"));
+		hotissue.setName(rs.getString("hotissues.name"));
+		hotissue.setTimestamp(rs.getString("hotissues.timestamp"));
+		
+		List<Article> articles = new ArrayList<Article>();
+		Article article = new Article();
+		Journal journal = new Journal(rs.getInt("articles.journals_id"));
+		Section section = new Section(rs.getInt("articles.minor_sections_id"));
+		
+		article.setJournal(journal);
+		article.setSection(section);
+		
+		article.setId(rs.getInt("articles.id"));
+		article.setTitle(rs.getString("articles.title"));
+		article.setDate(rs.getString("articles.date"));
+		article.setContent(rs.getString("articles.content"));
+		article.setHits(rs.getInt("articles.hits"));
+		article.setCompletedReadingCount(rs.getInt("articles.completed_reading_count"));
+		article.setTimestamp(rs.getString("articles.timestamp"));
+		article.setScore(rs.getDouble("articles.score"));
+		
+		articles.add(article);		
+		hotissue.setArticles(articles);
+
+		return hotissue;	
+	};
+	
+	
+	
 	public int deleteAll() {
 		
 		return this.jdbcTemplate.update("delete from hotissues");
@@ -90,6 +126,7 @@ public class HotissueDao {
 	}
 
 	public void add(final Hotissue hotissue) {
+		log.debug("score: " + hotissue.getScore());
 		this.jdbcTemplate.update(
 					"insert into hotissues (id, name, score) values (?, ?, ?)",
 					hotissue.getId(),
@@ -112,15 +149,16 @@ public class HotissueDao {
 		return this.jdbcTemplate.queryForInt("select last_insert_id()"); 
 	}
 
-	public Hotissue getWithArticles(int hotissueId) {
+	public Hotissue getWithArticlesById(int hotissueId) {
 		
 		return this.jdbcTemplate.queryForObject(
 					"SELECT * FROM hotissues INNER JOIN articles ON articles.hotissues_id = hotissues.id WHERE hotissues.id = ?",
 					new Object[]{hotissueId},
-					this.hotissueWithArticleMapper
+					this.hotissueWithArticlesMapper
 				);
 			
 	}
+	
 
 	public Hotissue getByName(String name) {
 		
@@ -201,23 +239,16 @@ public class HotissueDao {
 	public List<Hotissue> getWithArticlesByOrderedScore(int size) {
 		
 		return this.jdbcTemplate.query(
-//				"SELECT * FROM"
-//				+ "(SELECT * FROM hotissues ORDER BY score DESC LIMIT ?) AS hotissues"
-//				+ "INNER JOIN"
-//				+ "(SELECT * FROM articles GROUP BY hotissues_id ORDER BY score DESC LIMIT 1) AS articles"
-//				+ "ON articles.hotissues_id = hotissues.id",
-				"SELECT * FROM"
-				+ "(SELECT * FROM hotissues ORDER BY score DESC LIMIT ?) AS hotissues "
+				"SELECT * FROM " 
+					+ "(SELECT * FROM hotissues ORDER BY score DESC LIMIT ?) AS hotissues "
 				+ "INNER JOIN "
-				+ "(SELECT id, title, date, content, timestamp, journals_id, hotissues_id, minor_sections_id, hits, completed_reading_count, score FROM articles) AS articles "
-				+ "ON articles.hotissues_id = hotissues.id",
-				
-				
+					+ "(SELECT " 
+						+ "id, title, date, content, timestamp, journals_id, hotissues_id, minor_sections_id, "
+						+ "hits, completed_reading_count, MAX(score) AS score "
+					+ "FROM articles GROUP BY hotissues_id ORDER BY score DESC) AS articles "
+				+ "ON hotissues.id = articles.hotissues_id ORDER BY hotissues.score DESC",
 				new Object[]{size},
 				this.hotissueWithArticleMapper
-//				this.hotissueMapper
 			);
 	}
-
-
 }

@@ -63,6 +63,8 @@ public class ArticleDao {
 
 	public void add(Article article) {
 
+		log.debug("a score: " + article.getScore());
+		
 		this.jdbcTemplate.update(
 				"insert into articles(id, hotissues_id, title, journals_id, minor_sections_id, date, content, hits, completed_reading_count, score) values (?,?,?,?,?,?,?,?,?,?)",
 				article.getId(),
