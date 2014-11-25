@@ -155,7 +155,7 @@ public class ArticleTest {
 		hotissues.add(hotissue2);
 		hotissues.add(hotissue3);
 		
-		String timestamp = RefineryUtils.getDate(2014, Calendar.DECEMBER, 7, 6);
+		String timestamp = RefineryUtils.getFormattedDate(2014, Calendar.DECEMBER, 7, 6);
 		
 		List<Article> actualArticles = Article.asListWithSequenceIncludeTimestamp(hotissues, timestamp);
 		

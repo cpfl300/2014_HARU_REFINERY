@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -14,8 +15,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import refinery.model.Article;
 import refinery.model.Hotissue;
@@ -28,8 +27,6 @@ import refinery.utility.RefineryUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HalfDayTaskTest {
-	
-	private static final Logger log = LoggerFactory.getLogger(HalfDayTaskTest.class);
 	
 	private static final int N = 3;
 	
@@ -90,7 +87,8 @@ public class HalfDayTaskTest {
 
 	@Test
 	public void extract() {
-		String timestamp = RefineryUtils.getToday();
+		Date today = RefineryUtils.getToday();
+		String timestamp = RefineryUtils.formatDate(today);
 		String[] dates = RefineryUtils.getServiceDatesByTime(2014, Calendar.DECEMBER , 7, 6);
 		hotissue1.addArticle(article1);
 		hotissue2.addArticle(article2);

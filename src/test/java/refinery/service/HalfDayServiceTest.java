@@ -5,7 +5,6 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import org.junit.Before;
@@ -17,13 +16,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import refinery.dao.HalfDayDao;
 import refinery.model.Article;
-import refinery.model.Hotissue;
-import refinery.model.Journal;
-import refinery.model.Section;
-import refinery.service.ArticleService;
-import refinery.service.HalfDayService;
-import refinery.service.HotissueService;
-import refinery.utility.RefineryUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HalfDayServiceTest {
@@ -62,7 +54,6 @@ public class HalfDayServiceTest {
 		int actualCount = halfDayService.addArticles(articles);
 		
 		assertThat(actualCount, is(articles.size()));
-		
 		
 	}
 
