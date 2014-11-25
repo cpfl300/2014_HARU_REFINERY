@@ -108,7 +108,7 @@ public class HotissueTest {
 	
 	
 	@Test
-	public void orderByHotissue() {
+	public void orderBy() {
 		List<Article> articles = makeArticleFixtures();
 		
 		List<Hotissue> hotissues = Hotissue.orderByHotissue(articles);

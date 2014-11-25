@@ -1,7 +1,15 @@
 package refinery.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class Article {
+	
+	private static final Logger log = LoggerFactory.getLogger(Article.class);
 	
 	private int id;
 	private Hotissue hotissue;
@@ -65,6 +73,12 @@ public class Article {
 	public Article(int id, double score) {
 		this.id = id;
 		this.score = score;
+	}
+
+	public Article(int id, String timestamp, int sequence) {
+		this.id = id;
+		this.timestamp = timestamp;
+		this.sequence = sequence;
 	}
 
 	public int getId() {
@@ -242,8 +256,28 @@ public class Article {
 				+ ", timestamp=" + timestamp + ", order=" + sequence + "]";
 	}
 
+	public static List<Article> asList(List<Hotissue> hotissues) {
+		List<Article> articles = new ArrayList<Article>();
+		
+		for (Hotissue hotissue : hotissues) {
+			articles.addAll(hotissue.getArticles());
+			
+		}
+		
+		return articles;
+	}
 
-
-	
+	public static List<Article> asListWithSequenceIncludeTimestamp(List<Hotissue> hotissues, String timestamp) {
+		List<Article> articles = new ArrayList<Article>();
+		int sequence = 1;
+		
+		for (Hotissue hotissue : hotissues) {
+			for (Article a : hotissue.getArticles()) {
+				articles.add(new Article(a.getId(), timestamp, sequence++));
+			}
+		}
+		
+		return articles;
+	}
 	
 }

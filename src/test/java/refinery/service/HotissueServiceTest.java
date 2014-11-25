@@ -7,10 +7,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.TimeZone;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,8 +15,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
@@ -28,12 +23,11 @@ import refinery.model.Article;
 import refinery.model.Hotissue;
 import refinery.model.Journal;
 import refinery.model.Section;
+import refinery.utility.RefineryUtils;
 
 
 @RunWith(MockitoJUnitRunner.class)
 public class HotissueServiceTest {
-	
-	private static final Logger log = LoggerFactory.getLogger(HotissueServiceTest.class);
 	
 	@InjectMocks
 	private HotissueService hotissueService;
@@ -151,35 +145,15 @@ public class HotissueServiceTest {
 	
 	@Test
 	public void calcScore() {
-		Calendar serviceCalendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
-		serviceCalendar.set(2014, Calendar.DECEMBER , 7, 6, 0, 0);
+		String[] dates = RefineryUtils.getServiceDatesByTime(2014, Calendar.DECEMBER , 7, 6);
 		List<Article> articles = makeArticleFixtures();
+		List<Hotissue> hotissues = Hotissue.orderByHotissue(articles);
 		
-		when(articleServiceMock.getArticlesOfHalfDayByCalendarTo(serviceCalendar)).thenReturn(articles);
-		List<Hotissue> actualHotissues = hotissueService.calcScore(serviceCalendar); 
-	
-		Collections.sort(actualHotissues, new Comparator<Hotissue>() {
-
-			@Override
-			public int compare(Hotissue pre, Hotissue post) {
-				
-				if (pre.getId() < post.getId()) return -1;
-					
-				else if (pre.getId() == post.getId())  return 0;
-					
-				else return 1;
-			}
-			
-		});
+		when(articleServiceMock.getArticlesBetweenDates(dates[0], dates[1])).thenReturn(articles);
+		when(hotissueDaoMock.updateScores(hotissues)).thenReturn(new int[]{1,1,1});
+		int actualCount = hotissueService.calcScore(dates[0], dates[1]); 
 		
-		
-		assertThat(actualHotissues.size(), is(3));
-		double[] expectedValues = getHotissueScores(articles);
-		
-		for (int i=0; i<3; i++) {
-			double actual = actualHotissues.get(i).getScore();
-			assertThat(actual, is(expectedValues[i]));
-		}		
+		assertThat(actualCount, is(3));	
 	}
 	
 	@Test
@@ -197,7 +171,7 @@ public class HotissueServiceTest {
 		
 		when(hotissueDaoMock.getWithArticlesByOrderedScore(size)).thenReturn(Arrays.asList(new Hotissue[]{hotissue3, hotissue2}));
 		
-		List<Hotissue> actualHotissues = hotissueService.getByOrderedScore(size);
+		List<Hotissue> actualHotissues = hotissueService.getWithArticlesByOrderedScore(size);
 		assertThat(actualHotissues.size(), is(size));
 		assertThat(actualHotissues.get(0).getScore(), is(30.1));
 		assertThat(actualHotissues.get(0).getArticles().get(0).getId(), is(3));
@@ -206,24 +180,7 @@ public class HotissueServiceTest {
 		assertThat(actualHotissues.get(1).getArticles().get(0).getId(), is(2));
 		
 	}
-	
-	
-	private double[] getHotissueScores(List<Article> articles) {
-		double[] expected = new double[3];
-		
-		for (int i=0; i<3; i++) {
-			double tmp = 0;
-			
-			for (int j=i*3; j<(i+1)*3; j++) {
-				tmp += articles.get(j).getScore();
-			}
-			
-			expected[i] = tmp/3;
-		}
-		
-		return expected;
-		
-	}
+
 
 	private List<Article> makeArticleFixtures() {
 		List<Article> articles = new ArrayList<Article>();
@@ -254,5 +211,4 @@ public class HotissueServiceTest {
 		journal2 = new Journal(10);
 		journal3 = new Journal(23);		
 	}
-
 }

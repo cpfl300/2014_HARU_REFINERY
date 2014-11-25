@@ -6,14 +6,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -24,8 +21,6 @@ import refinery.model.Section;
 
 @Repository
 public class HotissueDao {
-	
-	private static final Logger log = LoggerFactory.getLogger(HotissueDao.class);
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -125,8 +120,7 @@ public class HotissueDao {
 
 	}
 
-	public void add(final Hotissue hotissue) {
-		log.debug("score: " + hotissue.getScore());
+	public void add(Hotissue hotissue) {
 		this.jdbcTemplate.update(
 					"insert into hotissues (id, name, score) values (?, ?, ?)",
 					hotissue.getId(),
@@ -249,6 +243,29 @@ public class HotissueDao {
 				+ "ON hotissues.id = articles.hotissues_id ORDER BY hotissues.score DESC",
 				new Object[]{size},
 				this.hotissueWithArticleMapper
+			);
+	}
+
+	public int[] updateScores(final List<Hotissue> hotissues) {
+		
+		return this.jdbcTemplate.batchUpdate(
+				"UPDATE hotissues SET score = ? WHERE id = ?",
+				new BatchPreparedStatementSetter() {
+
+					@Override
+					public void setValues(PreparedStatement ps, int i) throws SQLException {
+						Hotissue hotissue = hotissues.get(i);
+						ps.setDouble(1, hotissue.getScore());
+						ps.setInt(2, hotissue.getId());
+					}
+
+					@Override
+					public int getBatchSize() {
+						
+						return hotissues.size();
+					}
+					
+				}
 			);
 	}
 }
