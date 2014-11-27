@@ -1,16 +1,22 @@
 package core.naver.news.api;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import core.template.Template;
 
+@Component
 public class NaverNewsAPI implements API {
 	
 	private String host;
 	private Template template;
 	
+	@Autowired
 	public void setHost(String host) {
 		this.host = host;
 	}
 
+	@Autowired
 	public void setTemplate(Template template) {
 		this.template = template;
 	}

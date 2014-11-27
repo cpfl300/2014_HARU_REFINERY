@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -241,6 +242,23 @@ public class ArticleServiceTest {
 		assertThat(actualArticles.size(), is(size));
 		assertThat(actualArticles.get(0).getScore(), is(30.1));
 		assertThat(actualArticles.get(1).getScore(), is(20.1));
+	}
+	
+	@Test
+	public void getByServiceDate() {
+		Date date = RefineryUtils.getDate(2014, Calendar.NOVEMBER, 28, 6);
+		String[] dates = RefineryUtils.getServiceFormattedDatesByDate(date);
+		
+		articles = new ArrayList<Article>();
+		articles.add(article1);
+		articles.add(article2);
+		articles.add(article3);
+		
+		when(articleDaoMock.getBetweenServiceDates(dates[0], dates[1])).thenReturn(articles);
+		
+		List<Article> actualArticles = articleService.getByServiceDate(date);
+		assertThat(actualArticles.size(), is(articles.size()));
+
 	}
 
 

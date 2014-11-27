@@ -1,5 +1,6 @@
 package refinery.service;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import refinery.dao.HotissueDao;
 import refinery.model.Article;
 import refinery.model.Hotissue;
+import refinery.utility.RefineryUtils;
 
 @Service
 public class HotissueService {
@@ -83,6 +85,12 @@ public class HotissueService {
 		return getCount(hotissueDao.updateScores(hotissues));
 	}
 	
+	public List<Hotissue> getByServiceDate(Date date) {
+		String[] dates = RefineryUtils.getServiceFormattedDatesByDate(date);
+			
+		return this.hotissueDao.getBetweenServiceDates(dates[0], dates[1]);
+	}
+	
 
 	public List<Hotissue> getWithArticlesByOrderedScore(int size) {
 		
@@ -109,6 +117,8 @@ public class HotissueService {
 		}
 		
 	}
+
+
 
 	
 }

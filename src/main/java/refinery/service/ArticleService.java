@@ -1,6 +1,7 @@
 package refinery.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import refinery.model.Article;
 import refinery.model.Hotissue;
 import refinery.model.Journal;
 import refinery.model.Section;
+import refinery.utility.RefineryUtils;
 
 @Service
 public class ArticleService {
@@ -45,8 +47,6 @@ public class ArticleService {
 		int id = article.hashCode();
 		article.setId(id);
 		
-		log.debug("article id: " + id);
-
 		try {			
 			articleDao.add(article);
 		} catch (DuplicateKeyException e) {
@@ -114,6 +114,21 @@ public class ArticleService {
 		
 		return getCount(rowState);
 	}
+	
+	public List<Article> getByServiceDate(Date date) {
+		
+		String[] dates = RefineryUtils.getServiceFormattedDatesByDate(date);
+		List<Article> articles = articleDao.getBetweenServiceDates(dates[0], dates[1]);
+		
+		Iterator<Article> ir = articles.iterator();
+		while(ir.hasNext()) {
+			Article article = ir.next();
+			setJournalAndSection(article);
+		}
+		
+		return articles;
+	}
+	
 
 	private void setJournalAndSection(Article article) {
 		Journal journal = article.getJournal();
@@ -142,6 +157,7 @@ public class ArticleService {
 		
 		return articleDao.getArticlesBetweenDates(from, to);
 	}
-	
+
+
 
 }

@@ -12,11 +12,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import refinery.config.Config;
+import refinery.config.RefineryConfig;
 import refinery.model.Section;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=Config.class, loader=AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes=RefineryConfig.class, loader=AnnotationConfigContextLoader.class)
 public class SectionDaoTest {
 	
 	@Autowired

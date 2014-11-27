@@ -13,13 +13,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import refinery.config.Config;
+import refinery.config.RefineryConfig;
 import core.naver.model.Response;
 import core.naver.model.ResponseArticle;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=Config.class, loader=AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes=RefineryConfig.class, loader=AnnotationConfigContextLoader.class)
 public class HttpClientTemplateTest {
 	
 	@Autowired

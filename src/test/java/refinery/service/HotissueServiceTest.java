@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -179,6 +180,22 @@ public class HotissueServiceTest {
 		assertThat(actualHotissues.get(1).getScore(), is(20.1));
 		assertThat(actualHotissues.get(1).getArticles().get(0).getId(), is(2));
 		
+	}
+	
+	@Test
+	public void getByServiceDate() {
+		Date date = RefineryUtils.getDate(2014, Calendar.NOVEMBER, 28, 6);
+		String[] dates = RefineryUtils.getServiceFormattedDatesByDate(date);
+		
+		hotissues = new ArrayList<Hotissue>();
+		hotissues.add(hotissue1);
+		hotissues.add(hotissue2);
+		hotissues.add(hotissue3);
+		
+		when(hotissueDaoMock.getBetweenServiceDates(dates[0], dates[1])).thenReturn(hotissues);
+		
+		List<Hotissue> actualHotissues = hotissueService.getByServiceDate(date);
+		assertThat(actualHotissues.size(), is(hotissues.size()));		
 	}
 
 

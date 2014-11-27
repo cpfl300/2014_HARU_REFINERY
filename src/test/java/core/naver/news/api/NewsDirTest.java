@@ -3,8 +3,11 @@ package core.naver.news.api;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,14 +19,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import refinery.config.Config;
+import refinery.config.RefineryConfig;
+import refinery.model.Article;
 import refinery.service.ArticleService;
+import refinery.utility.RefineryUtils;
 import core.naver.model.Response;
 import core.naver.model.ResponseArticle;
 import core.template.fileio.FileIOTemplate;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=Config.class, loader=AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes=RefineryConfig.class, loader=AnnotationConfigContextLoader.class)
 public class NewsDirTest {
 	
 	private static final Logger log = LoggerFactory.getLogger(NewsDirTest.class);

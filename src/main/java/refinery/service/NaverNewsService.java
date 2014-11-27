@@ -15,12 +15,15 @@ import core.naver.news.api.API;
 @Service
 public class NaverNewsService {
 	
-	@Autowired
 	private API api;
 	
 	@Autowired
 	private ArticleService articleService;
 	
+	public void setApi(API api) {
+		this.api = api;
+	}
+
 	public List<Article> getArticles() {
 		List<ResponseArticle> responseArticles = api.get("/article", Response.class).getResponseArticles();
 		List<Article> articles = new ArrayList<Article>();

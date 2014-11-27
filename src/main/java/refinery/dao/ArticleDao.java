@@ -166,4 +166,21 @@ public class ArticleDao {
 				);
 				
 	}
+
+	public List<Article> getBetweenServiceDates(String from, String to) {
+		
+		return this.jdbcTemplate.query(
+					"SELECT "
+					+ "articles.id, articles.title, articles.date, articles.content, articles.timestamp, "
+					+ "articles.journals_id, articles.hotissues_id, articles.minor_sections_id, "
+					+ "articles.hits, articles.completed_reading_count, articles.score "
+					+ "FROM (SELECT * FROM half_day WHERE timestamp BETWEEN ? AND ?) AS half_day "
+					+ "INNER JOIN articles "
+					+ "ON half_day.articles_id = articles.id "
+					+ "ORDER BY half_day.sequence",
+					
+					new Object[] {from, to},
+					this.articleMapper
+				);
+	}
 }

@@ -25,14 +25,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
-import refinery.config.Config;
+import refinery.config.RefineryConfig;
 import refinery.model.Article;
 import refinery.model.Hotissue;
 import refinery.model.Journal;
 import refinery.model.Section;
+import refinery.utility.RefineryUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=Config.class, loader=AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes=RefineryConfig.class, loader=AnnotationConfigContextLoader.class)
 @Transactional
 public class ArticleDaoTest {
 	
@@ -308,6 +309,20 @@ public class ArticleDaoTest {
 		assertThat(actualArticles.get(1).getScore(), is(20.1));
 	}
 	
+//	
+//	@Test
+//	public void getBetweenServiceDates() {
+//		
+//		Date date = RefineryUtils.getDate(2014, Calendar.NOVEMBER, 28, 6);
+//		String[] dates = RefineryUtils.getServiceFormattedDatesByDate(date);
+//		
+//		List<Article> articles = articleDao.getBetweenServiceDates(dates[0], dates[1]);
+//		
+//		for (Article a : articles) {
+//			log.debug("id: " + a.getId());
+//		}
+//		
+//	}
 	
 	private void prepareHotissues() {
 		hotissueDao.add(hotissue1);

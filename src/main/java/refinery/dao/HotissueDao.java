@@ -274,4 +274,21 @@ public class HotissueDao {
 				}
 			);
 	}
+
+	public List<Hotissue> getBetweenServiceDates(String from, String to) {
+		
+		return this.jdbcTemplate.query(
+					"SELECT hotissues.id, hotissues.name, hotissues.timestamp, hotissues.score FROM "
+						+ "(SELECT articles.hotissues_id AS hotissues_id FROM "
+							+ "(SELECT * FROM half_day WHERE timestamp BETWEEN ? AND ?) AS half_day "
+						+ "INNER JOIN articles "
+						+ "ON half_day.articles_id = articles.id "
+						+ "ORDER BY half_day.sequence) AS half_day "
+					+ "INNER JOIN hotissues "
+					+ "ON half_day.hotissues_id = hotissues.id",
+					new Object[] {from, to},
+					this.hotissueMapper
+				);
+		
+	}
 }
