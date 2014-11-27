@@ -24,6 +24,11 @@ import scheduler.job.HalfDayJob;
 import scheduler.job.NaverNewsJob;
 import scheduler.task.HalfDayTask;
 import scheduler.task.NaverNewsTask;
+import core.naver.news.api.API;
+import core.naver.news.api.NaverNewsAPI;
+import core.template.Template;
+import core.template.fileio.FileIOTemplate;
+import core.template.httpclient.HttpClientTemplate;
 
 @org.springframework.context.annotation.Configuration
 @ComponentScan(basePackages={"core", "refinery", "scheduler"})
@@ -61,6 +66,27 @@ public class Config {
 		
         return new DataSourceTransactionManager(dataSource());
     }
+	
+	@Bean
+	public Template httpClientTemplate() {
+		
+		return new HttpClientTemplate();
+	}
+	
+	@Bean
+	public Template fileIOTemplate() {
+		
+		return new FileIOTemplate();
+	}
+	
+	@Bean
+	public API naverNewsAPI() {
+		API api = new NaverNewsAPI();
+		api.setHost(host());
+		api.setTemplate(httpClientTemplate());
+		
+		return api;
+	}
 	
 	
 	@Bean

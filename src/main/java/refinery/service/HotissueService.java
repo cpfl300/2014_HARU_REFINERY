@@ -3,6 +3,8 @@ package refinery.service;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -16,6 +18,8 @@ import refinery.model.Hotissue;
 @Service
 public class HotissueService {
 	
+	private static final Logger log = LoggerFactory.getLogger(HotissueService.class);
+	
 	@Autowired
 	private HotissueDao hotissueDao;
 	
@@ -27,6 +31,8 @@ public class HotissueService {
 		
 		int id = hotissue.hashCode();
 		hotissue.setId(id);
+		
+		log.debug("hotissue id: " + id);
 		
 		try {
 			hotissueDao.get(id);

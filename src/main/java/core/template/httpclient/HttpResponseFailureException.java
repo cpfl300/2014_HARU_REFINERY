@@ -1,4 +1,4 @@
-package core.httpclient;
+package core.template.httpclient;
 
 public class HttpResponseFailureException extends RuntimeException {
 	

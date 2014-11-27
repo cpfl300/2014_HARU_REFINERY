@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -20,6 +22,8 @@ import refinery.model.Section;
 
 @Service
 public class ArticleService {
+	
+	private static final Logger log = LoggerFactory.getLogger(ArticleService.class);
 	
 	@Autowired
 	private ArticleDao articleDao;
@@ -40,6 +44,8 @@ public class ArticleService {
 		
 		int id = article.hashCode();
 		article.setId(id);
+		
+		log.debug("article id: " + id);
 
 		try {			
 			articleDao.add(article);
