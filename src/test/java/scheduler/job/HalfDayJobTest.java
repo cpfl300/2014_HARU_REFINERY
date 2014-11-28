@@ -19,11 +19,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import refinery.config.Config;
+import refinery.config.RefineryConfig;
 import refinery.utility.RefineryUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=Config.class, loader=AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes=RefineryConfig.class, loader=AnnotationConfigContextLoader.class)
 public class HalfDayJobTest {
 
 	@Autowired

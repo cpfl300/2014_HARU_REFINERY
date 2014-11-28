@@ -5,7 +5,6 @@ import refinery.model.Hotissue;
 import refinery.model.Journal;
 import refinery.model.Section;
 
-
 public class ResponseArticle {
 	private String id;
 	private String hotissue;

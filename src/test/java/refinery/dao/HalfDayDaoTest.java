@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
-import refinery.config.Config;
+import refinery.config.RefineryConfig;
 import refinery.model.Article;
 import refinery.model.Hotissue;
 import refinery.model.Journal;
@@ -25,7 +25,7 @@ import refinery.service.ArticleService;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=Config.class, loader=AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes=RefineryConfig.class, loader=AnnotationConfigContextLoader.class)
 @Transactional
 public class HalfDayDaoTest {
 	

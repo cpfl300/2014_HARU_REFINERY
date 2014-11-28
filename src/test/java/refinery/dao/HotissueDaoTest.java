@@ -4,11 +4,15 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -17,16 +21,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
-import refinery.config.Config;
+import refinery.config.RefineryConfig;
 import refinery.model.Article;
 import refinery.model.Hotissue;
 import refinery.model.Journal;
 import refinery.model.Section;
+import refinery.utility.RefineryUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=Config.class, loader=AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes=RefineryConfig.class, loader=AnnotationConfigContextLoader.class)
 @Transactional
 public class HotissueDaoTest {
+	
+	private static final Logger log = LoggerFactory.getLogger(HotissueDaoTest.class);
 	
 	@Autowired
 	private HotissueDao hotissueDao;
@@ -356,6 +363,19 @@ public class HotissueDaoTest {
 		assertThat(hotissueDao.get(hotissue3.getId()).getScore(), is(updatedHotissues.get(2).getScore()));
 		
 	}
+	
+//	@Test
+//	public void getBetweenServiceDates() {
+//		Date date = RefineryUtils.getDate(2014, Calendar.NOVEMBER, 28, 6);
+//		String[] dates = RefineryUtils.getServiceFormattedDatesByDate(date);
+//		
+//		List<Hotissue> actualHotissues = hotissueDao.getBetweenServiceDates(dates[0], dates[1]);
+//		
+//		for(Hotissue h : actualHotissues) {
+//			log.debug("id: " + h.getId());
+//		}
+//
+//	}
 	
 
 	private void assertSameHotissue(Hotissue actual, Hotissue expected) {

@@ -1,4 +1,4 @@
-package core.httpclient;
+package core.template.httpclient;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,12 +8,12 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
 
-@Component
-public class HttpClientTemplate {
+import core.template.Template;
+
+public class HttpClientTemplate implements Template{
 	
 	public <T> T get(String host, String uri, Class<T> clazz) throws HttpRequestFailureException, HttpResponseFailureException {
 		HttpClient client = HttpClientBuilder.create().build();
