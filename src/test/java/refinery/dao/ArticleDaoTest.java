@@ -309,18 +309,32 @@ public class ArticleDaoTest {
 		assertThat(actualArticles.get(1).getScore(), is(20.1));
 	}
 	
-//	
+	
+	@Test
+	public void getBetweenServiceDates() {
+		
+		Date date = RefineryUtils.getDate(2014, Calendar.NOVEMBER, 28, 6);
+		String[] dates = RefineryUtils.getServiceFormattedDatesByDate(date);
+		
+		List<Article> articles = articleDao.getArticlesBetweenServiceDates(dates[0], dates[1]);
+		
+		for (Article a : articles) {
+			log.debug(a.toString());
+		}
+		
+	}
+	
+	
 //	@Test
-//	public void getBetweenServiceDates() {
+//	public void getBySequenceBetweenServiceDates() {
 //		
 //		Date date = RefineryUtils.getDate(2014, Calendar.NOVEMBER, 28, 6);
 //		String[] dates = RefineryUtils.getServiceFormattedDatesByDate(date);
+//		int sequence = 2;
 //		
-//		List<Article> articles = articleDao.getBetweenServiceDates(dates[0], dates[1]);
+//		Article article = articleDao.getBySequenceBetweenServiceDates(sequence, dates[0], dates[1]);
 //		
-//		for (Article a : articles) {
-//			log.debug("id: " + a.getId());
-//		}
+//		log.debug("id: " + article.getId());
 //		
 //	}
 	

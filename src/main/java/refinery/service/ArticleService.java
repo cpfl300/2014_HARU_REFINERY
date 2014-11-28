@@ -115,10 +115,9 @@ public class ArticleService {
 		return getCount(rowState);
 	}
 	
-	public List<Article> getByServiceDate(Date date) {
-		
+	public List<Article> getArticlesByServiceDate(Date date) {
 		String[] dates = RefineryUtils.getServiceFormattedDatesByDate(date);
-		List<Article> articles = articleDao.getBetweenServiceDates(dates[0], dates[1]);
+		List<Article> articles = articleDao.getArticlesBetweenServiceDates(dates[0], dates[1]);
 		
 		Iterator<Article> ir = articles.iterator();
 		while(ir.hasNext()) {
@@ -129,13 +128,38 @@ public class ArticleService {
 		return articles;
 	}
 	
+	public Article getBySequenceAndServiceDate(int sequence, Date date) {
+		String[] dates = RefineryUtils.getServiceFormattedDatesByDate(date);
+		
+		Article article = articleDao.getBySequenceBetweenServiceDates(sequence, dates[0], dates[1]);
+		setJournalAndSection(article);
+
+		return article;
+	}
+
+	
 
 	private void setJournalAndSection(Article article) {
 		Journal journal = article.getJournal();
 		Section section = article.getSection();
 		
-		article.setJournal(journalDao.getByName(journal.getName()));
-		article.setSection(sectionDao.getByMinor(section.getMinor()));
+		Journal fulfilledJournal;
+		Section fulfilledSection;
+		
+		if (journal.getName() != null) {
+			fulfilledJournal = journalDao.getByName(journal.getName()); 
+		} else {
+			fulfilledJournal = journalDao.get(journal.getId());
+		}
+		
+		if (section.getMinor() != null) {
+			fulfilledSection = sectionDao.getByMinor(section.getMinor());
+		} else {
+			fulfilledSection = sectionDao.get(section.getId());
+		}
+		
+		article.setJournal(fulfilledJournal);
+		article.setSection(fulfilledSection);
 	}
 	
 	private int getCount(int[] rows) {
@@ -157,6 +181,7 @@ public class ArticleService {
 		
 		return articleDao.getArticlesBetweenDates(from, to);
 	}
+
 
 
 

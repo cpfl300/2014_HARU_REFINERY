@@ -278,8 +278,8 @@ public class HotissueDao {
 	public List<Hotissue> getBetweenServiceDates(String from, String to) {
 		
 		return this.jdbcTemplate.query(
-					"SELECT hotissues.id, hotissues.name, hotissues.timestamp, hotissues.score FROM "
-						+ "(SELECT articles.hotissues_id AS hotissues_id FROM "
+					"SELECT half_day.sequence AS sequence, hotissues.id, hotissues.name, hotissues.timestamp, hotissues.score FROM "
+						+ "(SELECT articles.hotissues_id AS hotissues_id, half_day.sequence AS sequence FROM "
 							+ "(SELECT * FROM half_day WHERE timestamp BETWEEN ? AND ?) AS half_day "
 						+ "INNER JOIN articles "
 						+ "ON half_day.articles_id = articles.id "
@@ -287,7 +287,22 @@ public class HotissueDao {
 					+ "INNER JOIN hotissues "
 					+ "ON half_day.hotissues_id = hotissues.id",
 					new Object[] {from, to},
-					this.hotissueMapper
+					new RowMapper<Hotissue>() {
+
+						@Override
+						public Hotissue mapRow(ResultSet rs, int rowNum) throws SQLException {
+							Hotissue hotissue = new Hotissue();
+							hotissue.setId(rs.getInt("id"));
+							hotissue.setName(rs.getString("name"));
+							hotissue.setTimestamp(rs.getString("timestamp"));
+							hotissue.setScore(rs.getDouble("score"));
+							hotissue.setSequence(rs.getInt("sequence"));
+							
+							return hotissue;
+							
+						}
+							
+					}
 				);
 		
 	}

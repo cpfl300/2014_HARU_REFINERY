@@ -87,7 +87,7 @@ public class HalfDayTaskTest {
 
 	@Test
 	public void extract() {
-		Date today = RefineryUtils.getToday();
+		Date today = RefineryUtils.getNow();
 		String timestamp = RefineryUtils.formatDate(today);
 		String[] dates = RefineryUtils.getServiceDatesByTime(2014, Calendar.DECEMBER , 7, 6);
 		hotissue1.addArticle(article1);

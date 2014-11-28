@@ -47,6 +47,21 @@ public class HotissueService {
 		return id;
 			
 	}
+	
+	public Hotissue getById(int id) {
+		Hotissue result = null;
+
+		try {
+			result = hotissueDao.get(id);
+		} catch (EmptyResultDataAccessException e) {
+			// do nothing
+		}
+	
+		return result;
+	}
+
+
+
 
 	public int addHotissues(List<Hotissue> hotissues) {
 		
@@ -117,7 +132,6 @@ public class HotissueService {
 		}
 		
 	}
-
 
 
 	

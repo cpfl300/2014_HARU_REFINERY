@@ -158,6 +158,16 @@ public class HotissueServiceTest {
 	}
 	
 	@Test
+	public void getById() {
+		
+		when(hotissueDaoMock.get(hotissue1.getId())).thenReturn(hotissue1);
+		Hotissue actualHotissue = hotissueService.getById(hotissue1.getId());
+		
+		assertThat(actualHotissue.getId(), is(hotissue1.getId()));
+
+	}
+	
+	@Test
 	public void getWithArticlesByOrderedScore() {
 		final int size = 2;
 		

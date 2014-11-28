@@ -245,7 +245,7 @@ public class ArticleServiceTest {
 	}
 	
 	@Test
-	public void getByServiceDate() {
+	public void getArticlesByServiceDate() {
 		Date date = RefineryUtils.getDate(2014, Calendar.NOVEMBER, 28, 6);
 		String[] dates = RefineryUtils.getServiceFormattedDatesByDate(date);
 		
@@ -254,10 +254,23 @@ public class ArticleServiceTest {
 		articles.add(article2);
 		articles.add(article3);
 		
-		when(articleDaoMock.getBetweenServiceDates(dates[0], dates[1])).thenReturn(articles);
+		when(articleDaoMock.getArticlesBetweenServiceDates(dates[0], dates[1])).thenReturn(articles);
 		
-		List<Article> actualArticles = articleService.getByServiceDate(date);
+		List<Article> actualArticles = articleService.getArticlesByServiceDate(date);
 		assertThat(actualArticles.size(), is(articles.size()));
+
+	}
+	
+	@Test
+	public void getBySequenceAndServiceDate() {
+		Date date = RefineryUtils.getDate(2014, Calendar.NOVEMBER, 28, 6);
+		String[] dates = RefineryUtils.getServiceFormattedDatesByDate(date);
+		int sequence = 1;
+		
+		when(articleDaoMock.getBySequenceBetweenServiceDates(sequence, dates[0], dates[1])).thenReturn(article1);
+		
+		Article actualArticle = articleService.getBySequenceAndServiceDate(sequence, date);
+		assertThat(actualArticle.getId(), is(article1.getId()));
 
 	}
 

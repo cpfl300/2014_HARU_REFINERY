@@ -12,6 +12,7 @@ public class Hotissue {
 	private String timestamp;
 	private List<Article> articles;
 	private double score;
+	private int sequence;
 	
 	public Hotissue() {
 		
@@ -33,6 +34,13 @@ public class Hotissue {
 		this.id = id;
 		this.name = name;
 		this.timestamp = timestamp;
+	}
+	
+	public Hotissue(int id, String name, String timestamp, int sequence) {
+		this.id = id;
+		this.name = name;
+		this.timestamp = timestamp;
+		this.sequence = sequence;
 	}
 
 	public Hotissue(String name, String timestamp) {
@@ -71,6 +79,16 @@ public class Hotissue {
 		}
 		
 		this.timestamp = timestamp;
+	}
+	
+	
+
+	public int getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(int sequence) {
+		this.sequence = sequence;
 	}
 
 	public double getScore() {
