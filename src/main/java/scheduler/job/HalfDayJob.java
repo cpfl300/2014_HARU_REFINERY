@@ -24,13 +24,13 @@ public class HalfDayJob extends QuartzJobBean{
 	
 	@Override
 	protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-		Date today = RefineryUtils.getToday();
-		String timestamp = RefineryUtils.formatDate(today);
-		
-		Date serviceDate = RefineryUtils.nextServiceDate(today);
-		String[] dates = RefineryUtils.getServiceFormattedDatesByDate(serviceDate);
-
-		halfDayTask.extract(timestamp, dates, N);
+//		Date today = RefineryUtils.getToday();
+//		String timestamp = RefineryUtils.formatDate(today);
+//		
+//		Date serviceDate = RefineryUtils.nextServiceDate(today);
+//		String[] dates = RefineryUtils.getServiceFormattedDatesByDate(serviceDate);
+//
+//		halfDayTask.extract(timestamp, dates, N);
 		
 	}
 

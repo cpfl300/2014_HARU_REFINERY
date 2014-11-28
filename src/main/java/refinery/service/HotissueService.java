@@ -1,8 +1,11 @@
 package refinery.service;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -12,9 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 import refinery.dao.HotissueDao;
 import refinery.model.Article;
 import refinery.model.Hotissue;
+import refinery.utility.RefineryUtils;
 
 @Service
 public class HotissueService {
+	
+	private static final Logger log = LoggerFactory.getLogger(HotissueService.class);
 	
 	@Autowired
 	private HotissueDao hotissueDao;
@@ -28,6 +34,8 @@ public class HotissueService {
 		int id = hotissue.hashCode();
 		hotissue.setId(id);
 		
+		log.debug("hotissue id: " + id);
+		
 		try {
 			hotissueDao.get(id);
 			
@@ -39,6 +47,21 @@ public class HotissueService {
 		return id;
 			
 	}
+	
+	public Hotissue getById(int id) {
+		Hotissue result = null;
+
+		try {
+			result = hotissueDao.get(id);
+		} catch (EmptyResultDataAccessException e) {
+			// do nothing
+		}
+	
+		return result;
+	}
+
+
+
 
 	public int addHotissues(List<Hotissue> hotissues) {
 		
@@ -77,6 +100,12 @@ public class HotissueService {
 		return getCount(hotissueDao.updateScores(hotissues));
 	}
 	
+	public List<Hotissue> getByServiceDate(Date date) {
+		String[] dates = RefineryUtils.getServiceFormattedDatesByDate(date);
+			
+		return this.hotissueDao.getBetweenServiceDates(dates[0], dates[1]);
+	}
+	
 
 	public List<Hotissue> getWithArticlesByOrderedScore(int size) {
 		
@@ -103,6 +132,7 @@ public class HotissueService {
 		}
 		
 	}
+
 
 	
 }

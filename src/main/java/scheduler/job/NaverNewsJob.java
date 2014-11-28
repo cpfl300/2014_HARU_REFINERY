@@ -21,7 +21,7 @@ public class NaverNewsJob extends QuartzJobBean {
 	@Override
 	protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
 
-		naverNewsTask.getNews();
+//		naverNewsTask.getNews();
 		
 	}
 }

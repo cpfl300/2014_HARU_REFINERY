@@ -1,9 +1,12 @@
 package refinery.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -17,9 +20,12 @@ import refinery.model.Article;
 import refinery.model.Hotissue;
 import refinery.model.Journal;
 import refinery.model.Section;
+import refinery.utility.RefineryUtils;
 
 @Service
 public class ArticleService {
+	
+	private static final Logger log = LoggerFactory.getLogger(ArticleService.class);
 	
 	@Autowired
 	private ArticleDao articleDao;
@@ -40,7 +46,7 @@ public class ArticleService {
 		
 		int id = article.hashCode();
 		article.setId(id);
-
+		
 		try {			
 			articleDao.add(article);
 		} catch (DuplicateKeyException e) {
@@ -108,13 +114,52 @@ public class ArticleService {
 		
 		return getCount(rowState);
 	}
+	
+	public List<Article> getArticlesByServiceDate(Date date) {
+		String[] dates = RefineryUtils.getServiceFormattedDatesByDate(date);
+		List<Article> articles = articleDao.getArticlesBetweenServiceDates(dates[0], dates[1]);
+		
+		Iterator<Article> ir = articles.iterator();
+		while(ir.hasNext()) {
+			Article article = ir.next();
+			setJournalAndSection(article);
+		}
+		
+		return articles;
+	}
+	
+	public Article getBySequenceAndServiceDate(int sequence, Date date) {
+		String[] dates = RefineryUtils.getServiceFormattedDatesByDate(date);
+		
+		Article article = articleDao.getBySequenceBetweenServiceDates(sequence, dates[0], dates[1]);
+		setJournalAndSection(article);
+
+		return article;
+	}
+
+	
 
 	private void setJournalAndSection(Article article) {
 		Journal journal = article.getJournal();
 		Section section = article.getSection();
 		
-		article.setJournal(journalDao.getByName(journal.getName()));
-		article.setSection(sectionDao.getByMinor(section.getMinor()));
+		Journal fulfilledJournal;
+		Section fulfilledSection;
+		
+		if (journal.getName() != null) {
+			fulfilledJournal = journalDao.getByName(journal.getName()); 
+		} else {
+			fulfilledJournal = journalDao.get(journal.getId());
+		}
+		
+		if (section.getMinor() != null) {
+			fulfilledSection = sectionDao.getByMinor(section.getMinor());
+		} else {
+			fulfilledSection = sectionDao.get(section.getId());
+		}
+		
+		article.setJournal(fulfilledJournal);
+		article.setSection(fulfilledSection);
 	}
 	
 	private int getCount(int[] rows) {
@@ -136,6 +181,8 @@ public class ArticleService {
 		
 		return articleDao.getArticlesBetweenDates(from, to);
 	}
-	
+
+
+
 
 }

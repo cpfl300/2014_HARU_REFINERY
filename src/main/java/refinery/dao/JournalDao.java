@@ -1,5 +1,7 @@
 package refinery.dao;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -9,6 +11,8 @@ import refinery.model.Journal;
 
 @Repository
 public class JournalDao {
+	
+	private static final Logger log = LoggerFactory.getLogger(JournalDao.class);
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -24,6 +28,7 @@ public class JournalDao {
 	};
 
 	public Journal getByName(String name) {
+		log.debug("journal: " + name);
 		
 		return this.jdbcTemplate.queryForObject(
 					"SELECT journals.id, journals.name, section.name FROM journals INNER JOIN journal_sections AS section ON journals.journal_sections_id = section.id WHERE journals.name = ? ",

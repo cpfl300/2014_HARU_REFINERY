@@ -14,6 +14,7 @@
     <entry key="naver.news.api">http://localhost/~Dec7/haru/test/newNewsApiServer.php</entry>
     
     <!-- CronExpression -->
-    <entry key="cron.exp.naverapi.news">0 0/10 * * * ?</entry>
+    <!-- <entry key="cron.exp.naverapi.news">0 0/10 * * * ?</entry> -->
+    <entry key="cron.exp.naverapi.news">0/5 * * * * ?</entry>
     <entry key="cron.exp.news.extract">0 0 6/12 * * ?</entry>
 </properties>

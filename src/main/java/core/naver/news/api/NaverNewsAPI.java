@@ -3,20 +3,27 @@ package core.naver.news.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import core.httpclient.HttpClientTemplate;
+import core.template.Template;
 
 @Component
 public class NaverNewsAPI implements API {
 	
-	@Autowired
 	private String host;
+	private Template template;
 	
 	@Autowired
-	private HttpClientTemplate httpClientTemplate;	
-	
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	@Autowired
+	public void setTemplate(Template template) {
+		this.template = template;
+	}
+
 	public <T> T get(String uri, Class<T> clazz) {
 		
-		return clazz.cast(httpClientTemplate.get(host, uri, clazz));
+		return clazz.cast(template.get(host, uri, clazz));
 	}
 
 
