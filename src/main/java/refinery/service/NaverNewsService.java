@@ -7,10 +7,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import refinery.model.Article;
-import core.naver.model.Response;
-import core.naver.model.ResponseArticle;
-import core.naver.news.api.API;
+import refinery.apihandler.API;
+import refinery.model.Response;
+import refinery.model.ResponseArticle;
+import elixir.model.Article;
+import elixir.service.ArticleService;
 
 @Service
 public class NaverNewsService {

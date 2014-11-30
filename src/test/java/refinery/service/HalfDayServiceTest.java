@@ -14,8 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import refinery.dao.HalfDayDao;
-import refinery.model.Article;
+import elixir.dao.HalfDayDao;
+import elixir.model.Article;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HalfDayServiceTest {

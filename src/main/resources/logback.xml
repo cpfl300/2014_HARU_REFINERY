@@ -17,11 +17,9 @@
 			<Pattern>%d{HH:mm:ss.SSS} [%-5level] [%thread] [%logger{36}] - %m%n</Pattern>
 		</encoder>
 	</appender>
-
-	<logger name="learningtest" level="DEBUG" />
-	<logger name="core" level="DEBUG" />
+	
 	<logger name="refinery" level="DEBUG" />
-	<logger name="scheduler" level="DEBUG" />
+	<logger name="elixir" level="DEBUG" />
 
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
