@@ -14,10 +14,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import refinery.model.Article;
-import core.naver.model.Response;
-import core.naver.model.ResponseArticle;
-import core.naver.news.api.API;
+import refinery.apihandler.API;
+import elixir.model.Article;
+import elixir.service.ArticleService;
+import refinery.model.Response;
+import refinery.model.ResponseArticle;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NaverNewsServiceTest {

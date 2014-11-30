@@ -4,14 +4,10 @@
 	<comment>application-properties</comment>
 
 	<!-- Database -->
-    <entry key="database.driverClassName">com.mysql.jdbc.Driver</entry>
-    <entry key="refinery.database.url">jdbc:mysql://10.73.45.130/refinery</entry>
-    <entry key="refinery.database.username">refinery</entry>
-    <entry key="refinery.database.password">refinery </entry>
-    
-    <entry key="haru.database.url">jdbc:mysql://10.73.45.130/haru</entry>
-    <entry key="haru.database.username">haru</entry>
-    <entry key="haru.database.password">haru</entry>
+    <entry key="database.driverClassName">com.mysql.jdbc.Driver</entry>    
+    <entry key="database.url">jdbc:mysql://10.73.45.130/harutest</entry>
+    <entry key="database.username">haru</entry>
+    <entry key="database.password">haru</entry>
     
     <!-- NaverAPI -->
     <entry key="naver.news.api">www.naver.com/?</entry>

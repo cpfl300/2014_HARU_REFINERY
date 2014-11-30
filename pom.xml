@@ -3,14 +3,16 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.nhnnext</groupId>
-	<artifactId>refinery</artifactId>
+	<artifactId>haru-refinery</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0</version>
 
-	<name>refinery</name>
+	<name>Refinery</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
+		<org.nhnnext.haru-elixir.version>1.0-SNAPSHOT</org.nhnnext.haru-elixir.version>
+		
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<org.springframework.version>4.1.2.RELEASE</org.springframework.version>
 		<org.mockito.version>1.10.8</org.mockito.version>
@@ -34,6 +36,13 @@
 	</properties>
 
 	<dependencies>
+		<!-- haru-elixir -->
+		<dependency>
+			<groupId>org.nhnnext</groupId>
+			<artifactId>haru-elixir</artifactId>
+			<version>${org.nhnnext.haru-elixir.version}</version>
+		</dependency>
+	
 		<!-- logger -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
