@@ -46,8 +46,7 @@ public class HttpClientTemplate implements Template{
 			throw new HttpResponseFailureException("IO error", e);
 			
 		}
-			
-		log.debug("--------- result: " + result.toString());
+
 		Gson gson = new Gson();
 		T converted = gson.fromJson(result.toString(), clazz);
 		
