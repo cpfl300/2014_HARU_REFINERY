@@ -152,6 +152,10 @@
 			<!-- 기본 resource directory -->
             <resource>
                 <directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<excludes>
+					<exclude>test/**</exclude>
+				</excludes>
             </resource>
             <!-- 
             	java directory에 있는 resource file도 복사해 사용할 수 있음 다만 .
@@ -168,6 +172,9 @@
         <testResources>
             <testResource>
                 <directory>src/test/resources</directory>
+                <includes>
+					<include>test/**</include>
+				</includes>
             </testResource>
         </testResources>
 
