@@ -102,6 +102,8 @@ public class RefinerySchedulerConfig {
 		cronTriggerFactoryBean.setStartDelay(1000);
 		
 		String cronExp = env.getRequiredProperty("cron.exp.naverapi.news");
+		
+		log.debug("cronExp: " + cronExp);
 		cronTriggerFactoryBean.setCronExpression(cronExp);
 		
 		return cronTriggerFactoryBean;

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import elixir.utility.ElixirUtils;
 import refinery.scheduler.task.HalfDayTask;
 
+
 @Component
 public class HalfDayJob extends QuartzJobBean{
 	
@@ -24,13 +25,13 @@ public class HalfDayJob extends QuartzJobBean{
 	
 	@Override
 	protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-//		Date today = RefineryUtils.getToday();
-//		String timestamp = RefineryUtils.formatDate(today);
-//		
-//		Date serviceDate = RefineryUtils.nextServiceDate(today);
-//		String[] dates = RefineryUtils.getServiceFormattedDatesByDate(serviceDate);
-//
-//		halfDayTask.extract(timestamp, dates, N);
+		Date now = ElixirUtils.getNow();
+		String timestamp = ElixirUtils.formatDate(now);
+		
+		Date serviceDate = ElixirUtils.nextServiceDate(now);
+		String[] dates = ElixirUtils.getServiceFormattedDatesByDate(serviceDate);
+
+		halfDayTask.extract(timestamp, dates, N);
 		
 	}
 

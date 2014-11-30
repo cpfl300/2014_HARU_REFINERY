@@ -21,6 +21,7 @@ public class NaverNewsService {
 	@Autowired
 	private ArticleService articleService;
 	
+	@Autowired
 	public void setApi(API api) {
 		this.api = api;
 	}
