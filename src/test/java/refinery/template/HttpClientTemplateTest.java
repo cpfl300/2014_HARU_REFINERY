@@ -27,7 +27,7 @@ public class HttpClientTemplateTest {
 	@Autowired
 	private HttpClientTemplate httpClientTemplate;
 	
-	private final String host = "http://localhost/~Dec7/haru/test/newNewsApiServer.php";
+	private final String host = "http://localhost/~Dec7/haru/test/naverApiServer.php";
 	private final String fakeHost = "http://localhost/~Dec7/fake";
 	private final String uri = "/article";
 	private final String fakeUri = "/fake";

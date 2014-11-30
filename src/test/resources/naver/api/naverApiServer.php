@@ -1,4 +1,4 @@
-1<?php
+<?php
 
 	date_default_timezone_set('Asia/Seoul');
 	header('Content-type: text/html; charset=utf8');
