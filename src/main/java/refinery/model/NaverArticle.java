@@ -1,19 +1,17 @@
 package refinery.model;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
+import refinery.model.convertible.Convertible;
 import elixir.model.Article;
 import elixir.model.Journal;
-import elixir.model.Section;
-import elixir.utility.ElixirUtils;
 
-public class NaverArticle {
+public class NaverArticle implements Convertible<Article> {
 	private String officeId;
 	private String officeName;
 	private String articleId;
-	private String sectionId;
 	private String type;
 	private String title;
 	private String subcontent;
@@ -31,16 +29,23 @@ public class NaverArticle {
 	
 	
 	
-	public NaverArticle() {
+	public NaverArticle() { }
+	
+	// From NaverArticleList
+	public NaverArticle(String officeId, String officeName, String articleId, String title,
+			String orgUrl, List<NaverSection> sections, String serviceDate, String serviceTime, String imageUrl) {
+		
+		this(officeId, officeName, articleId, null, title, null,
+				null, orgUrl, sections, serviceDate, serviceTime, imageUrl,
+				null, null, null, null, null);
 	}
 	
-	public NaverArticle(String officeId, String officeName, String articleId, String sectionId, String type, String title, String subcontent,
+	public NaverArticle(String officeId, String officeName, String articleId, String type, String title, String subcontent,
 			String content, String orgUrl, List<NaverSection> sections, String serviceDate, String serviceTime, String imageUrl, String reporter,
 			String copyright, String hitCount, String readCount, String rank) {
 		this.officeId = officeId;
 		this.officeName = officeName;
 		this.articleId = articleId;
-		this.sectionId = sectionId;
 		this.type = type;
 		this.title = title;
 		this.subcontent = subcontent;
@@ -58,21 +63,8 @@ public class NaverArticle {
 	}
 	
 	
-	@Override
-	public String toString() {
-		return "NaverArticle [officeId=" + officeId + ", officeName=" + officeName + ", articleId=" + articleId + ", sectionId=" + sectionId
-				+ ", type=" + type + ", title=" + title + ", subcontent=" + subcontent + ", content=" + content + ", orgUrl=" + orgUrl
-				+ ", sections=" + sections + ", serviceDate=" + serviceDate + ", serviceTime=" + serviceTime + ", imageUrl=" + imageUrl
-				+ ", reporter=" + reporter + ", copyright=" + copyright + ", hitCount=" + hitCount + ", readCount=" + readCount + ", rank=" + rank
-				+ "]";
-	}
 	
-	public String getSectionId() {
-		return sectionId;
-	}
-	public void setSectionId(String sectionId) {
-		this.sectionId = sectionId;
-	}
+
 	public String getHitCount() {
 		return hitCount;
 	}
@@ -177,29 +169,70 @@ public class NaverArticle {
 	}
 
 
-	public static Article toArticle(NaverArticle naverArticle) {
-		String concatenatedDate = naverArticle.getServiceDate() + naverArticle.getServiceTime();
-		Date date = ElixirUtils.parse("yyyyMMddHHmmss", concatenatedDate);
+//	public static Article toArticle(NaverArticle naverArticle) {
+//		String concatenatedDate = naverArticle.getServiceDate() + naverArticle.getServiceTime();
+//		Date date = ElixirUtils.parse("yyyyMMddHHmmss", concatenatedDate);
+//		Article article = new Article();
+//		
+//		article.setId(Integer.parseInt(naverArticle.getArticleId()));
+//		article.setJournal(new Journal(Integer.parseInt(naverArticle.getOfficeId())));
+//		article.setSection(new Section(Integer.parseInt(naverArticle.getSectionId())));
+//		article.setContent(naverArticle.getContent());
+//		article.setHits(Integer.parseInt(naverArticle.getHitCount()));
+//		article.setCompletedReadingCount(Integer.parseInt(naverArticle.getReadCount()));
+//		article.setDate(ElixirUtils.format("yyyy-MM-dd HH:mm:ss", date));
+//		article.setTitle(naverArticle.getTitle());
+//		
+//		return article;
+//	}
+	
+//	public static List<Article> asArticles(List<NaverArticle> naverArticles) {
+//		List<Article> articles = new ArrayList<Article>();
+//		for (NaverArticle naverArticle : naverArticles) {
+//			articles.add(NaverArticle.toArticle(naverArticle));
+//		}
+//		
+//		return articles;
+//	}
+
+	@Override
+	public Article convert() {
 		Article article = new Article();
 		
-		article.setId(Integer.parseInt(naverArticle.getArticleId()));
-		article.setJournal(new Journal(Integer.parseInt(naverArticle.getOfficeId())));
-		article.setSection(new Section(Integer.parseInt(naverArticle.getSectionId())));
-		article.setContent(naverArticle.getContent());
-		article.setHits(Integer.parseInt(naverArticle.getHitCount()));
-		article.setCompletedReadingCount(Integer.parseInt(naverArticle.getReadCount()));
-		article.setDate(ElixirUtils.format("yyyy-MM-dd HH:mm:ss", date));
-		article.setTitle(naverArticle.getTitle());
+		article.setArticleId(this.articleId);
+		article.setJournal(new Journal(this.officeId, this.officeName));
+		// article.setSection(new Section(Integer.parseInt(naverArticle.getSectionId())));
+		article.setTitle(this.title);
+		article.setContent(this.content);
+		article.setOrgUrl(this.orgUrl);
+		article.setSection(NaverSection.convert(this.sections));
+		article.setServiceDate(this.serviceDate);
+		article.setServiceTime(this.serviceTime);
+		article.setImageUrl(this.imageUrl);
+//		article.setHitCount(Integer.parseInt(this.hitCount));
+//		article.setReadCount(Integer.parseInt(this.readCount));
 		
 		return article;
 	}
-	
-	public static List<Article> asArticles(List<NaverArticle> naverArticles) {
+
+	public static List<Article> convert(List<NaverArticle> naverArticles) {
 		List<Article> articles = new ArrayList<Article>();
-		for (NaverArticle naverArticle : naverArticles) {
-			articles.add(NaverArticle.toArticle(naverArticle));
+		Iterator<NaverArticle> ir = naverArticles.iterator();
+		while (ir.hasNext()) {
+			NaverArticle naverArticle = ir.next();
+			articles.add(naverArticle.convert());
 		}
 		
 		return articles;
 	}
+
+	@Override
+	public String toString() {
+		return "NaverArticle [officeId=" + officeId + ", officeName=" + officeName + ", articleId=" + articleId + ", type=" + type + ", title="
+				+ title + ", subcontent=" + subcontent + ", content=" + content + ", orgUrl=" + orgUrl + ", sections=" + sections + ", serviceDate="
+				+ serviceDate + ", serviceTime=" + serviceTime + ", imageUrl=" + imageUrl + ", reporter=" + reporter + ", copyright=" + copyright
+				+ ", hitCount=" + hitCount + ", readCount=" + readCount + ", rank=" + rank + "]";
+	}
+	
+	
 }

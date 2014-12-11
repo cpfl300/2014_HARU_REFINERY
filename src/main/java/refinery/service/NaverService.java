@@ -18,7 +18,6 @@ public class NaverService {
 	private NaverAao naverAao;
 	
 	public List<Article> getUpdatedArticles(String datehour) {
-
 		NaverArticleList naverArticleList = naverAao.getArticleList(datehour);
 		List<NaverArticle> naverArticles = naverArticleList.getArticles();		
 		
@@ -26,7 +25,18 @@ public class NaverService {
 			throw new EmptyNaverDataAccessException("naver articles have not updated yet");
 		}
 		
-		return NaverArticle.asArticles(naverArticles);
+		return NaverArticle.convert(naverArticles);
+	}
+
+	public void updateArticleContent(Article article) {
+		NaverArticle naverArticle = naverAao.getArticle(article.getJournal().getId(), article.getArticleId());
+		
+		String content = naverArticle.getContent();
+		if (content == null || content.length() == 0) {
+			throw new EmptyNaverDataAccessException("content of naver article is empty");
+		}
+		
+		article.setContent(content);
 	}
 
 }

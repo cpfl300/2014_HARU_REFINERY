@@ -1,6 +1,7 @@
 package refinery.service;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -23,7 +24,6 @@ import core.aao.EmptyNaverDataAccessException;
 import core.aao.NaverAao;
 import elixir.model.Article;
 import elixir.model.ArticleTest;
-import elixir.model.Hotissue;
 import elixir.model.Journal;
 import elixir.model.Section;
 import elixir.utility.ElixirUtils;
@@ -41,7 +41,8 @@ public class NaverServiceTest {
 	
 	private NaverArticleList naverArticleList;
 	private List<NaverArticle> naverArticles;
-	private List<NaverSection> naverSections; 
+	private List<NaverSection> naverSections;
+	private Section section;
 	private String datehour;
 
 	private List<Article> articles;
@@ -51,7 +52,7 @@ public class NaverServiceTest {
 		datehour = ElixirUtils.format("yyyyMMddHHmm", ElixirUtils.getNow()).substring(0, 11);
 		prepareNaverSections();
 		prepareNaverArticles();
-		prepareArticlesC();
+		prepareArticles();
 	}
 
 
@@ -96,17 +97,55 @@ public class NaverServiceTest {
 
 	
 	@Test
-	public void udpateArticleContent() {
+	public void updateArticleContent() {
+		// prepare
+		String[] contentArr = new String[] { "content1", "content2", "content3" };
+		prepareContent(contentArr);
 		
+		for (int i=0; i<contentArr.length; i++) {
+			Article article = articles.get(i);
+			NaverArticle naverArticle = naverArticles.get(i);
+			when(naverAaoMock.getArticle(article.getJournal().getId(), article.getArticleId())).thenReturn(naverArticle);			
+		}
 		
-		//List<String> actualIds = naverService.getArticles(datehour);
+		// exec
+		for (Article article : articles) {
+			naverService.updateArticleContent(article);
+		}
 		
-		
-		
+		// assert
+		for (int i=0; i<contentArr.length; i++) {
+			assertThat(articles.get(i).getContent(), notNullValue());
+			assertThat(articles.get(i).getContent(), is(contentArr[i]));
+		}		
 	}
 	
-	
-	
+	@Test(expected=EmptyNaverDataAccessException.class)
+	public void updateArticleContent_empty() {
+		// prepare
+		String[] contentArr = new String[] { "content1", "content2", "content3" };
+		
+		for (int i=0; i<contentArr.length; i++) {
+			Article article = articles.get(i);
+			NaverArticle naverArticle = naverArticles.get(i);
+			when(naverAaoMock.getArticle(article.getJournal().getId(), article.getArticleId())).thenReturn(naverArticle);			
+		}
+		
+		// exec - except
+		for (Article article : articles) {
+			naverService.updateArticleContent(article);
+		}	
+	}
+
+
+
+
+	private void prepareContent(String[] contents) {
+		for (int i=0; i<contents.length; i++) {
+			naverArticles.get(i).setContent(contents[i]);
+		}
+	}
+
 	private void prepareNaverArticleList(List<NaverArticle> naverArticles) {
 		prepareNaverArticleList();
 		naverArticleList.setArticles(naverArticles);
@@ -127,124 +166,26 @@ public class NaverServiceTest {
 						new NaverSection("111", "sectionName1"),
 						new NaverSection("222", "sectionName2"),
 						new NaverSection("333", "sectionName3")
-				}); 
+				});
+		section = NaverSection.convert(naverSections);
 	}
 	
 
-	private void prepareArticlesOfNaverArticleList() {
+	private void prepareArticles() {
 		articles = Arrays.asList(new Article[] {
-				new Article("001", new Journal("011", "officeName1"), NaverSection.asSections(naverSections), "title1", "imageUrl1", "20140124", "113202", 10000, 1000),
-				new Article("002", new Journal("022", "officeName2"), NaverSection.asSections(naverSections), "title2", "imageUrl2", "20140124" ,"123202", 20000, 2000),
-				new Article("003", new Journal("033", "officeName3"), NaverSection.asSections(naverSections), "title3", "imageUrl3", "20140124" ,"133202", 30000, 3000)
+				new Article("111", new Journal("001", "officeName1"), "title1", "orgUrl1", section, "20140124", "113202", "imageUrl1"),
+				new Article("222", new Journal("002", "officeName2"), "title2", "orgUrl2", section, "20140124", "123202", "imageUrl2"),
+				new Article("333", new Journal("003", "officeName3"), "title3", "orgUrl3", section, "20140124", "133202", "imageUrl3")
 		});
 		
 	}
 
 	private void prepareNaverArticles() {
 		naverArticles = Arrays.asList(new NaverArticle[] {
-				new NaverArticle("1", "officeName1", "1", "11", "1", "title1",
-						"subcontent1", "content1", "orgUrl1", naverSections, "20140124", "113202", "imageUrl1", "reporter1", "copyright1",
-						"10000", "1000", "1"),
-				new NaverArticle("2", "officeName2", "2", "22", "2", "title2",
-						"subcontent2", "content2", "orgUrl2", naverSections, "20140124", "123202", "imageUrl2", "reporter2", "copyright2",
-						"20000", "2000", "2"),
-				new NaverArticle("3", "officeName3", "3", "33", "3", "title3",
-						"subcontent3", "content3", "orgUrl3", naverSections, "20140124", "133202", "imageUrl3", "reporter3", "copyright3",
-						"30000", "3000", "3")
+				new NaverArticle("001", "officeName1", "111", "title1", "orgUrl1", naverSections, "20140124", "113202", "imageUrl1"),
+				new NaverArticle("002", "officeName2", "222", "title2", "orgUrl2", naverSections, "20140124", "123202", "imageUrl2"),
+				new NaverArticle("003", "officeName3", "333", "title3", "orgUrl3", naverSections, "20140124", "133202", "imageUrl3")
 		});
 	}
-
-
-
-	
-
-
-	
-//	@Test
-//	public void isUpdated() {
-//		String datehour = ElixirUtils.format(NaverService.DATE_FORMAT, ElixirUtils.getNow()).substring(0,NaverService.DATE_FORMAT.length()-1);
-//		// articles is null
-//		when(naverAaoMock.getArticleListPer10Min(datehour)).thenReturn(naverArticleList);
-//		assertThat(naverService.isUpdated(), is(false));
-//		
-//		// articles is not null
-//		naverArticleList.setArticles(Arrays.asList(new NaverArticle[]{ new NaverArticle() }));
-//		when(naverAaoMock.getArticleListPer10Min(datehour)).thenReturn(naverArticleList);
-//		assertThat(naverService.isUpdated(), is(true));
-//	}
-	
-	
-//	@Test
-//	public void getArticles() {
-//		when(naverAaoMock.get("/article", Response.class)).thenReturn(responseMock);
-//		
-//		assertThat(naverService.getArticles(), is(articles));
-//	}
-//	
-//
-//	
-//	@Test
-//	public void isNotUpdated() {
-//		when(naverAaoMock.get("/article", Response.class)).thenReturn(responseMock);
-//		
-//		when(articleServiceMock.has(newArticles.get(0).hashCode())).thenReturn(false);	
-//		assertThat(naverService.isUpdated(), is(false));
-//		
-//		when(articleServiceMock.has(newArticles.get(0).hashCode())).thenReturn(true);
-//		when(articleServiceMock.has(newArticles.get(1).hashCode())).thenReturn(false);
-//		assertThat(naverService.isUpdated(), is(false));
-//		
-//		when(articleServiceMock.has(newArticles.get(0).hashCode())).thenReturn(false);
-//		when(articleServiceMock.has(newArticles.get(1).hashCode())).thenReturn(false);
-//		when(articleServiceMock.has(newArticles.get(2).hashCode())).thenReturn(false);
-//		assertThat(naverService.isUpdated(), is(false));
-//		
-//	}
-//	
-//	
-//	private void makeResponseMock() {
-//		responseMock = new Response();
-//		
-//		List<ResponseArticle> responseArticles = new ArrayList<ResponseArticle>();
-//		articles = new ArrayList<Article>();
-//		
-//		ResponseArticle rArticle1 = new ResponseArticle("hotissue1", "title1", "서울신문", "북한", "1111-01-01 01:11:11", "content1", 10000, 7000);
-//		ResponseArticle rArticle2 = new ResponseArticle("hotissue2", "title2", "한국일보", "금융", "1222-02-02 02:11:11", "content2", 20000, 8000);
-//		ResponseArticle rArticle3 = new ResponseArticle("hotissue3", "title3", "전자신문", "언론", "1333-03-03 03:11:11", "content3", 30000, 8000);
-//		
-//		responseArticles.add(rArticle1);
-//		responseArticles.add(rArticle2);
-//		responseArticles.add(rArticle3);
-//		
-//		articles.add(rArticle1.toArticle());
-//		articles.add(rArticle2.toArticle());
-//		articles.add(rArticle3.toArticle());
-//		
-//		responseMock.setResponseArticles(responseArticles);
-//	}
-//	
-//	private void makeNewResponseMock() {
-//		newResponseMock = new Response();
-//		
-//		List<ResponseArticle> responseArticles = new ArrayList<ResponseArticle>();
-//		newArticles = new ArrayList<Article>();
-//		
-//		ResponseArticle rArticle1 = new ResponseArticle("hotissue4", "title4", "서울신문", "북한", "1114-01-01 01:11:11", "content4", 10000, 7000);
-//		ResponseArticle rArticle2 = new ResponseArticle("hotissue5", "title5", "한국일보", "금융", "1225-02-02 02:11:11", "content5", 20000, 8000);
-//		ResponseArticle rArticle3 = new ResponseArticle("hotissue6", "title6", "전자신문", "언론", "1335-03-03 03:11:11", "content6", 30000, 8000);
-//		
-//		responseArticles.add(rArticle1);
-//		responseArticles.add(rArticle2);
-//		responseArticles.add(rArticle3);
-//		
-//		newArticles.add(rArticle1.toArticle());
-//		newArticles.add(rArticle2.toArticle());
-//		newArticles.add(rArticle3.toArticle());
-//		
-//		newResponseMock.setResponseArticles(responseArticles);
-//		
-//	}
-
-	
 
 }
