@@ -11,7 +11,7 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
-		<org.nhnnext.haru-elixir.version>1.0-SNAPSHOT</org.nhnnext.haru-elixir.version>
+		<org.nhnnext.haru-elixir.version>1.0.1-SNAPSHOT</org.nhnnext.haru-elixir.version>
 		
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<org.springframework.version>4.1.2.RELEASE</org.springframework.version>
@@ -37,11 +37,11 @@
 
 	<dependencies>
 		<!-- haru-elixir -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.nhnnext</groupId>
 			<artifactId>haru-elixir</artifactId>
 			<version>${org.nhnnext.haru-elixir.version}</version>
-		</dependency>
+		</dependency> -->
 	
 		<!-- logger -->
 		<dependency>
@@ -152,10 +152,10 @@
 			<!-- 기본 resource directory -->
             <resource>
                 <directory>src/main/resources</directory>
-				<filtering>true</filtering>
+				<!-- <filtering>true</filtering>
 				<excludes>
-					<exclude>test/**</exclude>
-				</excludes>
+					<exclude>**/test/**</exclude>
+				</excludes> -->
             </resource>
             <!-- 
             	java directory에 있는 resource file도 복사해 사용할 수 있음 다만 .
@@ -172,9 +172,9 @@
         <testResources>
             <testResource>
                 <directory>src/test/resources</directory>
-                <includes>
-					<include>test/**</include>
-				</includes>
+                <!-- <includes>
+					<include>**/test/**</include>
+				</includes> -->
             </testResource>
         </testResources>
 

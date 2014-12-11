@@ -19,6 +19,8 @@
 	</appender>
 	
 	<logger name="refinery" level="DEBUG" />
+	<logger name="scheduler" level="DEBUG" />
+	<logger name="core" level="DEBUG" />
 	<logger name="elixir" level="DEBUG" />
 
 	<root level="INFO">

@@ -11,10 +11,12 @@
     <entry key="database.password">haru</entry>
     
     <!-- NaverAPI -->
-    <entry key="naver.news.api">http://localhost/~Dec7/haru/test/naverApiServer.php</entry>
+    <entry key="naver.news.host">http://localhost/~Dec7/haru/test/naver/api/apiserver.php</entry>
+    <entry key="naver.news.api.context">/main/export/v2/outside/next</entry>
+    
     
     <!-- CronExpression -->
-    <entry key="cron.exp.naverapi.news">0 0/10 * * * ?</entry>
+    <entry key="cron.exp.naver.save_article">0 0/10 * * * ?</entry>
     <entry key="cron.exp.news.extract">0 0 6/12 * * ?</entry>
     <!-- <entry key="cron.exp.naverapi.news">0/5 * * * * ?</entry>  -->
     
