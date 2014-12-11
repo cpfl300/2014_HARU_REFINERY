@@ -5,34 +5,27 @@ import javax.annotation.Resource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import refinery.template.HttpClientTemplate;
-import refinery.template.Template;
+import core.template.HttpClientTemplate;
+import core.template.HttpTemplate;
 
 @Configuration
-@ComponentScan(basePackages={"elixir.config", "refinery"}, excludeFilters = @ComponentScan.Filter(value=RefineryPackageFilter.class, type=FilterType.CUSTOM))
+@ComponentScan(basePackages={"elixir.config", "core", "refinery"})
 @PropertySource(value="classpath:application-properties.xml")
-@EnableTransactionManagement
 public class RefineryConfig {
 	
 	@Resource
 	private Environment env;
 
-	
 	@Bean
-	public Template httpClientTemplate() {
+	public HttpTemplate httpTemplate() {
 		
-		return new HttpClientTemplate();
-	}
-
-	@Bean
-	public String host() {
+		String host = env.getRequiredProperty("naver.news.host");
+		String context = env.getRequiredProperty("naver.news.api.context");
 		
-		return env.getRequiredProperty("naver.news.api");
+		return new HttpClientTemplate(host, context);
 	}
 	
 }
