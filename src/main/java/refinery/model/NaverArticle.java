@@ -40,6 +40,13 @@ public class NaverArticle implements Convertible<Article> {
 				null, null, null, null, null);
 	}
 	
+	public NaverArticle(String officeId, String officeName, String articleId, String title,
+			String serviceDate, String serviceTime) {
+		this(officeId, officeName, articleId, null, title, null,
+				null, null, null, serviceDate, serviceTime, null,
+				null, null, null, null, null);
+	}
+	
 	public NaverArticle(String officeId, String officeName, String articleId, String type, String title, String subcontent,
 			String content, String orgUrl, List<NaverSection> sections, String serviceDate, String serviceTime, String imageUrl, String reporter,
 			String copyright, String hitCount, String readCount, String rank) {
@@ -62,8 +69,8 @@ public class NaverArticle implements Convertible<Article> {
 		this.rank = rank;
 	}
 	
-	
-	
+
+
 
 	public String getHitCount() {
 		return hitCount;
@@ -201,11 +208,16 @@ public class NaverArticle implements Convertible<Article> {
 		
 		article.setArticleId(this.articleId);
 		article.setJournal(new Journal(this.officeId, this.officeName));
+		
 		// article.setSection(new Section(Integer.parseInt(naverArticle.getSectionId())));
 		article.setTitle(this.title);
 		article.setContent(this.content);
 		article.setOrgUrl(this.orgUrl);
-		article.setSection(NaverSection.convert(this.sections));
+		
+		if (this.sections != null) {			
+			article.setSection(NaverSection.convert(this.sections));
+		}
+		
 		article.setServiceDate(this.serviceDate);
 		article.setServiceTime(this.serviceTime);
 		article.setImageUrl(this.imageUrl);

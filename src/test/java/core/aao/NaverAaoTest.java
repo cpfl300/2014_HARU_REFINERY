@@ -69,10 +69,10 @@ public class NaverAaoTest {
 	
 	
 	@Test
-	public void getArticleListOfHotissue() {
+	public void getArticleListByHotissueId() {
 		String componentId = "887553";
 		
-		NaverArticleList actual = naverAao.getArticleListOfHotissue(componentId);
+		NaverArticleList actual = naverAao.getArticleListByHotissueId(componentId);
 		
 		assertThat(actual.getComponentId(), is(componentId));		
 	}

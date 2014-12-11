@@ -7,9 +7,12 @@ import org.springframework.stereotype.Service;
 
 import refinery.model.NaverArticle;
 import refinery.model.NaverArticleList;
+import refinery.model.NaverHotissue;
+import refinery.model.NaverHotissueList;
 import core.aao.EmptyNaverDataAccessException;
 import core.aao.NaverAao;
 import elixir.model.Article;
+import elixir.model.Hotissue;
 
 @Service
 public class NaverService {
@@ -37,6 +40,28 @@ public class NaverService {
 		}
 		
 		article.setContent(content);
+	}
+
+	public List<Hotissue> getHotissueList() {
+		NaverHotissueList naverHotissueList = naverAao.getHotissueList();
+		List<NaverHotissue> naverHotissue = naverHotissueList.getHotissues();
+		
+		if (naverHotissue == null || naverHotissue.size() == 0) {
+			throw new EmptyNaverDataAccessException("naver hotissues have not updated yet");
+		}
+		
+		return NaverHotissue.convert(naverHotissue);
+	}
+
+	public List<Article> getArticleListByHotissueId(String hotissueId) {
+		NaverArticleList naverArticleList = naverAao.getArticleListByHotissueId(hotissueId);
+		List<NaverArticle> naverArticles = naverArticleList.getArticles();
+		
+		if (naverArticles == null || naverArticles.size() == 0) {
+			throw new EmptyNaverDataAccessException("naver articles of hotissue have not existed");
+		}
+		
+		return NaverArticle.convert(naverArticles);
 	}
 
 }

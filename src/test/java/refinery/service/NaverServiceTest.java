@@ -19,12 +19,15 @@ import org.slf4j.LoggerFactory;
 
 import refinery.model.NaverArticle;
 import refinery.model.NaverArticleList;
+import refinery.model.NaverHotissue;
+import refinery.model.NaverHotissueList;
 import refinery.model.NaverSection;
 import core.aao.EmptyNaverDataAccessException;
 import core.aao.NaverAao;
 import elixir.model.Article;
 import elixir.model.ArticleTest;
-import elixir.model.Journal;
+import elixir.model.Hotissue;
+import elixir.model.HotissueTest;
 import elixir.model.Section;
 import elixir.utility.ElixirUtils;
 
@@ -40,20 +43,30 @@ public class NaverServiceTest {
 	private NaverAao naverAaoMock;
 	
 	private NaverArticleList naverArticleList;
+	private NaverHotissueList naverHotissueList;
+	
+	private List<NaverHotissue> naverHotissues;
 	private List<NaverArticle> naverArticles;
 	private List<NaverSection> naverSections;
+	
 	private Section section;
 	private String datehour;
 
 	private List<Article> articles;
+	private List<Hotissue> hotissues;
 	
 	@Before
 	public void setup() {
 		datehour = ElixirUtils.format("yyyyMMddHHmm", ElixirUtils.getNow()).substring(0, 11);
 		prepareNaverSections();
 		prepareNaverArticles();
-		prepareArticles();
+		prepareNaverHotissues();
+//		prepareArticles();
+		
+		
 	}
+
+
 
 
 	@Test
@@ -136,6 +149,88 @@ public class NaverServiceTest {
 			naverService.updateArticleContent(article);
 		}	
 	}
+	
+	@Test
+	public void getHotissueList() {
+		//prepare
+		prepareNaverHotissueList(naverHotissues);
+		when(naverAaoMock.getHotissueList()).thenReturn(naverHotissueList);
+		
+		// exec
+		List<Hotissue> actuals = naverService.getHotissueList();
+		HotissueTest.ASSERTS(actuals, hotissues);
+	}
+	
+	@Test(expected=EmptyNaverDataAccessException.class)
+	public void getHotissueList_naverHotissueIsZero() {
+		//prepare
+		prepareNaverHotissueList(new NaverHotissue[]{});
+		when(naverAaoMock.getHotissueList()).thenReturn(naverHotissueList);
+		
+		// exec - expcet
+		List<Hotissue> actuals = naverService.getHotissueList();
+		HotissueTest.ASSERTS(actuals, hotissues);
+	}
+	
+	@Test(expected=EmptyNaverDataAccessException.class)
+	public void getHotissueList_naverHotissueIsNull() {
+		//prepare
+		prepareNaverHotissueList();
+		when(naverAaoMock.getHotissueList()).thenReturn(naverHotissueList);
+		
+		// exec - expcet
+		List<Hotissue> actuals = naverService.getHotissueList();
+		HotissueTest.ASSERTS(actuals, hotissues);
+	}
+	
+	@Test
+	public void getArticleListOfHotissue() {
+		// prepare
+		String hotissueId = "887522";
+		prepareArticleListOfHotissue();
+		prepareNaverArticleList(naverArticles);
+		
+		when(naverAaoMock.getArticleListByHotissueId(hotissueId)).thenReturn(naverArticleList);
+		
+		// exec
+		List<Article> actuals = naverService.getArticleListByHotissueId(hotissueId);
+		ArticleTest.ASSERTS(actuals, NaverArticle.convert(naverArticles));
+	}
+
+	@Test(expected=EmptyNaverDataAccessException.class)
+	public void getArticleListOfHotissue_naverArticleIsZero() {
+		// prepare
+		String hotissueId = "887522";
+		prepareNaverArticleList(new NaverArticle[]{});
+		
+		when(naverAaoMock.getArticleListByHotissueId(hotissueId)).thenReturn(naverArticleList);
+		
+		// exec - except
+		List<Article> actuals = naverService.getArticleListByHotissueId(hotissueId);
+		ArticleTest.ASSERTS(actuals, NaverArticle.convert(naverArticles));
+	}
+	
+	@Test(expected=EmptyNaverDataAccessException.class)
+	public void getArticleListOfHotissue_naverArticleIsNull() {
+		// prepare
+		String hotissueId = "887522";
+		prepareNaverArticleList();
+		
+		when(naverAaoMock.getArticleListByHotissueId(hotissueId)).thenReturn(naverArticleList);
+		
+		// exec - except
+		List<Article> actuals = naverService.getArticleListByHotissueId(hotissueId);
+		ArticleTest.ASSERTS(actuals, NaverArticle.convert(naverArticles));
+	}
+	
+	private void prepareArticleListOfHotissue() {
+		naverArticles = Arrays.asList(new NaverArticle[]{
+				new NaverArticle("001", "officeName1", "111", "title1", "20140124", "113202"),
+				new NaverArticle("002", "officeName2", "222", "title2", "20140124", "123202"),
+				new NaverArticle("003", "officeName3", "333", "title3", "20140124", "133202")
+		});
+		
+	}
 
 
 
@@ -144,6 +239,19 @@ public class NaverServiceTest {
 		for (int i=0; i<contents.length; i++) {
 			naverArticles.get(i).setContent(contents[i]);
 		}
+	}
+
+	private void prepareNaverHotissueList(List<NaverHotissue> naverHotissues) {
+		prepareNaverHotissueList();
+		naverHotissueList.setHotissues(naverHotissues);
+	}
+
+	private void prepareNaverHotissueList(NaverHotissue[] naverHotisuseArr) {
+		prepareNaverHotissueList(Arrays.asList(naverHotisuseArr));
+	}
+
+	private void prepareNaverHotissueList() {
+		naverHotissueList = new NaverHotissueList();
 	}
 
 	private void prepareNaverArticleList(List<NaverArticle> naverArticles) {
@@ -161,22 +269,30 @@ public class NaverServiceTest {
 		
 
 	private void prepareNaverSections() {
-		naverSections = Arrays.asList(
-				new NaverSection[] {
-						new NaverSection("111", "sectionName1"),
-						new NaverSection("222", "sectionName2"),
-						new NaverSection("333", "sectionName3")
-				});
+		naverSections = Arrays.asList(new NaverSection[] {
+				new NaverSection("111", "sectionName1"),
+				new NaverSection("222", "sectionName2"),
+				new NaverSection("333", "sectionName3")
+		});
+		
 		section = NaverSection.convert(naverSections);
 	}
 	
 
-	private void prepareArticles() {
-		articles = Arrays.asList(new Article[] {
-				new Article("111", new Journal("001", "officeName1"), "title1", "orgUrl1", section, "20140124", "113202", "imageUrl1"),
-				new Article("222", new Journal("002", "officeName2"), "title2", "orgUrl2", section, "20140124", "123202", "imageUrl2"),
-				new Article("333", new Journal("003", "officeName3"), "title3", "orgUrl3", section, "20140124", "133202", "imageUrl3")
+	private void prepareNaverHotissues() {
+		naverHotissues = Arrays.asList(new NaverHotissue[] {
+				new NaverHotissue(
+						"mbs.875.101", "887522", "연애지침서",
+						"http://m.news.naver.com/issueGroup.nhn?sid1=103&pid=mbs.875.103&cid=887522&type=issue"),
+				new NaverHotissue(
+						"mbs.875.102", "893847", "화제의 판결",
+						"http://m.news.naver.com/issueGroup.nhn?sid1=102&pid=mbs.875.102&cid=893847&type=issue"),
+				new NaverHotissue(
+						"mbs.875.103", "887553", "따뜻한 세상",
+						"http://m.news.naver.com/issueGroup.nhn?sid1=102&pid=mbs.875.102&cid=893670&type=issue")
 		});
+		
+		hotissues = NaverHotissue.convert(naverHotissues);
 		
 	}
 
@@ -186,6 +302,8 @@ public class NaverServiceTest {
 				new NaverArticle("002", "officeName2", "222", "title2", "orgUrl2", naverSections, "20140124", "123202", "imageUrl2"),
 				new NaverArticle("003", "officeName3", "333", "title3", "orgUrl3", naverSections, "20140124", "133202", "imageUrl3")
 		});
+		
+		articles = NaverArticle.convert(naverArticles);
 	}
 
 }

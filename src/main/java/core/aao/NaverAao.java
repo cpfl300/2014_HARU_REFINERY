@@ -2,8 +2,6 @@ package core.aao;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,8 +17,6 @@ import core.template.HttpTemplate;
 
 @Component
 public class NaverAao {
-	
-	private static final Logger log = LoggerFactory.getLogger(NaverAao.class);
 	
 	@Autowired
 	private HttpTemplate httpTemplate;
@@ -74,12 +70,12 @@ public class NaverAao {
 	}
 	
 
-	public NaverArticleList getArticleListOfHotissue(String componentId) {
+	public NaverArticleList getArticleListByHotissueId(String hotissueId) {
 		
 		return this.httpTemplate.request(
 				"/hotissueArticles.nhn",
 				"componentId=?",
-				new Object[] { componentId },
+				new Object[] { hotissueId },
 				new GsonMapper<NaverArticleList> () {
 
 					@Override
@@ -116,100 +112,4 @@ public class NaverAao {
 				}
 			);
 	}
-
-	/*
-	public NaverArticleList getArticleListAtPopularDay(String datehour, String sectionId) {
-		
-		return this.httpTemplate.request(
-				"/rankingArticles.nhn",
-				"sectionId=?&rankingType=popular_day&datehour=?",
-				new Object[] { sectionId, datehour },
-				new GsonMapper<NaverArticleList> () {
-
-					@Override
-					public NaverArticleList map(Gson gson, JsonReader gsonReader) throws IOException {
-						NaverArticleList naverArticleList = new NaverArticleList();
-						List<NaverArticle> naverArticles = new ArrayList<NaverArticle>();
-						NaverArticle naverArticle = null;
-						//result
-						gsonReader.beginObject();
-						gsonReader.nextName();
-						
-						// actual
-						gsonReader.beginObject();
-						gsonReader.nextName();
-						naverArticleList.setDatehour(gsonReader.nextString());
-						
-						gsonReader.nextName();
-						naverArticleList.setSectionId(gsonReader.nextString());
-						
-						gsonReader.nextName();
-						naverArticleList.setRankingType(gsonReader.nextString());
-						
-						gsonReader.nextName();
-						gsonReader.beginArray();
-						
-						while(gsonReader.peek() == JsonToken.BEGIN_OBJECT) {
-							naverArticle = new NaverArticle();
-							gsonReader.beginObject();
-							
-							log.debug("name: " + gsonReader.nextName());
-							naverArticle.setOfficeId(gsonReader.nextString());
-							
-							// pass officeName
-//							gsonReader.nextName();
-							log.debug("name: " + gsonReader.nextName());
-							gsonReader.skipValue();
-							
-//							gsonReader.nextName();
-							log.debug("name: " + gsonReader.nextName());
-							naverArticle.setArticleId(gsonReader.nextString());
-							
-//							gsonReader.nextName();
-							log.debug("name: " + gsonReader.nextName());
-							naverArticle.setSectionId(gsonReader.nextString());
-							
-//							gsonReader.nextName();
-							log.debug("name: " + gsonReader.nextName());
-							naverArticle.setType(gsonReader.nextString());
-							
-							// pass serviceDate
-//							gsonReader.nextName();
-							log.debug("name: " + gsonReader.nextName());
-							gsonReader.skipValue();
-							
-//							gsonReader.nextName();
-							log.debug("name: " + gsonReader.nextName());
-							naverArticle.setServiceTime(gsonReader.nextString());
-							
-//							gsonReader.nextName();
-							log.debug("name: " + gsonReader.nextName());
-							naverArticle.setHitCount(gsonReader.nextString());
-							
-//							gsonReader.nextName();
-							log.debug("name: " + gsonReader.nextName());
-							naverArticle.setReadCount(gsonReader.nextString());
-							
-//							gsonReader.nextName();
-							log.debug("name: " + gsonReader.nextName());
-							naverArticle.setRank(gsonReader.nextString());
-							
-							gsonReader.endObject();
-							naverArticles.add(naverArticle);
-						}
-						gsonReader.endArray();
-						gsonReader.endObject();
-						gsonReader.endObject();
-						
-						return naverArticleList;
-					}
-					
-				}
-			);
-	}
-	*/
-
-
-
-
 }
