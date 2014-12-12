@@ -14,8 +14,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import refinery.model.NaverArticle;
 import refinery.model.NaverArticleList;
@@ -33,8 +31,6 @@ import elixir.utility.ElixirUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NaverServiceTest {
-	
-	private static final Logger log = LoggerFactory.getLogger(NaverServiceTest.class);
 	
 	@InjectMocks
 	private NaverService naverService;
@@ -222,6 +218,8 @@ public class NaverServiceTest {
 		List<Article> actuals = naverService.getArticleListByHotissueId(hotissueId);
 		ArticleTest.ASSERTS(actuals, NaverArticle.convert(naverArticles));
 	}
+
+	
 	
 	private void prepareArticleListOfHotissue() {
 		naverArticles = Arrays.asList(new NaverArticle[]{
@@ -231,8 +229,6 @@ public class NaverServiceTest {
 		});
 		
 	}
-
-
 
 
 	private void prepareContent(String[] contents) {

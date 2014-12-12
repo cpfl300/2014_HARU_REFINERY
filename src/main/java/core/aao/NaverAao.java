@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import refinery.model.NaverArticle;
+import refinery.model.NaverArticleCountList;
 import refinery.model.NaverArticleList;
 import refinery.model.NaverHotissueList;
 
@@ -107,6 +108,28 @@ public class NaverAao {
 						gsonReader.endObject();
 						
 						return naverHotissueList;
+					}
+					
+				}
+			);
+	}
+
+
+	public NaverArticleCountList getArticleCountListInRealtime(String sectionId) {
+		return this.httpTemplate.request(
+				"/rankingArticlesRealtime.nhn",
+				"sectionId=?&rankingType=hit",
+				new Object[] { sectionId },
+				new GsonMapper<NaverArticleCountList> () {
+
+					@Override
+					public NaverArticleCountList map(Gson gson, JsonReader gsonReader) throws IOException {
+						gsonReader.beginObject();
+						gsonReader.nextName();
+						NaverArticleCountList naverArticleCountList = gson.fromJson(gsonReader, NaverArticleCountList.class);
+						gsonReader.endObject();
+						
+						return naverArticleCountList;
 					}
 					
 				}
