@@ -12,7 +12,7 @@ import core.template.HttpClientTemplate;
 import core.template.HttpTemplate;
 
 @Configuration
-@ComponentScan(basePackages={"elixir.config", "core", "refinery"})
+@ComponentScan(basePackages={"core", "refinery"})
 @PropertySource(value="classpath:application-properties.xml")
 public class RefineryConfig {
 	
