@@ -13,14 +13,10 @@ public class NaverSection implements Convertible<Section>{
 	private String sectionId;
 	private String sectionName;
 	
+	// empty
 	public NaverSection() { }
 	
-	public NaverSection(String sectionId, String sectionName) {
-		this.sectionId = sectionId;
-		this.sectionName = sectionName;
-	}
-	
-		
+	// setter getter
 	public String getSectionId() {
 		return sectionId;
 	}
@@ -34,6 +30,7 @@ public class NaverSection implements Convertible<Section>{
 		this.sectionName = sectionName;
 	}
 	
+	// converter
 	@Override
 	public Section convert() {
 		String first = this.sectionId.substring(0,1);

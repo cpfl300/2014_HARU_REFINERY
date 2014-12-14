@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import refinery.model.convertible.Convertible;
-import elixir.model.Article;
 import elixir.model.Hotissue;
 
 public class NaverHotissue implements Convertible<Hotissue> {
@@ -15,6 +14,11 @@ public class NaverHotissue implements Convertible<Hotissue> {
 	private String title;
 	private String url;
 	
+	// empty
+	public NaverHotissue() { }
+	
+	
+	// setter getter
 	public String getPanelId() {
 		return panelId;
 	}
@@ -40,14 +44,6 @@ public class NaverHotissue implements Convertible<Hotissue> {
 		this.url = url;
 	}
 	
-	public NaverHotissue() { }
-	
-	public NaverHotissue(String panelId, String componentId, String title, String url) {
-		this.panelId = panelId;
-		this.componentId = componentId;
-		this.title = title;
-		this.url = url;
-	}
 	
 	@Override
 	public String toString() {

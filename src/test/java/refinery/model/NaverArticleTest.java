@@ -6,9 +6,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import refinery.utils.TestUtils;
 import elixir.model.Article;
 import elixir.model.ArticleTest;
-import elixir.model.Journal;
 import elixir.model.Section;
 
 public class NaverArticleTest {
@@ -41,32 +41,82 @@ public class NaverArticleTest {
 		ArticleTest.ASSERTS(actuals, articles);
 	}
 	
-
+	
+	// prepare
 	private void prepareNaverSections() {
-		naverSections = Arrays.asList(
-				new NaverSection[] {
-						new NaverSection("111", "sectionName1"),
-						new NaverSection("222", "sectionName2"),
-						new NaverSection("333", "sectionName3")
-				});
-		
+		naverSections = NaverSectionTest.PREPARED_LIST();
 		section = NaverSection.convert(naverSections);
 	}
 	
 	private void prepareArticles() {
-		articles = Arrays.asList(new Article[] {
-				new Article("111", new Journal("001", "officeName1"), "title1", "orgUrl1", section, "20140124", "113202", "imageUrl1"),
-				new Article("222", new Journal("002", "officeName2"), "title2", "orgUrl2", section, "20140124", "123202", "imageUrl2"),
-				new Article("333", new Journal("003", "officeName3"), "title3", "orgUrl3", section, "20140124", "133202", "imageUrl3")
-		});
-		
+		articles = ArticleTest.PREPARED_LIST(section, section, section); 		
 	}
 
 	private void prepareNaverArticles() {
-		naverArticles = Arrays.asList(new NaverArticle[] {
-				new NaverArticle("001", "officeName1", "111", "title1", "orgUrl1", naverSections, "20140124", "113202", "imageUrl1"),
-				new NaverArticle("002", "officeName2", "222", "title2", "orgUrl2", naverSections, "20140124", "123202", "imageUrl2"),
-				new NaverArticle("003", "officeName3", "333", "title3", "orgUrl3", naverSections, "20140124", "133202", "imageUrl3")
+		naverArticles = NaverArticleTest.PREPARED_LIST(naverSections, naverSections, naverSections);
+	}
+
+	
+	// creator
+	// "001", "officeName1", "111", "title1", "orgUrl1", naverSections, "20140124", "113202", "imageUrl1"
+	public static NaverArticle CREATE(String officeId, String officeName, String articleId, String title, String orgUrl,
+			List<NaverSection> naverSections, String serviceDate, String serviceTime, String imageUrl) {
+		NaverArticle naverArticle = new NaverArticle();
+		
+		naverArticle.setOfficeId(officeId);
+		naverArticle.setOfficeName(officeName);
+		naverArticle.setArticleId(articleId);
+		naverArticle.setTitle(title);
+		naverArticle.setOrgUrl(orgUrl);
+		naverArticle.setSections(naverSections);
+		naverArticle.setServiceDate(serviceDate);
+		naverArticle.setServiceTime(serviceTime);
+		naverArticle.setImageUrl(imageUrl);
+		
+		return naverArticle;
+	}
+	
+	// ("001", "officeName1", "111", "title1", "20140124", "113202")
+	public static NaverArticle CREATE(String officeId, String officeName, String articleId,
+			String title, String serviceDate, String serviceTime) {
+		NaverArticle naverArticle = new NaverArticle();
+		
+		naverArticle.setOfficeId(officeId);
+		naverArticle.setOfficeName(officeName);
+		naverArticle.setArticleId(articleId);
+		naverArticle.setTitle(title);
+		naverArticle.setServiceDate(serviceDate);
+		naverArticle.setServiceTime(serviceTime);
+		
+		return naverArticle;
+	}
+	
+	@SafeVarargs
+	public static List<NaverArticle> PREPARED_LIST(List<NaverSection> firstNaverSections, List<NaverSection>... remainNaverSectionsArr) {
+		
+		List<NaverSection> secondSections = null;
+		List<NaverSection> thirdSections = null;
+		if (remainNaverSectionsArr.length >= 1) {
+			secondSections = remainNaverSectionsArr[0];
+		}
+		if (remainNaverSectionsArr.length >= 2) {
+			thirdSections = remainNaverSectionsArr[1];
+		}
+		
+		return Arrays.asList(new NaverArticle[] {
+				NaverArticleTest.CREATE("001", "officeName1", "111", "title1", "orgUrl1", firstNaverSections, "20140124", "113202", "imageUrl1"),
+				NaverArticleTest.CREATE("002", "officeName2", "222", "title2", "orgUrl2", secondSections, "20140124", "123202", "imageUrl2"),
+				NaverArticleTest.CREATE("003", "officeName3", "333", "title3", "orgUrl3", thirdSections, "20140124", "133202", "imageUrl3")
 		});
 	}
+
+	
+	public static List<NaverArticle> PREPARED_LIST(String[] fields,  List<NaverSection> firstNaverSection, List<NaverSection>... remainNaverSectionsArr){
+		List<NaverArticle> naverArticles = NaverArticleTest.PREPARED_LIST(firstNaverSection, remainNaverSectionsArr);
+		
+		TestUtils.initComplementaryFields(naverArticles, fields);
+		
+		return naverArticles;
+	}
+
 }

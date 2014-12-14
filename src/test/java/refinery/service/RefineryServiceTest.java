@@ -1,10 +1,5 @@
 package refinery.service;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
-
-import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -14,11 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import refinery.model.NaverArticle;
-import refinery.model.NaverArticleList;
 import elixir.model.Article;
 import elixir.service.ArticleService;
-import elixir.utility.ElixirUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RefineryServiceTest {
