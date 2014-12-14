@@ -104,9 +104,9 @@ public class NaverArticleTest {
 		}
 		
 		return Arrays.asList(new NaverArticle[] {
-				NaverArticleTest.CREATE("001", "officeName1", "111", "title1", "orgUrl1", firstNaverSections, "20140124", "113202", "imageUrl1"),
-				NaverArticleTest.CREATE("002", "officeName2", "222", "title2", "orgUrl2", secondSections, "20140124", "123202", "imageUrl2"),
-				NaverArticleTest.CREATE("003", "officeName3", "333", "title3", "orgUrl3", thirdSections, "20140124", "133202", "imageUrl3")
+				NaverArticleTest.CREATE("001", "officeName1", "111", "title1", "orgUrl1", firstNaverSections, "20140101", "010101", "imageUrl1"),
+				NaverArticleTest.CREATE("002", "officeName2", "222", "title2", "orgUrl2", secondSections, "20140102", "010102", "imageUrl2"),
+				NaverArticleTest.CREATE("003", "officeName3", "333", "title3", "orgUrl3", thirdSections, "20140103", "010103", "imageUrl3")
 		});
 	}
 
