@@ -1,10 +1,11 @@
 package refinery.service;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,10 +58,16 @@ public class NaverServiceTest {
 
 	private List<Article> articles;
 	private List<Hotissue> hotissues;
+	private List<List<NaverSection>> naverSectionsList;
 	
 	@Before
 	public void setup() {
 		datehour = ElixirUtils.format("yyyyMMddHHmm", ElixirUtils.getNow()).substring(0, 11);
+		naverSectionsList = new ArrayList<List<NaverSection>>();
+		naverSectionsList.add(naverSections);
+		naverSectionsList.add(naverSections);
+		naverSectionsList.add(naverSections);
+		
 		createNaverSections();
 		createNaverArticles();
 		createNaverHotissues();
@@ -278,7 +285,7 @@ public class NaverServiceTest {
 	
 	// create objs
 	private void createNaverSections() {
-		naverSections = NaverSectionTest.PREPARED_LIST();
+		naverSections = NaverSectionTest.preparedList();
 		
 		section = NaverSection.convert(naverSections);
 	}
@@ -291,14 +298,15 @@ public class NaverServiceTest {
 
 
 	private void createNaverArticles() {
-		naverArticles = NaverArticleTest.PREPARED_LIST(naverSections, naverSections, naverSections);
+		naverArticles = NaverArticleTest.preparedList(naverSectionsList);
 		
 		articles = NaverArticle.convert(naverArticles);
 	}
 	
 	
 	private void createArticleListOfHotissue() {
-		naverArticles = NaverArticleTest.PREPARED_LIST(new String[]{"officeId", "officeName", "articleId", "title", "serviceDate", "serviceTime"}, null);
+		naverArticles = NaverArticleTest.preparedList(
+				naverSectionsList, new String[]{"officeId", "officeName", "articleId", "title", "serviceDate", "serviceTime"});
 	}
 
 }

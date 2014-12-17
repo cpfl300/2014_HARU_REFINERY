@@ -43,12 +43,7 @@ public class NaverHotissue implements Convertible<Hotissue> {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	
-	
-	@Override
-	public String toString() {
-		return "NaverHotissue [panelId=" + panelId + ", componentId=" + componentId + ", title=" + title + ", url=" + url + "]";
-	}
+
 	
 	@Override
 	public Hotissue convert() {

@@ -146,7 +146,7 @@ public class NaverArticle implements Convertible<Article> {
 		article.setContributionDate(this.serviceDate);
 		article.setContributionTime(this.serviceTime);
 		article.setTitle(this.title);
-		
+		article.setContent(this.content);
 		article.setContent(this.content);
 		article.setOrgUrl(this.orgUrl);
 		article.setImageUrl(this.imageUrl);

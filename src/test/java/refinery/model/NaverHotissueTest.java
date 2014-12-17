@@ -24,7 +24,7 @@ public class NaverHotissueTest {
 		List<Section> sections = SectionTest.preparedList();
 		
 		naverHotissues = NaverHotissueTest.preparedList();
-		hotissues = HotissueTest.preparedList(dates, sections);
+		hotissues = HotissueTest.preparedList(dates, sections, new String[]{"hotissueId", "title"});
 	}
 
 	@Test

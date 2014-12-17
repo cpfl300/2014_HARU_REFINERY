@@ -18,7 +18,7 @@ public class NaverSectionTest {
 	@Before
 	public void setup() {
 		section = new Section("222", "sectionName2");
-		naverSections = NaverSectionTest.PREPARED_LIST();
+		naverSections = NaverSectionTest.preparedList();
 	}
 
 	@Test
@@ -76,7 +76,7 @@ public class NaverSectionTest {
 		return naverSection;
 	}
 
-	public static List<NaverSection> PREPARED_LIST() {
+	public static List<NaverSection> preparedList() {
 		return Arrays.asList(
 				new NaverSection[] {
 						NaverSectionTest.CREATE("111", "sectionName1"),
