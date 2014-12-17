@@ -1,6 +1,7 @@
 package refinery.model;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -8,6 +9,9 @@ import org.junit.Test;
 
 import elixir.model.Hotissue;
 import elixir.model.HotissueTest;
+import elixir.model.Section;
+import elixir.model.SectionTest;
+import elixir.utility.ElixirUtilsTest;
 
 public class NaverHotissueTest {
 	
@@ -16,8 +20,11 @@ public class NaverHotissueTest {
 	
 	@Before
 	public void setup() {
-		prepareNaverHotissues();
-		prepareHotissues();
+		List<Date> dates = ElixirUtilsTest.preparedList();
+		List<Section> sections = SectionTest.preparedList();
+		
+		naverHotissues = NaverHotissueTest.preparedList();
+		hotissues = HotissueTest.preparedList(dates, sections);
 	}
 
 	@Test
@@ -34,16 +41,7 @@ public class NaverHotissueTest {
 		HotissueTest.ASSERTS(actuals, hotissues);
 	}
 	
-	// prepare
-	private void prepareHotissues() {
-		hotissues = HotissueTest.PREPARED_LIST();
-		
-	}
 	
-	private void prepareNaverHotissues() {
-		naverHotissues = NaverHotissueTest.PREPARED_LIST();
-	}
-
 	
 	// creator
 	public static NaverHotissue CREATE(String panelId, String componentId, String title, String url) {
@@ -57,7 +55,7 @@ public class NaverHotissueTest {
 		return naverHotissue;
 	}
 
-	public static List<NaverHotissue> PREPARED_LIST() {
+	public static List<NaverHotissue> preparedList() {
 
 		return Arrays.asList(new NaverHotissue[] {
 				NaverHotissueTest.CREATE("mbs.875.101", "887522", "연애지침서",

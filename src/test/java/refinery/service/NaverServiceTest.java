@@ -285,7 +285,7 @@ public class NaverServiceTest {
 	
 
 	private void createNaverHotissues() {
-		naverHotissues = NaverHotissueTest.PREPARED_LIST();
+		naverHotissues = NaverHotissueTest.preparedList();
 		hotissues = NaverHotissue.convert(naverHotissues);
 	}
 

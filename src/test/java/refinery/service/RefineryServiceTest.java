@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import elixir.model.Article;
-import elixir.service.ArticleService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RefineryServiceTest {
@@ -21,8 +20,8 @@ public class RefineryServiceTest {
 	@Mock
 	private NaverService naverSerivce;
 	
-	@Mock
-	private ArticleService articleService;
+//	@Mock
+//	private ArticleService articleService;
 	
 	private List<Article> articles;
 	
