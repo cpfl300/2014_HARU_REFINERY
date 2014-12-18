@@ -1,9 +1,10 @@
 package refinery.service;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +19,7 @@ import elixir.model.Office;
 import elixir.model.OfficeTest;
 import elixir.model.Section;
 import elixir.model.SectionTest;
+import elixir.service.ArticleService;
 import elixir.utility.ElixirUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -46,12 +48,12 @@ public class RefineryServiceTest {
 		
 		// mock
 		when(naverServiceMock.getUpdatedArticles(datehour)).thenReturn(articles);
-		when(articleServiceMock.addAll()).thenReturn();
 		
 		// exec
 		refineryService.saveArticles();
 		
-		// assert
+		// vierfy
+		verify(articleServiceMock, times(1)).addAll(articles);
 	}
 
 	private List<Article> prepareArticlesForSaveArticles() {
