@@ -1,6 +1,9 @@
 package refinery.service;
 
+import static org.mockito.Mockito.when;
+
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +13,12 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import elixir.model.Article;
+import elixir.model.ArticleTest;
+import elixir.model.Office;
+import elixir.model.OfficeTest;
+import elixir.model.Section;
+import elixir.model.SectionTest;
+import elixir.utility.ElixirUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RefineryServiceTest {
@@ -18,36 +27,42 @@ public class RefineryServiceTest {
 	private RefineryService refineryService;
 	
 	@Mock
-	private NaverService naverSerivce;
+	private NaverService naverServiceMock;
 	
-//	@Mock
-//	private ArticleService articleService;
+	@Mock
+	private ArticleService articleServiceMock;
 	
 	private List<Article> articles;
 	
 	@Before
 	public void setup() {
-		prepareArticles();
+		
 	}
 
-//	@Test
-//	public void saveArticles(){
-//		// prepare
-//		naverArticleList = new NaverArticleList();
-//		naverArticleList.setArticles(naverArticles);
-//		
-//		Date now = ElixirUtils.getNow();
-//		String datehour = ElixirUtils.format("yyyyMMddHHmm", now);
-//		datehour = datehour.substring(0, 11);
-//		
-//		// mock
-//		when(naverAaoMock.getArticleListPer10Min(datehour)).thenReturn(naverArticleList);
-//		when(articleServiceMock.addArticles(NaverArticle.asArticles(naverArticles))).thenReturn(3);
-//		
-//		// exec
-//		int addCount = naverService.saveArticles();
-//		assertThat(addCount, is(3));
-//	}
+	@Test
+	public void saveArticles(){		
+		String datehour = ElixirUtils.format("yyyyMMddHHmm", ElixirUtils.getNow()).substring(0, 11);
+		articles = prepareArticlesForSaveArticles();
+		
+		// mock
+		when(naverServiceMock.getUpdatedArticles(datehour)).thenReturn(articles);
+		when(articleServiceMock.addAll()).thenReturn();
+		
+		// exec
+		refineryService.saveArticles();
+		
+		// assert
+	}
+
+	private List<Article> prepareArticlesForSaveArticles() {
+		List<Office> offices = OfficeTest.preparedList();
+		List<Section> sections = SectionTest.preparedList(new String[]{"sectionId", "sectionName"});
+		
+		articles = ArticleTest.preparedList(offices, sections,
+				new String[]{"officeId", "officeName", "articleId", "title",
+				"sections", "contributionDate", "contributionTime", "imageUrl"});
+	}
+
 //
 //	@Test
 //	public void saveArticles() {
