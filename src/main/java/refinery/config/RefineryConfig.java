@@ -1,5 +1,8 @@
 package refinery.config;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 import javax.annotation.Resource;
 
 import org.springframework.context.annotation.Bean;
@@ -7,6 +10,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.SchedulingConfigurer;
+import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 import core.template.HttpClientTemplate;
 import core.template.HttpTemplate;
@@ -14,7 +20,9 @@ import core.template.HttpTemplate;
 @Configuration
 @ComponentScan(basePackages={"core", "refinery"})
 @PropertySource(value="classpath:application-properties.xml")
-public class RefineryConfig {
+@EnableScheduling
+public class RefineryConfig implements SchedulingConfigurer {
+    
 	
 	@Resource
 	private Environment env;
@@ -30,6 +38,16 @@ public class RefineryConfig {
 		
 		return new HttpClientTemplate(host, context);
 	}
+	
+	@Override
+    public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
+        taskRegistrar.setScheduler(taskExecutor());
+    }
+
+    @Bean(destroyMethod="shutdown")
+    public Executor taskExecutor() {
+        return Executors.newScheduledThreadPool(100);
+    }
 	
 //	@Bean
 //	public RestTemplate restTemplate() {

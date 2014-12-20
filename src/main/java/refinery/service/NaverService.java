@@ -6,13 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import refinery.model.NaverArticle;
-import refinery.model.NaverArticleList;
 import refinery.model.NaverHotissue;
-import refinery.model.NaverHotissueList;
 import core.aao.EmptyNaverDataAccessException;
 import core.aao.NaverAao;
-import elixir.model.Article;
-import elixir.model.Hotissue;
 
 @Service
 public class NaverService {
