@@ -8,20 +8,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import refinery.model.NaverHotissue;
-import core.aao.NaverAao;
+import elixir.model.Hotissue;
+import elixir.service.HotissueService;
 
 @Service
 public class RefineryService {
 	private static final Logger log = LoggerFactory.getLogger(RefineryService.class);
 	
 	@Autowired
-	private NaverAao naverAao;
+	private NaverService naverService;
+	
+	@Autowired
+	private HotissueService hotissueService;
 	
 	@Scheduled(cron="0/10 * * * * ?")
-	public void getHotissues() {
-		List<NaverHotissue> naverHotissues = naverAao.getHotissueList();
-		log.debug("size: " + naverHotissues.size());
+	public void saveHotissueList() {
+		List<Hotissue> hotissues = naverService.getHotissueList();
+		hotissueService.addAll(hotissues);
 	}
 }
 	

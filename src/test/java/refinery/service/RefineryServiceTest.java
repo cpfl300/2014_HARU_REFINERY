@@ -13,27 +13,64 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import sun.swing.SwingUtilities2.Section;
+import refinery.model.NaverArticle;
+import refinery.model.NaverHotissue;
+import refinery.model.NaverHotissueTest;
+import refinery.model.NaverHotissues;
+import refinery.model.NaverSection;
+import refinery.model.NaverSectionTest;
+import refinery.model.NaverSections;
+import elixir.model.Article;
+import elixir.model.Hotissue;
+import elixir.model.Section;
+import elixir.service.HotissueService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RefineryServiceTest {
+	
+	@InjectMocks
+	private RefineryService refineryService;
+	
+	@Mock
+	private NaverService naverServiceMock;
+	
+	@Mock
+	private HotissueService hotissueServiceMock;
+	
+	private List<NaverHotissue> naverHotissues;
+	private List<NaverArticle> naverArticles;
+	private List<NaverSection> naverSections;
+	
+	private Section section;
+	private String datehour;
 
+	private List<Article> articles;
+	private List<Hotissue> hotissues;
+	private List<List<NaverSection>> naverSectionsList;
+	private List<Section> sections;
+	
+	@Before
+	public void setup() {
+		naverSections = NaverSectionTest.preparedList();	
+		sections = NaverSections.convert(naverSections);
+		
+		naverHotissues = NaverHotissueTest.preparedList();
+		hotissues = NaverHotissues.convert(naverHotissues);
+	}
+	
 
-//	@Test
-//	public void saveArticles(){		
-//		String datehour = ElixirUtils.format("yyyyMMddHHmm", ElixirUtils.getNow()).substring(0, 11);
-//		articles = prepareArticlesForSaveArticles();
-//		
-//		// mock
-//		when(naverServiceMock.getUpdatedArticles(datehour)).thenReturn(articles);
-//		
-//		// exec
-//		refineryService.saveArticles();
-//		
-//		// vierfy
-//		verify(articleServiceMock, times(1)).addAll(articles);
-//	}
-//
+	@Test
+	public void saveHotissueList(){		
+		// mock
+		when(naverServiceMock.getHotissueList()).thenReturn(hotissues);
+		
+		// exec
+		refineryService.saveHotissueList();
+		
+		// vierfy
+		verify(hotissueServiceMock, times(1)).addAll(hotissues);
+	}
+
 //	private List<Article> prepareArticlesForSaveArticles() {
 //		List<Office> offices = OfficeTest.preparedList();
 //		List<Section> sections = SectionTest.preparedList(new String[]{"sectionId", "sectionName"});

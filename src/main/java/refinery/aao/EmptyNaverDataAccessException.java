@@ -1,4 +1,4 @@
-package core.aao;
+package refinery.aao;
 
 public class EmptyNaverDataAccessException extends RuntimeException {
 	
