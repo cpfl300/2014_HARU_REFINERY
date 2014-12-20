@@ -36,15 +36,15 @@ public class NaverHotissueTest {
 	}
 	
 	@Test
-	public void convertAsList() {
-		List<Hotissue> actuals = NaverHotissue.convert(naverHotissues);
+	public void convertAtList() {
+		List<Hotissue> actuals = NaverHotissues.convert(naverHotissues);
 		HotissueTest.ASSERTS(actuals, hotissues);
 	}
 	
 	
 	
 	// creator
-	public static NaverHotissue CREATE(String panelId, String componentId, String title, String url) {
+	public static NaverHotissue create(String panelId, String componentId, String title, String url) {
 		NaverHotissue naverHotissue = new NaverHotissue();
 
 		naverHotissue.setPanelId(panelId);
@@ -58,11 +58,11 @@ public class NaverHotissueTest {
 	public static List<NaverHotissue> preparedList() {
 
 		return Arrays.asList(new NaverHotissue[] {
-				NaverHotissueTest.CREATE("mbs.875.101", "887522", "연애지침서",
+				NaverHotissueTest.create("mbs.875.101", "887522", "연애지침서",
 						"http://m.news.naver.com/issueGroup.nhn?sid1=103&pid=mbs.875.103&cid=887522&type=issue"),
-				NaverHotissueTest.CREATE("mbs.875.102", "893847", "화제의 판결",
+				NaverHotissueTest.create("mbs.875.102", "893847", "화제의 판결",
 						"http://m.news.naver.com/issueGroup.nhn?sid1=102&pid=mbs.875.102&cid=893847&type=issue"),
-				NaverHotissueTest.CREATE("mbs.875.103", "887553", "따뜻한 세상",
+				NaverHotissueTest.create("mbs.875.103", "887553", "따뜻한 세상",
 						"http://m.news.naver.com/issueGroup.nhn?sid1=102&pid=mbs.875.102&cid=893670&type=issue") });
 	}
 

@@ -9,45 +9,25 @@ import org.junit.Test;
 import refinery.model.convertible.NaverConvertFailureException;
 import elixir.model.Section;
 import elixir.model.SectionTest;
+import elixir.test.ElixirTestUtils;
 
 public class NaverSectionTest {
 	
 	private List<NaverSection> naverSections;
-	private Section section;
+	private List<Section> sections;
 	
 	@Before
 	public void setup() {
-		section = new Section("222", "sectionName2");
+		sections = SectionTest.preparedList(new String[]{"sectionId", "sectionName"});
 		naverSections = NaverSectionTest.preparedList();
 	}
 
 	@Test
-	public void covert_count1() {
-		// prepare
-		prepareNaverSections(naverSections.get(1));
-		
-		Section actualSection = NaverSection.convert(naverSections);
-		SectionTest.ASSERT(actualSection, section);
+	public void covert_alone() {
+		Section actual = naverSections.get(0).convert();
+		SectionTest.ASSERT(actual, sections.get(0));
 	}
 
-	@Test
-	public void covert_count2() {
-		// prepare
-		prepareNaverSections(naverSections.get(0), naverSections.get(1));
-		
-		Section actualSection = NaverSection.convert(naverSections);
-		SectionTest.ASSERT(actualSection, section);
-	}
-	
-	@Test
-	public void covert_count3() {
-		// prepare
-		prepareNaverSections(naverSections.get(0), naverSections.get(1), naverSections.get(2));
-		
-		Section actualSection = NaverSection.convert(naverSections);
-		SectionTest.ASSERT(actualSection, section);
-	}
-	
 	
 	
 	@Test(expected=NaverConvertFailureException.class)
@@ -67,7 +47,7 @@ public class NaverSectionTest {
 
 	
 	// creator
-	public static NaverSection CREATE(String sectionId, String sectionName) {
+	public static NaverSection create(String sectionId, String sectionName) {
 		NaverSection naverSection = new NaverSection();
 		
 		naverSection.setSectionId(sectionId);
@@ -75,13 +55,22 @@ public class NaverSectionTest {
 		
 		return naverSection;
 	}
-
+	
+	// preparedList
 	public static List<NaverSection> preparedList() {
 		return Arrays.asList(
 				new NaverSection[] {
-						NaverSectionTest.CREATE("111", "sectionName1"),
-						NaverSectionTest.CREATE("222", "sectionName2"),
-						NaverSectionTest.CREATE("333", "sectionName3")
+						NaverSectionTest.create("104", "생활/문화"),
+						NaverSectionTest.create("227", "지역"),
+						NaverSectionTest.create("316", "3단계_16")
 				});
+	}
+	
+	public static List<NaverSection> preparedList(String[] fields) {
+		List<NaverSection> naverSections = NaverSectionTest.preparedList();
+		
+		ElixirTestUtils.initComplementaryFields(naverSections, fields);
+		
+		return naverSections;
 	}
 }
