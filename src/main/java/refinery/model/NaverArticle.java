@@ -1,14 +1,8 @@
 package refinery.model;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import refinery.model.convertible.Convertible;
-import elixir.model.Article;
-import elixir.model.Office;
-
-public class NaverArticle implements Convertible<Article> {
+public class NaverArticle {
 	private String officeId;
 	private String officeName;
 	private String articleId;
@@ -146,42 +140,15 @@ public class NaverArticle implements Convertible<Article> {
 
 
 	@Override
-	public Article convert() {
-		Article article = new Article();
-		
-		article.setArticleId(this.articleId);
-		article.setOffice(new Office(this.officeId, this.officeName));
-		//if (this.sections != null) { article.setSection(NaverSection.convert(this.sections)); }
-		article.setContributionDate(this.serviceDate);
-		article.setContributionTime(this.serviceTime);
-		article.setTitle(this.title);
-		article.setContent(this.content);
-		article.setContent(this.content);
-		article.setOrgUrl(this.orgUrl);
-		article.setImageUrl(this.imageUrl);
-		
-		return article;
-	}
-
-	public static List<Article> convert(List<NaverArticle> naverArticles) {
-		List<Article> articles = new ArrayList<Article>();
-		Iterator<NaverArticle> ir = naverArticles.iterator();
-		while (ir.hasNext()) {
-			NaverArticle naverArticle = ir.next();
-			articles.add(naverArticle.convert());
-		}
-		
-		return articles;
-	}
-
-
-	@Override
 	public String toString() {
-		return "NaverArticle [officeId=" + officeId + ", officeName=" + officeName + ", articleId=" + articleId + ", type=" + type + ", title="
-				+ title + ", subcontent=" + subcontent + ", content=" + content + ", orgUrl=" + orgUrl + ", sections=" + sections + ", serviceDate="
-				+ serviceDate + ", serviceTime=" + serviceTime + ", imageUrl=" + imageUrl + ", reporter=" + reporter + ", copyright=" + copyright
-				+ ", hitCount=" + hitCount + ", readCount=" + readCount + ", rank=" + rank + "]";
+		return "NaverArticle [officeId=" + officeId + ", officeName=" + officeName + ", articleId=" + articleId + ", sectionId=" + sectionId
+				+ ", type=" + type + ", title=" + title + ", subcontent=" + subcontent + ", content=" + content + ", orgUrl=" + orgUrl
+				+ ", sections=" + sections + ", serviceDate=" + serviceDate + ", serviceTime=" + serviceTime + ", imageUrl=" + imageUrl
+				+ ", reporter=" + reporter + ", copyright=" + copyright + ", hitCount=" + hitCount + ", readCount=" + readCount + ", rank=" + rank
+				+ "]";
 	}
+	
+	
 
 	
 	

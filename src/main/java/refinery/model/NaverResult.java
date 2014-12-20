@@ -55,6 +55,4 @@ public class NaverResult {
 		this.hotissues = hotissues;
 	}
 	
-	
-
 }
