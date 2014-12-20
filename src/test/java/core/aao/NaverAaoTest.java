@@ -1,6 +1,7 @@
 package core.aao;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.number.OrderingComparison.*;
 import static org.junit.Assert.assertThat;
 
 import java.util.Iterator;
@@ -58,14 +59,12 @@ public class NaverAaoTest {
 	public void getArticleList() {
 		String datehour = "20140124103";
 		
-		NaverArticleList actual = naverAao.getArticleList(datehour);
+		List<NaverArticle> actuals = naverAao.getArticleList(datehour);
 		
-		assertThat(actual.getDatehour(), is(datehour));
-		
-		Iterator<NaverArticle> ir = actual.getArticles().iterator();
+		Iterator<NaverArticle> ir = actuals.iterator();
 		while(ir.hasNext()) {
-			NaverArticle naverArticle = ir.next();
-			String actualDatehour = naverArticle.getServiceDate() + naverArticle.getServiceTime().substring(0, 3);
+			NaverArticle actual = ir.next();
+			String actualDatehour = actual.getServiceDate() + actual.getServiceTime().substring(0, 3);
 			
 			assertThat(actualDatehour, is(datehour));
 		}
@@ -77,9 +76,9 @@ public class NaverAaoTest {
 	public void getArticleListByHotissueId() {
 		String componentId = "887553";
 		
-		NaverArticleList actual = naverAao.getArticleListByHotissueId(componentId);
+		List<NaverArticle> actuals = naverAao.getArticleListByHotissueId(componentId);
 		
-		assertThat(actual.getComponentId(), is(componentId));		
+		assertThat(actuals.size(), greaterThanOrEqualTo(1));	
 	}
 	
 
@@ -87,12 +86,17 @@ public class NaverAaoTest {
 	public void getArticleCountListInRealtime() {
 		String sectionId = "100";
 		
-		NaverArticleCountList naverArticleCountList = naverAao.getArticleCountListInRealtime(sectionId);
-		List<NaverArticleCount> actuals = naverArticleCountList.getNaverArticleCounts();
-		for (NaverArticleCount actual : actuals) {
-			assertThat(actual.getOfficeId().length(), is(3));
-			assertThat(actual.getArticleId().length(), is(10));
-		}
+		List<NaverArticleCount> actuals = naverAao.getArticleCountListInRealtime(sectionId);
+		assertThat(actuals.size(), greaterThanOrEqualTo(1));
+	}
+	
+	@Test
+	public void getArticleCountListAtDay() {
+		String datehour="20141219";
+		String sectionId = "100";
+		
+		List<NaverArticle> actuals = naverAao.getArticleCountListAtDay(datehour, sectionId);
+		assertThat(actuals.size(), greaterThanOrEqualTo(1));
 	}
 	
 //	@Test
@@ -107,8 +111,5 @@ public class NaverAaoTest {
 //		
 //		
 //	}
-
-	
-	
 
 }

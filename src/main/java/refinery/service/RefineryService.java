@@ -19,8 +19,8 @@ public class RefineryService {
 	@Autowired
 	private NaverAao naverAao;
 	
-	@Autowired
-	private ArticleService articleSerivce;
+//	@Autowired
+//	private ArticleService articleSerivce;
 	
 	@Scheduled(cron="0 0/10 * * * ?")
 	public void saveArticles() {
@@ -28,8 +28,8 @@ public class RefineryService {
 		NaverArticleList naverArticleList = naverAao.getArticleList(datehour);
 			
 		List<NaverArticle> naverArticles = naverArticleList.getArticles();
-		List<Article> articles = NaverArticle.asArticles(naverArticles);
-		
-		articleSerivce.addArticles(articles);
+//		List<Article> articles = NaverArticle.asArticles(naverArticles);
+//		
+//		articleSerivce.addArticles(articles);
 	}
 }

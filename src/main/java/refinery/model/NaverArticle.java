@@ -12,6 +12,7 @@ public class NaverArticle implements Convertible<Article> {
 	private String officeId;
 	private String officeName;
 	private String articleId;
+	private String sectionId;
 	private String type;
 	private String title;
 	private String subcontent;
@@ -135,6 +136,14 @@ public class NaverArticle implements Convertible<Article> {
 		this.copyright = copyright;
 	}
 
+	public String getSectionId() {
+		return sectionId;
+	}
+
+	public void setSectionId(String sectionId) {
+		this.sectionId = sectionId;
+	}
+
 
 	@Override
 	public Article convert() {
@@ -142,7 +151,7 @@ public class NaverArticle implements Convertible<Article> {
 		
 		article.setArticleId(this.articleId);
 		article.setOffice(new Office(this.officeId, this.officeName));
-		if (this.sections != null) { article.setSection(NaverSection.convert(this.sections)); }
+		//if (this.sections != null) { article.setSection(NaverSection.convert(this.sections)); }
 		article.setContributionDate(this.serviceDate);
 		article.setContributionTime(this.serviceTime);
 		article.setTitle(this.title);
