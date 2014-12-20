@@ -19,20 +19,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import refinery.model.NaverArticle;
-import refinery.model.NaverArticleList;
 import refinery.model.NaverArticleTest;
 import refinery.model.NaverHotissue;
-import refinery.model.NaverHotissueList;
 import refinery.model.NaverHotissueTest;
 import refinery.model.NaverSection;
 import refinery.model.NaverSectionTest;
+import sun.swing.SwingUtilities2.Section;
 import core.aao.EmptyNaverDataAccessException;
 import core.aao.NaverAao;
 import elixir.model.Article;
 import elixir.model.ArticleTest;
 import elixir.model.Hotissue;
 import elixir.model.HotissueTest;
-import elixir.model.Section;
 import elixir.utility.ElixirUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -45,9 +43,6 @@ public class NaverServiceTest {
 	
 	@Mock
 	private NaverAao naverAaoMock;
-	
-	private NaverArticleList naverArticleList;
-	private NaverHotissueList naverHotissueList;
 	
 	private List<NaverHotissue> naverHotissues;
 	private List<NaverArticle> naverArticles;
@@ -75,6 +70,50 @@ public class NaverServiceTest {
 		
 		
 	}
+
+	// getHotissueList
+	@Test
+	public void getHotissueList() {
+		//prepare
+		prepareNaverHotissueList(naverHotissues);
+		prepareMocksForGetHorissueList();
+		
+		// exec
+		List<Hotissue> actuals = naverService.getHotissueList();
+		HotissueTest.ASSERTS(actuals, hotissues);
+	}
+
+
+	@Test(expected=EmptyNaverDataAccessException.class)
+	public void getHotissueList_naverHotissueIsZero() {
+		//prepare
+		prepareNaverHotissueList(new NaverHotissue[]{});
+		prepareMocksForGetHorissueList();
+		
+		// exec - expcet
+		List<Hotissue> actuals = naverService.getHotissueList();
+		HotissueTest.ASSERTS(actuals, hotissues);
+	}
+	
+	@Test(expected=EmptyNaverDataAccessException.class)
+	public void getHotissueList_naverHotissueIsNull() {
+		//prepare
+		prepareNaverHotissueList();
+		prepareMocksForGetHorissueList();
+		
+		// exec - expcet
+		List<Hotissue> actuals = naverService.getHotissueList();
+		HotissueTest.ASSERTS(actuals, hotissues);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	// getUpdateArticles
 	@Test
 	public void getUpdatedArticles() {
@@ -141,41 +180,6 @@ public class NaverServiceTest {
 		}	
 	}
 	
-	
-	// getHotissueList
-	@Test
-	public void getHotissueList() {
-		//prepare
-		prepareNaverHotissueList(naverHotissues);
-		prepareMocksForGetHorissueList();
-		
-		// exec
-		List<Hotissue> actuals = naverService.getHotissueList();
-		HotissueTest.ASSERTS(actuals, hotissues);
-	}
-
-
-	@Test(expected=EmptyNaverDataAccessException.class)
-	public void getHotissueList_naverHotissueIsZero() {
-		//prepare
-		prepareNaverHotissueList(new NaverHotissue[]{});
-		prepareMocksForGetHorissueList();
-		
-		// exec - expcet
-		List<Hotissue> actuals = naverService.getHotissueList();
-		HotissueTest.ASSERTS(actuals, hotissues);
-	}
-	
-	@Test(expected=EmptyNaverDataAccessException.class)
-	public void getHotissueList_naverHotissueIsNull() {
-		//prepare
-		prepareNaverHotissueList();
-		prepareMocksForGetHorissueList();
-		
-		// exec - expcet
-		List<Hotissue> actuals = naverService.getHotissueList();
-		HotissueTest.ASSERTS(actuals, hotissues);
-	}
 	
 	// getArticleListOfHotissue
 	@Test

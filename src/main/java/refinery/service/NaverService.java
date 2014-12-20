@@ -9,6 +9,8 @@ import refinery.model.NaverArticle;
 import refinery.model.NaverHotissue;
 import core.aao.EmptyNaverDataAccessException;
 import core.aao.NaverAao;
+import elixir.model.Article;
+import elixir.model.Hotissue;
 
 @Service
 public class NaverService {
