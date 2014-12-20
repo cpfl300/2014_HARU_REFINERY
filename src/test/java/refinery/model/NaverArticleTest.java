@@ -1,5 +1,6 @@
 package refinery.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -8,8 +9,9 @@ import org.junit.Test;
 
 import elixir.model.Article;
 import elixir.model.ArticleTest;
-import elixir.model.Journal;
+import elixir.model.OfficeTest;
 import elixir.model.Section;
+import elixir.test.ElixirTestUtils;
 
 public class NaverArticleTest {
 
@@ -20,9 +22,18 @@ public class NaverArticleTest {
 	
 	@Before
 	public void setup() {
-		prepareNaverSections();
-		prepareNaverArticles();
-		prepareArticles();
+		naverSections = NaverSectionTest.preparedList();
+		List<List<NaverSection>> naverSectionsList = new ArrayList<List<NaverSection>>();
+		naverSectionsList.add(naverSections);
+		naverSectionsList.add(naverSections);
+		naverSectionsList.add(naverSections);
+		
+		section = NaverSection.convert(naverSections);
+		
+		naverArticles = NaverArticleTest.preparedList(naverSectionsList);
+		articles = ArticleTest.preparedList(
+				OfficeTest.preparedList(),
+				Arrays.asList(new Section[]{section, section, section}));
 	}
 	
 
@@ -41,32 +52,60 @@ public class NaverArticleTest {
 		ArticleTest.ASSERTS(actuals, articles);
 	}
 	
+	
 
-	private void prepareNaverSections() {
-		naverSections = Arrays.asList(
-				new NaverSection[] {
-						new NaverSection("111", "sectionName1"),
-						new NaverSection("222", "sectionName2"),
-						new NaverSection("333", "sectionName3")
-				});
+	// creator
+	// "001", "officeName1", "111", "title1", "orgUrl1", naverSections, "20140124", "113202", "imageUrl1"
+	public static NaverArticle create(String officeId, String officeName, String articleId, String title,
+			String content, String orgUrl, List<NaverSection> naverSections,
+			String serviceDate, String serviceTime, String imageUrl) {
+		NaverArticle naverArticle = new NaverArticle();
 		
-		section = NaverSection.convert(naverSections);
+		naverArticle.setOfficeId(officeId);
+		naverArticle.setOfficeName(officeName);
+		naverArticle.setArticleId(articleId);
+		naverArticle.setTitle(title);
+		naverArticle.setContent(content);
+		naverArticle.setOrgUrl(orgUrl);
+		naverArticle.setSections(naverSections);
+		naverArticle.setServiceDate(serviceDate);
+		naverArticle.setServiceTime(serviceTime);
+		naverArticle.setImageUrl(imageUrl);
+		
+		return naverArticle;
 	}
 	
-	private void prepareArticles() {
-		articles = Arrays.asList(new Article[] {
-				new Article("111", new Journal("001", "officeName1"), "title1", "orgUrl1", section, "20140124", "113202", "imageUrl1"),
-				new Article("222", new Journal("002", "officeName2"), "title2", "orgUrl2", section, "20140124", "123202", "imageUrl2"),
-				new Article("333", new Journal("003", "officeName3"), "title3", "orgUrl3", section, "20140124", "133202", "imageUrl3")
-		});
+	// ("001", "officeName1", "111", "title1", "20140124", "113202")
+	public static NaverArticle CREATE(String officeId, String officeName, String articleId,
+			String title, String serviceDate, String serviceTime) {
+		NaverArticle naverArticle = new NaverArticle();
 		
+		naverArticle.setOfficeId(officeId);
+		naverArticle.setOfficeName(officeName);
+		naverArticle.setArticleId(articleId);
+		naverArticle.setTitle(title);
+		naverArticle.setServiceDate(serviceDate);
+		naverArticle.setServiceTime(serviceTime);
+		
+		return naverArticle;
+	}
+	
+	public static List<NaverArticle> preparedList(List<List<NaverSection>> naverSectionsList) {
+				
+		return Arrays.asList(new NaverArticle[] {
+				NaverArticleTest.create("101", "경향신문", "111", "title1", "content1", "orgUrl1", naverSectionsList.get(0), "20140101", "010101", "imageUrl1"),
+				NaverArticleTest.create("209", "한국경제", "222", "title2", "content2", "orgUrl2", naverSectionsList.get(1), "20140102", "010102", "imageUrl2"),
+				NaverArticleTest.create("711", "인벤", "333", "title3", "content3", "orgUrl3", naverSectionsList.get(2), "20140103", "010103", "imageUrl3")
+		});
 	}
 
-	private void prepareNaverArticles() {
-		naverArticles = Arrays.asList(new NaverArticle[] {
-				new NaverArticle("001", "officeName1", "111", "title1", "orgUrl1", naverSections, "20140124", "113202", "imageUrl1"),
-				new NaverArticle("002", "officeName2", "222", "title2", "orgUrl2", naverSections, "20140124", "123202", "imageUrl2"),
-				new NaverArticle("003", "officeName3", "333", "title3", "orgUrl3", naverSections, "20140124", "133202", "imageUrl3")
-		});
+	
+	public static List<NaverArticle> preparedList(List<List<NaverSection>> naverSectionsList, String[] fields){
+		List<NaverArticle> naverArticles = NaverArticleTest.preparedList(naverSectionsList);
+		
+		ElixirTestUtils.initComplementaryFields(naverArticles, fields);
+		
+		return naverArticles;
 	}
+
 }

@@ -1,20 +1,18 @@
 package refinery.model;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
-import refinery.model.convertible.Convertible;
-import elixir.model.Article;
-import elixir.model.Hotissue;
-
-public class NaverHotissue implements Convertible<Hotissue> {
+public class NaverHotissue {
 	
 	private String panelId;
 	private String componentId;
 	private String title;
 	private String url;
 	
+	// empty
+	public NaverHotissue() { }
+	
+	
+	// setter getter
 	public String getPanelId() {
 		return panelId;
 	}
@@ -39,41 +37,28 @@ public class NaverHotissue implements Convertible<Hotissue> {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	
-	public NaverHotissue() { }
-	
-	public NaverHotissue(String panelId, String componentId, String title, String url) {
-		this.panelId = panelId;
-		this.componentId = componentId;
-		this.title = title;
-		this.url = url;
-	}
-	
-	@Override
-	public String toString() {
-		return "NaverHotissue [panelId=" + panelId + ", componentId=" + componentId + ", title=" + title + ", url=" + url + "]";
-	}
-	
-	@Override
-	public Hotissue convert() {
-		Hotissue hotissue = new Hotissue();
-		
-		hotissue.setHotissueId(this.componentId);
-		hotissue.setTitle(this.title);
-		
-		return hotissue;
-	}
-	
-	public static List<Hotissue> convert(List<NaverHotissue> naverHotissues) {
-		List<Hotissue> hotissues = new ArrayList<Hotissue>();
-		Iterator<NaverHotissue> ir = naverHotissues.iterator();
-		while (ir.hasNext()) {
-			NaverHotissue naverArticle = ir.next();
-			hotissues.add(naverArticle.convert());
-		}
-		
-		return hotissues;
-	}
-	
+
+//	
+//	@Override
+//	public Hotissue convert() {
+//		Hotissue hotissue = new Hotissue();
+//		
+//		hotissue.setHotissueId(this.componentId);
+//		hotissue.setTitle(this.title);
+//		
+//		return hotissue;
+//	}
+//	
+//	public static List<Hotissue> convert(List<NaverHotissue> naverHotissues) {
+//		List<Hotissue> hotissues = new ArrayList<Hotissue>();
+//		Iterator<NaverHotissue> ir = naverHotissues.iterator();
+//		while (ir.hasNext()) {
+//			NaverHotissue naverArticle = ir.next();
+//			hotissues.add(naverArticle.convert());
+//		}
+//		
+//		return hotissues;
+//	}
+//	
 
 }

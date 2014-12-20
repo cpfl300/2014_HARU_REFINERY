@@ -18,7 +18,10 @@ public class RefineryConfig {
 	
 	@Resource
 	private Environment env;
-
+	
+//	@Resource(name="host")
+//	public String host = env.getRequiredProperty("naver.news.host");
+//
 	@Bean
 	public HttpTemplate httpTemplate() {
 		
@@ -27,5 +30,26 @@ public class RefineryConfig {
 		
 		return new HttpClientTemplate(host, context);
 	}
+	
+//	@Bean
+//	public RestTemplate restTemplate() {
+//		
+//		return new RestTemplate(Arrays.asList(new HttpMessageConverter[]{jsonConverter()}));
+//		
+//	}
+	
+//	@Bean
+//	public MappingJackson2HttpMessageConverter jsonConverter() {
+//		List<MediaType> supportedMediaTypes = new ArrayList<MediaType>();
+//		supportedMediaTypes.add(MediaType.APPLICATION_JSON);
+//		supportedMediaTypes.add(MediaType.TEXT_PLAIN);
+//		supportedMediaTypes.add(new MediaType("text", "json"));
+//		
+//		MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
+//		jsonConverter.setSupportedMediaTypes(supportedMediaTypes);
+//
+//		return jsonConverter;
+//	}
+	
 	
 }

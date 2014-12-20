@@ -1,14 +1,15 @@
 package core.aao;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import refinery.model.NaverArticle;
-import refinery.model.NaverArticleCountList;
-import refinery.model.NaverArticleList;
-import refinery.model.NaverHotissueList;
+import refinery.model.NaverArticleCount;
+import refinery.model.NaverHotissue;
+import refinery.model.NaverResult;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
@@ -18,10 +19,10 @@ import core.template.HttpTemplate;
 
 @Component
 public class NaverAao {
-	
+
 	@Autowired
 	private HttpTemplate httpTemplate;
-
+	
 	public NaverArticle getArticle(String officeId, String articleId) {
 		
 		return this.httpTemplate.request(
@@ -47,22 +48,22 @@ public class NaverAao {
 	}
 	
 
-	public NaverArticleList getArticleList(String datehour) {
+	public List<NaverArticle> getArticleList(String datehour) {
 
 		return this.httpTemplate.request(
 					"/articles.nhn",
 					"datehour=?",
 					new Object[] { datehour },
-					new GsonMapper<NaverArticleList> () {
+					new GsonMapper<List<NaverArticle>> () {
 
 						@Override
-						public NaverArticleList map(Gson gson, JsonReader gsonReader) throws IOException {
+						public List<NaverArticle> map(Gson gson, JsonReader gsonReader) throws IOException {
 							gsonReader.beginObject();
 							gsonReader.nextName();
-							NaverArticleList naverArticleList = gson.fromJson(gsonReader, NaverArticleList.class);
+							NaverResult naverResult = gson.fromJson(gsonReader, NaverResult.class);
 							gsonReader.endObject();
 							
-							return naverArticleList;
+							return naverResult.getArticles();
 						}
 						
 					}
@@ -71,22 +72,22 @@ public class NaverAao {
 	}
 	
 
-	public NaverArticleList getArticleListByHotissueId(String hotissueId) {
+	public List<NaverArticle> getArticleListByHotissueId(String hotissueId) {
 		
 		return this.httpTemplate.request(
 				"/hotissueArticles.nhn",
 				"componentId=?",
 				new Object[] { hotissueId },
-				new GsonMapper<NaverArticleList> () {
+				new GsonMapper<List<NaverArticle>> () {
 
 					@Override
-					public NaverArticleList map(Gson gson, JsonReader gsonReader) throws IOException {
+					public List<NaverArticle> map(Gson gson, JsonReader gsonReader) throws IOException {
 						gsonReader.beginObject();
 						gsonReader.nextName();
-						NaverArticleList naverArticleList = gson.fromJson(gsonReader, NaverArticleList.class);
+						NaverResult naverResult = gson.fromJson(gsonReader, NaverResult.class);
 						gsonReader.endObject();
 						
-						return naverArticleList;
+						return naverResult.getArticles();
 					}
 					
 				}
@@ -94,45 +95,57 @@ public class NaverAao {
 	}
 
 
-	public NaverHotissueList getHotissueList() {
+	public List<NaverHotissue> getHotissueList() {
 		
 		return this.httpTemplate.request(
 				"/hotissues.nhn",
-				new GsonMapper<NaverHotissueList> () {
+				new GsonMapper<List<NaverHotissue>> () {
 
 					@Override
-					public NaverHotissueList map(Gson gson, JsonReader gsonReader) throws IOException {
+					public List<NaverHotissue> map(Gson gson, JsonReader gsonReader) throws IOException {
 						gsonReader.beginObject();
 						gsonReader.nextName();
-						NaverHotissueList naverHotissueList = gson.fromJson(gsonReader, NaverHotissueList.class);
+						NaverResult naverResult = gson.fromJson(gsonReader, NaverResult.class);
 						gsonReader.endObject();
 						
-						return naverHotissueList;
+						return naverResult.getHotissues();
 					}
 					
 				}
 			);
 	}
 
-
-	public NaverArticleCountList getArticleCountListInRealtime(String sectionId) {
+	
+	public List<NaverArticleCount> getArticleCountListInRealtime(String sectionId) {
 		return this.httpTemplate.request(
 				"/rankingArticlesRealtime.nhn",
 				"sectionId=?&rankingType=hit",
 				new Object[] { sectionId },
-				new GsonMapper<NaverArticleCountList> () {
+				new GsonMapper<List<NaverArticleCount>> () {
 
 					@Override
-					public NaverArticleCountList map(Gson gson, JsonReader gsonReader) throws IOException {
+					public List<NaverArticleCount> map(Gson gson, JsonReader gsonReader) throws IOException {
 						gsonReader.beginObject();
 						gsonReader.nextName();
-						NaverArticleCountList naverArticleCountList = gson.fromJson(gsonReader, NaverArticleCountList.class);
+						NaverResult naverResult = gson.fromJson(gsonReader, NaverResult.class);
 						gsonReader.endObject();
 						
-						return naverArticleCountList;
+						return naverResult.getArticleCountList();
 					}
 					
 				}
+			);
+	}
+
+
+	public NaverResult getArticleCountList(String sectionId, String date, String hour) {
+		if (hour == null) hour = "";
+		
+		return this.httpTemplate.request(
+				"/rankingArticles.nhn",
+				"sectionId=?&rankingType=popular_day&datehour=?",
+				new Object[] { sectionId, date+hour },
+				NaverResult.class
 			);
 	}
 }

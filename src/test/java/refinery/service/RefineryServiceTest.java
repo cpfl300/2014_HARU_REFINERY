@@ -1,10 +1,9 @@
 package refinery.service;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -14,9 +13,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import refinery.model.NaverArticle;
-import refinery.model.NaverArticleList;
 import elixir.model.Article;
+import elixir.model.ArticleTest;
+import elixir.model.Office;
+import elixir.model.OfficeTest;
+import elixir.model.Section;
+import elixir.model.SectionTest;
 import elixir.service.ArticleService;
 import elixir.utility.ElixirUtils;
 
@@ -27,36 +29,42 @@ public class RefineryServiceTest {
 	private RefineryService refineryService;
 	
 	@Mock
-	private NaverService naverSerivce;
+	private NaverService naverServiceMock;
 	
 	@Mock
-	private ArticleService articleService;
+	private ArticleService articleServiceMock;
 	
 	private List<Article> articles;
 	
 	@Before
 	public void setup() {
-		prepareArticles();
+		
 	}
 
-//	@Test
-//	public void saveArticles(){
-//		// prepare
-//		naverArticleList = new NaverArticleList();
-//		naverArticleList.setArticles(naverArticles);
-//		
-//		Date now = ElixirUtils.getNow();
-//		String datehour = ElixirUtils.format("yyyyMMddHHmm", now);
-//		datehour = datehour.substring(0, 11);
-//		
-//		// mock
-//		when(naverAaoMock.getArticleListPer10Min(datehour)).thenReturn(naverArticleList);
-//		when(articleServiceMock.addArticles(NaverArticle.asArticles(naverArticles))).thenReturn(3);
-//		
-//		// exec
-//		int addCount = naverService.saveArticles();
-//		assertThat(addCount, is(3));
-//	}
+	@Test
+	public void saveArticles(){		
+		String datehour = ElixirUtils.format("yyyyMMddHHmm", ElixirUtils.getNow()).substring(0, 11);
+		articles = prepareArticlesForSaveArticles();
+		
+		// mock
+		when(naverServiceMock.getUpdatedArticles(datehour)).thenReturn(articles);
+		
+		// exec
+		refineryService.saveArticles();
+		
+		// vierfy
+		verify(articleServiceMock, times(1)).addAll(articles);
+	}
+
+	private List<Article> prepareArticlesForSaveArticles() {
+		List<Office> offices = OfficeTest.preparedList();
+		List<Section> sections = SectionTest.preparedList(new String[]{"sectionId", "sectionName"});
+		
+		articles = ArticleTest.preparedList(offices, sections,
+				new String[]{"officeId", "officeName", "articleId", "title",
+				"sections", "contributionDate", "contributionTime", "imageUrl"});
+	}
+
 //
 //	@Test
 //	public void saveArticles() {

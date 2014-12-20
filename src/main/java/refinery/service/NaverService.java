@@ -32,7 +32,7 @@ public class NaverService {
 	}
 
 	public void updateArticleContent(Article article) {
-		NaverArticle naverArticle = naverAao.getArticle(article.getJournal().getId(), article.getArticleId());
+		NaverArticle naverArticle = naverAao.getArticle(article.getOffice().getOfficeId(), article.getArticleId());
 		
 		String content = naverArticle.getContent();
 		if (content == null || content.length() == 0) {

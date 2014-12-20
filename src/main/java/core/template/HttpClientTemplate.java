@@ -1,5 +1,6 @@
 package core.template;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -10,8 +11,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-
-import core.template.GsonMapper;
 
 public class HttpClientTemplate extends HttpTemplateImpl {
 	
@@ -32,7 +31,60 @@ public class HttpClientTemplate extends HttpTemplateImpl {
 		
 		return gsonReader(requestHttpClient(url), gsonMapper);
 	}
+	
+	
+	@Override
+	public <T> T request(String uri, String query, Object[] objects, Class<T> clazz) {
+		String url = createURL(uri, query, objects);
+		
+		StringBuilder body = validateResponse(requestHttpClient(url));
+		
+		Gson gson = new Gson();
+		
+		return gson.fromJson(body.toString(), clazz);
 
+	}
+
+	private <T> StringBuilder validateResponse(InputStreamReader responseReader) {
+		
+		StringBuilder sb = new StringBuilder();
+		BufferedReader br = new BufferedReader(responseReader);
+		boolean flag = false;
+		
+		String line = null;
+		try {
+			while((line = br.readLine()) != null) {
+				// first line
+				if (!flag) {
+					line = line.replace("{\"result\" : {", "{");
+					flag = true;
+				}
+				
+				if (line.contains("title") || line.contains("serviceDate") || line.contains("serviceTime")) continue;
+				
+				sb.append(line);
+				
+			}
+			
+			// last line
+			int lastBraceIdx = sb.lastIndexOf("}");
+			sb.deleteCharAt(lastBraceIdx);
+			
+		} catch (IOException e) {
+			throw new HttpResponseFailureException("response io error", e);
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					throw new HttpResponseFailureException("response reader close error", e);
+				}
+			}
+
+		}
+		
+		return sb;
+	}
 
 	private <T> T gsonReader(InputStreamReader responseReader, GsonMapper<T> gsonMapper) {
 		T mappedObject = null;

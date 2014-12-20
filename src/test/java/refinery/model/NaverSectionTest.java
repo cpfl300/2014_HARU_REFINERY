@@ -13,28 +13,18 @@ import elixir.model.SectionTest;
 public class NaverSectionTest {
 	
 	private List<NaverSection> naverSections;
-	
-	private NaverSection naverSection1;
-	private NaverSection naverSection2;
-	private NaverSection naverSection3;
 	private Section section;
 	
 	@Before
 	public void setup() {
 		section = new Section("222", "sectionName2");
-		
-		naverSection1 = new NaverSection("111", "sectionName1");
-		naverSection2 = new NaverSection("222", "sectionName2");
-		naverSection3 = new NaverSection("333", "sectionName3");
+		naverSections = NaverSectionTest.preparedList();
 	}
-
 
 	@Test
 	public void covert_count1() {
 		// prepare
-		prepareNaverSections(new NaverSection[] {
-				naverSection2
-		});
+		prepareNaverSections(naverSections.get(1));
 		
 		Section actualSection = NaverSection.convert(naverSections);
 		SectionTest.ASSERT(actualSection, section);
@@ -43,9 +33,7 @@ public class NaverSectionTest {
 	@Test
 	public void covert_count2() {
 		// prepare
-		prepareNaverSections(new NaverSection[] {
-				naverSection1, naverSection2
-		});
+		prepareNaverSections(naverSections.get(0), naverSections.get(1));
 		
 		Section actualSection = NaverSection.convert(naverSections);
 		SectionTest.ASSERT(actualSection, section);
@@ -54,9 +42,7 @@ public class NaverSectionTest {
 	@Test
 	public void covert_count3() {
 		// prepare
-		prepareNaverSections(new NaverSection[] {
-				naverSection1, naverSection2, naverSection3
-		});
+		prepareNaverSections(naverSections.get(0), naverSections.get(1), naverSections.get(2));
 		
 		Section actualSection = NaverSection.convert(naverSections);
 		SectionTest.ASSERT(actualSection, section);
@@ -67,21 +53,35 @@ public class NaverSectionTest {
 	@Test(expected=NaverConvertFailureException.class)
 	public void covert_lackOfSize() {
 		// prepare
-		prepareNaverSections(new NaverSection[] {
-				new NaverSection("111", "sectionName1"),
-		});
+		prepareNaverSections(naverSections.get(0));
 		
 		Section actualSection = NaverSection.convert(naverSections);
 		SectionTest.ASSERT(actualSection, section);
 	}
 	
 	
-	
-	
-	
-	
-
-	private void prepareNaverSections(NaverSection[] naverSectionArr) {
+	// prepare
+	private void prepareNaverSections(NaverSection... naverSectionArr) {
 		naverSections = Arrays.asList(naverSectionArr); 
+	}
+
+	
+	// creator
+	public static NaverSection CREATE(String sectionId, String sectionName) {
+		NaverSection naverSection = new NaverSection();
+		
+		naverSection.setSectionId(sectionId);
+		naverSection.setSectionName(sectionName);
+		
+		return naverSection;
+	}
+
+	public static List<NaverSection> preparedList() {
+		return Arrays.asList(
+				new NaverSection[] {
+						NaverSectionTest.CREATE("111", "sectionName1"),
+						NaverSectionTest.CREATE("222", "sectionName2"),
+						NaverSectionTest.CREATE("333", "sectionName3")
+				});
 	}
 }
