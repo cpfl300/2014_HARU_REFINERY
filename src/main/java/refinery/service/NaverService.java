@@ -5,10 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import refinery.aao.EmptyNaverDataAccessException;
+import refinery.aao.NaverAao;
 import refinery.model.NaverArticle;
 import refinery.model.NaverHotissue;
-import core.aao.EmptyNaverDataAccessException;
-import core.aao.NaverAao;
+import refinery.model.NaverHotissues;
 import elixir.model.Article;
 import elixir.model.Hotissue;
 
@@ -17,6 +18,15 @@ public class NaverService {
 	
 	@Autowired
 	private NaverAao naverAao;
+	
+	
+	public List<Hotissue> getHotissueList() {
+		List<NaverHotissue> naverHotissues = naverAao.getHotissueList();
+		
+		return NaverHotissues.convert(naverHotissues);
+	}
+	
+	
 	
 	public List<Article> getUpdatedArticles(String datehour) {
 		NaverArticleList naverArticleList = naverAao.getArticleList(datehour);
@@ -40,16 +50,7 @@ public class NaverService {
 		article.setContent(content);
 	}
 
-	public List<Hotissue> getHotissueList() {
-		NaverHotissueList naverHotissueList = naverAao.getHotissueList();
-		List<NaverHotissue> naverHotissue = naverHotissueList.getHotissues();
-		
-		if (naverHotissue == null || naverHotissue.size() == 0) {
-			throw new EmptyNaverDataAccessException("naver hotissues have not updated yet");
-		}
-		
-		return NaverHotissue.convert(naverHotissue);
-	}
+
 
 	public List<Article> getArticleListByHotissueId(String hotissueId) {
 		NaverArticleList naverArticleList = naverAao.getArticleListByHotissueId(hotissueId);

@@ -6,7 +6,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import refinery.model.convertible.NaverConvertFailureException;
 import elixir.model.Section;
 import elixir.model.SectionTest;
 import elixir.test.ElixirTestUtils;
@@ -23,26 +22,16 @@ public class NaverSectionTest {
 	}
 
 	@Test
-	public void covert_alone() {
+	public void covert() {
 		Section actual = naverSections.get(0).convert();
 		SectionTest.ASSERT(actual, sections.get(0));
 	}
-
 	
-	
-	@Test(expected=NaverConvertFailureException.class)
-	public void covert_lackOfSize() {
-		// prepare
-		prepareNaverSections(naverSections.get(0));
+	@Test
+	public void convertAtList() {
+		List<Section> actuals = NaverSections.convert(naverSections);
+		SectionTest.ASSERTS(actuals, sections);
 		
-		Section actualSection = NaverSection.convert(naverSections);
-		SectionTest.ASSERT(actualSection, section);
-	}
-	
-	
-	// prepare
-	private void prepareNaverSections(NaverSection... naverSectionArr) {
-		naverSections = Arrays.asList(naverSectionArr); 
 	}
 
 	

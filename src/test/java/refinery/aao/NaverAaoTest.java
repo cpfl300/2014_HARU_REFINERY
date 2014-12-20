@@ -1,4 +1,4 @@
-package core.aao;
+package refinery.aao;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -15,6 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import refinery.aao.NaverAao;
 import refinery.config.RefineryConfig;
 import refinery.model.NaverArticle;
 import refinery.model.NaverArticleCount;
