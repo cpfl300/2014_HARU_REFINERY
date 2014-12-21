@@ -21,10 +21,15 @@ public class RefineryService {
 	@Autowired
 	private HotissueService hotissueService;
 	
-	@Scheduled(cron="0/10 * * * * ?")
+	@Scheduled(cron="* 0/10 * * * ?")
 	public void saveHotissueList() {
 		List<Hotissue> hotissues = naverService.getHotissueList();
 		hotissueService.addAll(hotissues);
+	}
+	
+	@Scheduled(cron="0/10 * * * * ?")
+	public void saveArticleList() {
+		log.debug("save article list exec");
 	}
 }
 	
