@@ -8,10 +8,9 @@ import elixir.model.Section;
 public class NaverSections {
 	
 	public static List<Section> convert(List<NaverSection> naverSections) {
-		
 		List<List<NaverSection>> naverSectionsList = NaverSections.separate(naverSections);
 		List<Section> convertedList = new ArrayList<Section>();
-		
+
 		// 마지막 section만 list에 담아 전달
 		for (List<NaverSection> ns : naverSectionsList) {
 			convertedList.add(ns.get(ns.size()-1).convert());
@@ -21,9 +20,10 @@ public class NaverSections {
 	}
 
 	static List<List<NaverSection>> separate(List<NaverSection> naverSections) {
-
-		if (naverSections.size() < 2) return null;
 		
+		if (naverSections == null || naverSections.size() < 1) return null;
+		
+		// 원소가 1개일때 처리
 		NaverSection previousSection = naverSections.get(0);
 		NaverSection currentSection = null;
 		
@@ -32,7 +32,7 @@ public class NaverSections {
 		currentNss.add(previousSection);
 		nssList.add(currentNss);
 		
-		// NaverSection 개수만큼 순회
+		// NaverSection 원소가 1 ~ n개 만큼 순회
 		for (int i=1; i<naverSections.size(); i++) {
 			currentSection = naverSections.get(i);
 			

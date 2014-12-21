@@ -62,7 +62,14 @@ public class NaverSectionsTest {
 		NaverSectionsTest.ASSERTS(actuals, naverSectionsList);
 	}
 	
-	
+	@Test
+	public void spearate_case_1개_1단() {
+		naverSections = prepareNaverSections(
+				NaverSectionTest.create("101", "경제"));
+		
+		List<List<NaverSection>> naverSectionsList = NaverSections.separate(naverSections);
+		assertThat(naverSectionsList.size(), is(1));
+	}
 	
 	@Test
 	public void spearate_case_1개_2단() {

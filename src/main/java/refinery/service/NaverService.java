@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import refinery.aao.EmptyNaverDataAccessException;
 import refinery.aao.NaverAao;
 import refinery.model.NaverArticle;
 import refinery.model.NaverArticles;

@@ -1,10 +1,13 @@
 package refinery.service;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -33,11 +36,21 @@ public class RefineryService {
 		hotissueService.addAll(hotissues);
 	}
 	
-	@Scheduled(cron="* 0/10 * * * ?")
+//	@Scheduled(cron="* 0/10 * * * ?")
+	@Scheduled(cron="0/10 * * * * ?")
 	public void saveArticleList() {
 		String datehour = ElixirUtils.format("yyyyMMddHHmm", ElixirUtils.getNow()).substring(0, 11);
+		
 		List<Article> articles = naverService.getArticleList(datehour);
-		articleService.addAll(articles);
+		//articleService.addAll(articles);
+		
+		updateArticleContent();
+	}
+	
+	@Async
+	public Future<Integer> updateArticleContent() {
+		
+		return new AsyncResult<Integer>(-2);
 	}
 }
 	
