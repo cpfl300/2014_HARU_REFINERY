@@ -10,17 +10,17 @@ public class NaverSections {
 	public static List<Section> convert(List<NaverSection> naverSections) {
 		
 		List<List<NaverSection>> naverSectionsList = NaverSections.separate(naverSections);
-		List<Section> covertedList = new ArrayList<Section>();
+		List<Section> convertedList = new ArrayList<Section>();
 		
 		// 마지막 section만 list에 담아 전달
 		for (List<NaverSection> ns : naverSectionsList) {
-			covertedList.add(ns.get(ns.size()-1).convert());
+			convertedList.add(ns.get(ns.size()-1).convert());
 		}
 		
-		return covertedList;
+		return convertedList;
 	}
 
-	public static List<List<NaverSection>> separate(List<NaverSection> naverSections) {
+	static List<List<NaverSection>> separate(List<NaverSection> naverSections) {
 
 		if (naverSections.size() < 2) return null;
 		

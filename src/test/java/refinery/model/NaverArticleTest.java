@@ -16,22 +16,28 @@ import elixir.test.ElixirTestUtils;
 public class NaverArticleTest {
 
 	private List<NaverArticle> naverArticles;
-	private List<NaverSection> naverSections;
 	private List<Article> articles;
-	private Section section;
 	
 	@Before
 	public void setup() {
 		List<List<NaverSection>> naverSectionsList = new ArrayList<List<NaverSection>>();
-		naverSectionsList.add(NaverSectionTest.preparedList1());
-		naverSectionsList.add(NaverSectionTest.preparedList2());
-		naverSectionsList.add(NaverSectionTest.preparedList3());
+		List<NaverSection> ns1 = NaverSectionsTest.preparedList1();
+		List<NaverSection> ns2 = NaverSectionsTest.preparedList2();
+		List<NaverSection> ns3 = NaverSectionsTest.preparedList3();
+		naverSectionsList.add(ns1);
+		naverSectionsList.add(ns2);
+		naverSectionsList.add(ns3);
 		
-		//section = NaverSection.convert(naverSections);
+		List<Section> s1 = NaverSections.convert(ns1);
+		List<Section> s2 = NaverSections.convert(ns2);
+		List<Section> s3 = NaverSections.convert(ns3);
+		List<List<Section>> ss = new ArrayList<List<Section>>();
+		ss.add(s1);
+		ss.add(s2);
+		ss.add(s3);
+		
 		naverArticles = NaverArticleTest.preparedList(naverSectionsList);
-		articles = ArticleTest.preparedList(
-				OfficeTest.preparedList(),
-				Arrays.asList(new Section[]{section, section, section}));
+		articles = ArticleTest.preparedList(OfficeTest.preparedList(), ss);
 	}
 	
 
@@ -40,17 +46,10 @@ public class NaverArticleTest {
 		for (int i=0; i<articles.size(); i++) {
 			Article actual = naverArticles.get(i).convert();
 			
-			ArticleTest.ASSERT(actual, articles.get(i));
+			ArticleTest.ASSERT(actual, articles.get(i),
+					new String[]{"artilceId", "title", "content", "orgUrl", "sections", "serviceDate", "serviceTime", "imageUrl"});
 		}
 	}
-	
-	@Test
-	public void convertAsList() {
-		List<Article> actuals = NaverArticle.convert(naverArticles);
-		ArticleTest.ASSERTS(actuals, articles);
-	}
-	
-	
 
 	// creator
 	// "001", "officeName1", "111", "title1", "orgUrl1", naverSections, "20140124", "113202", "imageUrl1"
@@ -69,21 +68,6 @@ public class NaverArticleTest {
 		naverArticle.setServiceDate(serviceDate);
 		naverArticle.setServiceTime(serviceTime);
 		naverArticle.setImageUrl(imageUrl);
-		
-		return naverArticle;
-	}
-	
-	// ("001", "officeName1", "111", "title1", "20140124", "113202")
-	public static NaverArticle create(String officeId, String officeName, String articleId,
-			String title, String serviceDate, String serviceTime) {
-		NaverArticle naverArticle = new NaverArticle();
-		
-		naverArticle.setOfficeId(officeId);
-		naverArticle.setOfficeName(officeName);
-		naverArticle.setArticleId(articleId);
-		naverArticle.setTitle(title);
-		naverArticle.setServiceDate(serviceDate);
-		naverArticle.setServiceTime(serviceTime);
 		
 		return naverArticle;
 	}

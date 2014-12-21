@@ -5,7 +5,6 @@ import java.util.List;
 import refinery.model.able.Convertible;
 import elixir.model.Article;
 import elixir.model.Office;
-import elixir.model.Section;
 
 public class NaverArticle implements Convertible<Article> {
 	private String officeId;
@@ -160,7 +159,9 @@ public class NaverArticle implements Convertible<Article> {
 		
 		article.setArticleId(articleId);
 		article.setOffice(new Office(officeId, officeName));
-		//article.setSection(sections);
+		
+		// convert
+		article.setSections(NaverSections.convert(sections));
 		article.setContributionDate(serviceDate);
 		article.setContributionTime(serviceTime);
 		article.setTitle(title);
