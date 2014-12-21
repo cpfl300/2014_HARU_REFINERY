@@ -1,7 +1,5 @@
 package refinery.model;
 
-import refinery.model.able.Convertible;
-import refinery.model.able.Separable;
 import elixir.model.Section;
 
 

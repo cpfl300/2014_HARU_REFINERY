@@ -45,7 +45,7 @@ public class RefineryService {
 		
 		List<Article> articles = naverService.getArticleList(datehour);
 		List<Signature> signatures = Articles.sign(articles);
-		//articleService.addAll(articles);
+		articleService.addAll(articles);
 		
 		updateContentOfArticleList(signatures);
 	}

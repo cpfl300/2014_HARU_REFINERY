@@ -1,6 +1,5 @@
 package refinery.model;
 
-import refinery.model.able.Convertible;
 import elixir.model.Hotissue;
 
 

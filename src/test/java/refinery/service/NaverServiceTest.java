@@ -29,13 +29,13 @@ import refinery.model.NaverSectionTest;
 import refinery.model.NaverSections;
 import refinery.model.NaverSectionsTest;
 import elixir.model.Article;
-import elixir.model.ArticleTest;
+import elixir.model.ArticlesTest;
 import elixir.model.Hotissue;
-import elixir.model.HotissueTest;
-import elixir.model.OfficeTest;
+import elixir.model.HotissuesTest;
+import elixir.model.OfficesTest;
 import elixir.model.Section;
 import elixir.model.Signature;
-import elixir.model.SignatureTest;
+import elixir.model.SignaturesTest;
 import elixir.utility.ElixirUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -76,7 +76,7 @@ public class NaverServiceTest {
 		naverHotissues = NaverHotissueTest.preparedList();
 		hotissues = NaverHotissues.convert(naverHotissues);
 		
-		signatures = SignatureTest.preparedList();
+		signatures = SignaturesTest.preparedList();
 		prepareArticles();
 	}
 
@@ -90,7 +90,7 @@ public class NaverServiceTest {
 		
 		// exec
 		List<Hotissue> actuals = naverService.getHotissueList();
-		HotissueTest.ASSERTS(actuals, hotissues);
+		HotissuesTest.ASSERTS(actuals, hotissues);
 	}
 	
 	
@@ -324,7 +324,7 @@ public class NaverServiceTest {
 		ss.add(s3);
 		
 		naverArticles = NaverArticleTest.preparedList(naverSectionsList);
-		articles = ArticleTest.preparedList(OfficeTest.preparedList(), ss);
+		articles = ArticlesTest.preparedList(OfficesTest.preparedList(), ss);
 	}
 
 }

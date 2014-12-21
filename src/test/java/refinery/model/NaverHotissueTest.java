@@ -9,8 +9,9 @@ import org.junit.Test;
 
 import elixir.model.Hotissue;
 import elixir.model.HotissueTest;
+import elixir.model.HotissuesTest;
 import elixir.model.Section;
-import elixir.model.SectionTest;
+import elixir.model.SectionsTest;
 import elixir.utility.ElixirUtilsTest;
 
 public class NaverHotissueTest {
@@ -21,10 +22,10 @@ public class NaverHotissueTest {
 	@Before
 	public void setup() {
 		List<Date> dates = ElixirUtilsTest.preparedList();
-		List<Section> sections = SectionTest.preparedList();
+		List<Section> sections = SectionsTest.preparedList();
 		
 		naverHotissues = NaverHotissueTest.preparedList();
-		hotissues = HotissueTest.preparedList(dates, sections, new String[]{"hotissueId", "title"});
+		hotissues = HotissuesTest.preparedList(dates, sections, new String[]{"hotissueId", "title"});
 	}
 
 	@Test
@@ -38,7 +39,7 @@ public class NaverHotissueTest {
 	@Test
 	public void convertAtList() {
 		List<Hotissue> actuals = NaverHotissues.convert(naverHotissues);
-		HotissueTest.ASSERTS(actuals, hotissues);
+		HotissuesTest.ASSERTS(actuals, hotissues);
 	}
 	
 	

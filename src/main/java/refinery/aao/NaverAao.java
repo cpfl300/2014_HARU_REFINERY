@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import refinery.core.template.GsonMapper;
+import refinery.core.template.HttpTemplate;
 import refinery.model.NaverArticle;
 import refinery.model.NaverArticleCount;
 import refinery.model.NaverHotissue;
@@ -14,8 +16,6 @@ import refinery.model.NaverResult;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
-import core.template.GsonMapper;
-import core.template.HttpTemplate;
 import elixir.model.Signature;
 
 @Component

@@ -1,4 +1,4 @@
-package core.template;
+package refinery.core.template;
 
 public class HttpRequestFailureException extends RuntimeException {
 	

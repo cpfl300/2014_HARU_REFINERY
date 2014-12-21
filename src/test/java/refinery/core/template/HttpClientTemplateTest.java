@@ -1,4 +1,4 @@
-package core.template;
+package refinery.core.template;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -11,10 +11,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import core.template.HttpClientTemplate;
-import core.template.HttpRequestFailureException;
-import core.template.HttpResponseFailureException;
 import refinery.config.RefineryConfig;
+import refinery.core.template.GsonMapper;
+import refinery.core.template.HttpClientTemplate;
+import refinery.core.template.HttpRequestFailureException;
+import refinery.core.template.HttpResponseFailureException;
 import refinery.model.NaverArticle;
 
 

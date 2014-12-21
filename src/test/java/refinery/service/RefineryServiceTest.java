@@ -25,12 +25,12 @@ import refinery.model.NaverSectionTest;
 import refinery.model.NaverSections;
 import refinery.model.NaverSectionsTest;
 import elixir.model.Article;
-import elixir.model.ArticleTest;
+import elixir.model.ArticlesTest;
 import elixir.model.Hotissue;
-import elixir.model.OfficeTest;
+import elixir.model.OfficesTest;
 import elixir.model.Section;
 import elixir.model.Signature;
-import elixir.model.SignatureTest;
+import elixir.model.SignaturesTest;
 import elixir.service.ArticleService;
 import elixir.service.HotissueService;
 import elixir.utility.ElixirUtils;
@@ -71,7 +71,7 @@ public class RefineryServiceTest {
 		naverHotissues = NaverHotissueTest.preparedList();
 		hotissues = NaverHotissues.convert(naverHotissues);
 		
-		signatures = SignatureTest.preparedList();
+		signatures = SignaturesTest.preparedList();
 		
 		prepareArticles();
 	}
@@ -99,7 +99,7 @@ public class RefineryServiceTest {
 		refineryService.saveArticleList();
 		
 		// verify
-		verify(articleServiceMock, times(1)).addAll(articles);
+		verify(articleServiceMock, times(1)).addAll(any());
 		
 	}
 	
@@ -151,7 +151,7 @@ public class RefineryServiceTest {
 		ss.add(s3);
 		
 		naverArticles = NaverArticleTest.preparedList(naverSectionsList);
-		articles = ArticleTest.preparedList(OfficeTest.preparedList(), ss);
+		articles = ArticlesTest.preparedList(OfficesTest.preparedList(), ss);
 	}
 	
 

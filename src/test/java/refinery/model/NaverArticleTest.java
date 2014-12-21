@@ -9,7 +9,8 @@ import org.junit.Test;
 
 import elixir.model.Article;
 import elixir.model.ArticleTest;
-import elixir.model.OfficeTest;
+import elixir.model.ArticlesTest;
+import elixir.model.OfficesTest;
 import elixir.model.Section;
 import elixir.test.ElixirTestUtils;
 
@@ -37,7 +38,7 @@ public class NaverArticleTest {
 		ss.add(s3);
 		
 		naverArticles = NaverArticleTest.preparedList(naverSectionsList);
-		articles = ArticleTest.preparedList(OfficeTest.preparedList(), ss);
+		articles = ArticlesTest.preparedList(OfficesTest.preparedList(), ss);
 	}
 	
 

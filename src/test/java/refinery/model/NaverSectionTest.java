@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import elixir.model.Section;
 import elixir.model.SectionTest;
+import elixir.model.SectionsTest;
 import elixir.test.ElixirTestUtils;
 
 public class NaverSectionTest {
@@ -20,7 +21,7 @@ public class NaverSectionTest {
 	
 	@Before
 	public void setup() {
-		sections = SectionTest.preparedList(new String[]{"sectionId", "sectionName"});
+		sections = SectionsTest.preparedList(new String[]{"sectionId", "sectionName"});
 		naverSections = NaverSectionTest.preparedList();
 	}
 	

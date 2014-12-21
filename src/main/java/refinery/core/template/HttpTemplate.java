@@ -1,6 +1,6 @@
-package core.template;
+package refinery.core.template;
 
-import core.template.GsonMapper;
+import refinery.core.template.GsonMapper;
 
 
 

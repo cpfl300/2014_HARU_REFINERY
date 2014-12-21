@@ -1,4 +1,4 @@
-package core.template;
+package refinery.core.template;
 
 import java.io.BufferedReader;
 import java.io.IOException;

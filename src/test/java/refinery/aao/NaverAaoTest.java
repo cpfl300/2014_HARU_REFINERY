@@ -40,7 +40,7 @@ public class NaverAaoTest {
 	}
 	
 	@Test
-	public void zz() {
+	public void getHotissueList() {
 		List<NaverHotissue> actuals = naverAao.getHotissueList();
 		
 		for (NaverHotissue actual : actuals) {
@@ -97,7 +97,7 @@ public class NaverAaoTest {
 	
 	@Test
 	public void getArticleCountListAtHour() {
-		String date = "20141219";
+		String date = "20141220";
 		String hour = "17";
 		String sectionId = "101";
 		

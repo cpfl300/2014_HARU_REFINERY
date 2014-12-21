@@ -2,7 +2,6 @@ package refinery.model;
 
 import java.util.List;
 
-import refinery.model.able.Convertible;
 import elixir.model.Article;
 import elixir.model.Office;
 
