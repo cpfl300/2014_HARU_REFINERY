@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import refinery.aao.EmptyNaverDataAccessException;
 import refinery.aao.NaverAao;
 import refinery.model.NaverArticle;
+import refinery.model.NaverArticles;
 import refinery.model.NaverHotissue;
 import refinery.model.NaverHotissues;
 import elixir.model.Article;
@@ -24,6 +25,15 @@ public class NaverService {
 		List<NaverHotissue> naverHotissues = naverAao.getHotissueList();
 		
 		return NaverHotissues.convert(naverHotissues);
+	}
+
+
+	public List<Article> getArticleList(String datehour) {
+		
+		List<NaverArticle> naverArticles = naverAao.getArticleList(datehour);
+		List<Article> articles = NaverArticles.convert(naverArticles);
+		
+		return articles;
 	}
 	
 	

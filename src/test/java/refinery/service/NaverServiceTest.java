@@ -1,9 +1,9 @@
 package refinery.service;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,10 +28,12 @@ import refinery.model.NaverHotissues;
 import refinery.model.NaverSection;
 import refinery.model.NaverSectionTest;
 import refinery.model.NaverSections;
+import refinery.model.NaverSectionsTest;
 import elixir.model.Article;
 import elixir.model.ArticleTest;
 import elixir.model.Hotissue;
 import elixir.model.HotissueTest;
+import elixir.model.OfficeTest;
 import elixir.model.Section;
 import elixir.utility.ElixirUtils;
 
@@ -71,17 +73,34 @@ public class NaverServiceTest {
 		
 		naverHotissues = NaverHotissueTest.preparedList();
 		hotissues = NaverHotissues.convert(naverHotissues);
+		
+		prepareArticles();
 	}
+
+	
 
 	// getHotissueList
 	@Test
 	public void getHotissueList() {
-		//prepare
+		// mock
 		when(naverAaoMock.getHotissueList()).thenReturn(naverHotissues);
 		
 		// exec
 		List<Hotissue> actuals = naverService.getHotissueList();
 		HotissueTest.ASSERTS(actuals, hotissues);
+	}
+	
+	
+	// getArticleList
+	@Test
+	public void getArticleList() {
+		// mock
+		when(naverAaoMock.getArticleList(datehour)).thenReturn(naverArticles);
+		
+		// exec
+		List<Article> actuals = naverService.getArticleList(datehour);
+		
+		verify(naverAaoMock, times(1)).getArticleList(datehour);
 	}
 
 
@@ -276,6 +295,27 @@ public class NaverServiceTest {
 	private void createArticleListOfHotissue() {
 		naverArticles = NaverArticleTest.preparedList(
 				naverSectionsList, new String[]{"officeId", "officeName", "articleId", "title", "serviceDate", "serviceTime"});
+	}
+	
+	private void prepareArticles() {
+		List<List<NaverSection>> naverSectionsList = new ArrayList<List<NaverSection>>();
+		List<NaverSection> ns1 = NaverSectionsTest.preparedList1();
+		List<NaverSection> ns2 = NaverSectionsTest.preparedList2();
+		List<NaverSection> ns3 = NaverSectionsTest.preparedList3();
+		naverSectionsList.add(ns1);
+		naverSectionsList.add(ns2);
+		naverSectionsList.add(ns3);
+		
+		List<Section> s1 = NaverSections.convert(ns1);
+		List<Section> s2 = NaverSections.convert(ns2);
+		List<Section> s3 = NaverSections.convert(ns3);
+		List<List<Section>> ss = new ArrayList<List<Section>>();
+		ss.add(s1);
+		ss.add(s2);
+		ss.add(s3);
+		
+		naverArticles = NaverArticleTest.preparedList(naverSectionsList);
+		articles = ArticleTest.preparedList(OfficeTest.preparedList(), ss);
 	}
 
 }
