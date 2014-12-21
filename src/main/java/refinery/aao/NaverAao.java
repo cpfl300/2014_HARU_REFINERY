@@ -16,6 +16,7 @@ import com.google.gson.stream.JsonReader;
 
 import core.template.GsonMapper;
 import core.template.HttpTemplate;
+import elixir.model.Signature;
 
 @Component
 public class NaverAao {
@@ -23,12 +24,12 @@ public class NaverAao {
 	@Autowired
 	private HttpTemplate httpTemplate;
 	
-	public NaverArticle getArticle(String officeId, String articleId) {
+	public NaverArticle getArticle(Signature signature) {
 		
 		return this.httpTemplate.request(
 				"/read.nhn",
 				"officeId=?&articleId=?",
-				new Object[] { officeId, articleId },
+				new Object[] { signature.getOfficeId(), signature.getArticleId() },
 				new GsonMapper<NaverArticle> () {
 
 					@Override

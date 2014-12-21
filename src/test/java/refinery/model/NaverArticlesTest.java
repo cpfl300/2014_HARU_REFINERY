@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import elixir.model.Article;
 import elixir.model.ArticleTest;
+import elixir.model.ArticlesTest;
 import elixir.model.OfficeTest;
 import elixir.model.Section;
 
@@ -42,7 +43,7 @@ public class NaverArticlesTest {
 	public void convert() {
 		List<Article> actuals = NaverArticles.convert(naverArticles); 
 		
-		ArticleTest.ASSERTS(actuals, articles,
+		ArticlesTest.ASSERTS(actuals, articles,
 				new String[]{"artilceId", "title", "content", "orgUrl", "sections", "serviceDate", "serviceTime", "imageUrl"});
 	}
 

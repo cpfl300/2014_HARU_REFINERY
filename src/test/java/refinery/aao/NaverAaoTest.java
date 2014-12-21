@@ -15,6 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import elixir.model.Signature;
 import refinery.aao.NaverAao;
 import refinery.config.RefineryConfig;
 import refinery.model.NaverArticle;
@@ -30,17 +31,16 @@ public class NaverAaoTest {
 	
 	@Test
 	public void getArticle() {
-		String officeId = "073";
-		String articleId = "0002377584";
+		Signature signature = new Signature("073", "0002377584");
 		
-		NaverArticle actual = naverAao.getArticle(officeId, articleId);
+		NaverArticle actual = naverAao.getArticle(signature);
 		
-		assertThat(actual.getOfficeId(), is(officeId));
-		assertThat(actual.getArticleId(), is(articleId));
+		assertThat(actual.getOfficeId(), is(signature.getOfficeId()));
+		assertThat(actual.getArticleId(), is(signature.getArticleId()));
 	}
 	
 	@Test
-	public void getHotissueList() {
+	public void zz() {
 		List<NaverHotissue> actuals = naverAao.getHotissueList();
 		
 		for (NaverHotissue actual : actuals) {

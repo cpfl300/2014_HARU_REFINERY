@@ -12,7 +12,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import elixir.model.Article;
+import elixir.model.Articles;
 import elixir.model.Hotissue;
+import elixir.model.Signature;
 import elixir.service.ArticleService;
 import elixir.service.HotissueService;
 import elixir.utility.ElixirUtils;
@@ -42,16 +44,32 @@ public class RefineryService {
 		String datehour = ElixirUtils.format("yyyyMMddHHmm", ElixirUtils.getNow()).substring(0, 11);
 		
 		List<Article> articles = naverService.getArticleList(datehour);
+		List<Signature> signatures = Articles.sign(articles);
 		//articleService.addAll(articles);
 		
-		updateArticleContent();
+		updateContentOfArticleList(signatures);
 	}
 	
 	@Async
-	public Future<Integer> updateArticleContent() {
+	public Future<Integer> updateContentOfArticleList(List<Signature> signatures) {
+		
+		for (Signature signature : signatures) {
+			updateContentOfArticle(signature);
+		}
 		
 		return new AsyncResult<Integer>(-2);
 	}
+
+	@Async
+	public Future<Integer> updateContentOfArticle(Signature signature) {
+		
+		
+		
+		return new AsyncResult<Integer>(-2);
+	}
+
+	
+	
 }
 	
 	
