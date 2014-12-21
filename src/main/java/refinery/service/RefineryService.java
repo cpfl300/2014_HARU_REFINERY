@@ -63,7 +63,8 @@ public class RefineryService {
 	@Async
 	public Future<Integer> updateContentOfArticle(Signature signature) {
 		
-		
+		Article article = naverService.getArticle(signature);
+		articleService.updateContent(article);
 		
 		return new AsyncResult<Integer>(-2);
 	}

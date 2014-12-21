@@ -2,9 +2,7 @@ package refinery.service;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,8 +128,7 @@ public class RefineryServiceTest {
 			refineryService.updateContentOfArticle(signature);
 			
 		}
-		
-		verify(articleServiceMock, times(3)).updateArticleContent();
+		verify(articleServiceMock, times(3)).updateContent(any());
 		
 	}
 	
