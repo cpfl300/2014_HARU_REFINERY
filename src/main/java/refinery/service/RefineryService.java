@@ -8,8 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import elixir.model.Article;
 import elixir.model.Hotissue;
+import elixir.service.ArticleService;
 import elixir.service.HotissueService;
+import elixir.utility.ElixirUtils;
 
 @Service
 public class RefineryService {
@@ -21,15 +24,20 @@ public class RefineryService {
 	@Autowired
 	private HotissueService hotissueService;
 	
+	@Autowired
+	private ArticleService articleService;
+	
 	@Scheduled(cron="* 0/10 * * * ?")
 	public void saveHotissueList() {
 		List<Hotissue> hotissues = naverService.getHotissueList();
 		hotissueService.addAll(hotissues);
 	}
 	
-	@Scheduled(cron="0/10 * * * * ?")
+	@Scheduled(cron="* 0/10 * * * ?")
 	public void saveArticleList() {
-		log.debug("save article list exec");
+		String datehour = ElixirUtils.format("yyyyMMddHHmm", ElixirUtils.getNow()).substring(0, 11);
+		List<Article> articles = naverService.getArticleList(datehour);
+		articleService.addAll(articles);
 	}
 }
 	
