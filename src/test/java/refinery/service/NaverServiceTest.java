@@ -1,12 +1,12 @@
 package refinery.service;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -18,7 +18,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import refinery.aao.EmptyNaverDataAccessException;
 import refinery.aao.NaverAao;
 import refinery.model.NaverArticle;
 import refinery.model.NaverArticleTest;
@@ -35,6 +34,8 @@ import elixir.model.Hotissue;
 import elixir.model.HotissueTest;
 import elixir.model.OfficeTest;
 import elixir.model.Section;
+import elixir.model.Signature;
+import elixir.model.SignatureTest;
 import elixir.utility.ElixirUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -59,6 +60,7 @@ public class NaverServiceTest {
 	private List<Hotissue> hotissues;
 	private List<List<NaverSection>> naverSectionsList;
 	private List<Section> sections;
+	private List<Signature> signatures;
 	
 	@Before
 	public void setup() {
@@ -74,6 +76,7 @@ public class NaverServiceTest {
 		naverHotissues = NaverHotissueTest.preparedList();
 		hotissues = NaverHotissues.convert(naverHotissues);
 		
+		signatures = SignatureTest.preparedList();
 		prepareArticles();
 	}
 
@@ -103,14 +106,20 @@ public class NaverServiceTest {
 		verify(naverAaoMock, times(1)).getArticleList(datehour);
 	}
 
+	
+	@Test
+	public void getArticle() {
+		for (int i=0; i<signatures.size(); i++) {
+			Signature signature = signatures.get(i);
+			NaverArticle naverArticle = naverArticles.get(i);
+			when(naverAaoMock.getArticle(signature)).thenReturn(naverArticle);
+			
+			Article actual = naverService.getArticle(signature);
+			assertThat(actual.getContent(), notNullValue());
+			assertThat(actual.getContent(), not(is("")));
+		}
+	}
 
-	
-	
-	
-	
-	
-	
-	
 	
 	// getUpdateArticles
 //	@Test

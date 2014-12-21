@@ -31,6 +31,8 @@ import elixir.model.ArticleTest;
 import elixir.model.Hotissue;
 import elixir.model.OfficeTest;
 import elixir.model.Section;
+import elixir.model.Signature;
+import elixir.model.SignatureTest;
 import elixir.service.ArticleService;
 import elixir.service.HotissueService;
 import elixir.utility.ElixirUtils;
@@ -59,6 +61,7 @@ public class RefineryServiceTest {
 	private List<Article> articles;
 	private List<Hotissue> hotissues;
 	private List<Section> sections;
+	private List<Signature> signatures;
 	
 	@Before
 	public void setup() {
@@ -69,6 +72,8 @@ public class RefineryServiceTest {
 		
 		naverHotissues = NaverHotissueTest.preparedList();
 		hotissues = NaverHotissues.convert(naverHotissues);
+		
+		signatures = SignatureTest.preparedList();
 		
 		prepareArticles();
 	}
@@ -102,9 +107,34 @@ public class RefineryServiceTest {
 	
 	
 	@Test
-	public void async_updateArticleContent() throws InterruptedException, ExecutionException {
-		assertThat(refineryService.updateArticleContent().get(), is(-2));
+	public void async_updateContentOfArticleList() throws InterruptedException, ExecutionException {
+		
+		
+		assertThat(refineryService.updateContentOfArticleList(signatures).get(), is(-2));
 	}
+	
+	@Test
+	public void async_updateContentOfArticle() throws InterruptedException, ExecutionException {
+		
+		assertThat(refineryService.updateContentOfArticle(signatures.get(0)).get(), is(-2));
+	}
+	
+	@Test
+	public void updateConentOfArticle() {
+		
+		for (int i=0; i<signatures.size(); i++) {
+			Signature signature = signatures.get(i);
+			
+			when(naverServiceMock.getArticle(signature)).thenReturn(articles.get(0));
+						
+			refineryService.updateContentOfArticle(signature);
+			
+		}
+		
+		verify(articleServiceMock, times(3)).updateArticleContent();
+		
+	}
+	
 	
 	private void prepareArticles() {
 		List<List<NaverSection>> naverSectionsList = new ArrayList<List<NaverSection>>();

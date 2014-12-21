@@ -12,6 +12,7 @@ import refinery.model.NaverHotissue;
 import refinery.model.NaverHotissues;
 import elixir.model.Article;
 import elixir.model.Hotissue;
+import elixir.model.Signature;
 
 @Service
 public class NaverService {
@@ -34,6 +35,16 @@ public class NaverService {
 		
 		return articles;
 	}
+
+
+	public Article getArticle(Signature signature) {
+		
+		NaverArticle naverArticle = naverAao.getArticle(signature);
+		
+		return naverArticle.convert();
+	}
+	
+	
 	
 	
 	
