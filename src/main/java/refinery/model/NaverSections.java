@@ -3,17 +3,27 @@ package refinery.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import elixir.model.Section;
 
 public class NaverSections {
 	
+	private static final Logger log = LoggerFactory.getLogger(NaverSections.class);
+	
 	public static List<Section> convert(List<NaverSection> naverSections) {
+		log.debug("in NaverSections.convert()");
+		log.debug(naverSections.toString());
 		
 		List<List<NaverSection>> naverSectionsList = NaverSections.separate(naverSections);
+		log.debug(naverSectionsList.toString());
 		List<Section> convertedList = new ArrayList<Section>();
+		
 		
 		// 마지막 section만 list에 담아 전달
 		for (List<NaverSection> ns : naverSectionsList) {
+			log.debug("here");
 			convertedList.add(ns.get(ns.size()-1).convert());
 		}
 		
@@ -21,9 +31,10 @@ public class NaverSections {
 	}
 
 	static List<List<NaverSection>> separate(List<NaverSection> naverSections) {
-
-		if (naverSections.size() < 2) return null;
 		
+		if (naverSections == null || naverSections.size() < 1) return null;
+		
+		// 원소가 1개일때 처리
 		NaverSection previousSection = naverSections.get(0);
 		NaverSection currentSection = null;
 		
@@ -32,7 +43,7 @@ public class NaverSections {
 		currentNss.add(previousSection);
 		nssList.add(currentNss);
 		
-		// NaverSection 개수만큼 순회
+		// NaverSection 원소가 1 ~ n개 만큼 순회
 		for (int i=1; i<naverSections.size(); i++) {
 			currentSection = naverSections.get(i);
 			
