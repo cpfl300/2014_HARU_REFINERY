@@ -113,189 +113,189 @@ public class NaverServiceTest {
 	
 	
 	// getUpdateArticles
-	@Test
-	public void getUpdatedArticles() {
-		// prepare
-		prepareNaverArticleList(naverArticles);
-		prepareMockForGetUpdateArticles();
-		
-		// exec
-		List<Article> actualArticles = naverService.getUpdatedArticles(datehour);
-		ArticleTest.ASSERTS(actualArticles, articles);
-		
-	}
-	
-	@Test(expected=EmptyNaverDataAccessException.class)
-	public void getUpdatedArticles_naverArticleSizeIsZero() {
-		// prepare
-		prepareNaverArticleList(new NaverArticle[] {});
-		prepareMockForGetUpdateArticles();
-		
-		// exec - except
-		naverService.getUpdatedArticles(datehour);
-	}
-	
-	@Test(expected=EmptyNaverDataAccessException.class)
-	public void getUpdatedArticles_naverArticleSizeIsNull() {
-		// prepare
-		prepareNaverArticleList();
-		prepareMockForGetUpdateArticles();
-		
-		// exec - except
-		naverService.getUpdatedArticles(datehour);
-	}
-
-
-	// updateArticleContent
-	@Test
-	public void updateArticleContent() {
-		// prepare
-		String[] contentArr = new String[] { "content1", "content2", "content3" };
-		prepareContent(contentArr);
-		prepareMocksForUpdateArticleContent(contentArr);
-		
-		// exec
-		for (Article article : articles) {
-			naverService.updateArticleContent(article);
-		}
-		
-		// assert
-		for (int i=0; i<contentArr.length; i++) {
-			assertThat(articles.get(i).getContent(), notNullValue());
-			assertThat(articles.get(i).getContent(), is(contentArr[i]));
-		}		
-	}
-
-	@Test(expected=EmptyNaverDataAccessException.class)
-	public void updateArticleContent_empty() {
-		// prepare
-		String[] contentArr = new String[] { "content1", "content2", "content3" };
-		prepareMocksForUpdateArticleContent(contentArr);
-		
-		// exec - except
-		for (Article article : articles) {
-			naverService.updateArticleContent(article);
-		}	
-	}
-	
-	
-	// getArticleListOfHotissue
-	@Test
-	public void getArticleListOfHotissue() {
-		final String hotissueId = "887522";
-		
-		// prepare
-		createArticleListOfHotissue();
-		prepareNaverArticleList(naverArticles);
-		prepareMocksGetArticleListOfHotissue(hotissueId);
-		
-		// exec
-		List<Article> actuals = naverService.getArticleListByHotissueId(hotissueId);
-		ArticleTest.ASSERTS(actuals, NaverArticle.convert(naverArticles));
-	}
-
-
-	@Test(expected=EmptyNaverDataAccessException.class)
-	public void getArticleListOfHotissue_naverArticleIsZero() {
-		final String hotissueId = "887522";
-		
-		// prepare
-		prepareNaverArticleList(new NaverArticle[]{});
-		prepareMocksGetArticleListOfHotissue(hotissueId);
-		
-		// exec - except
-		List<Article> actuals = naverService.getArticleListByHotissueId(hotissueId);
-		ArticleTest.ASSERTS(actuals, NaverArticle.convert(naverArticles));
-	}
-	
-	@Test(expected=EmptyNaverDataAccessException.class)
-	public void getArticleListOfHotissue_naverArticleIsNull() {
-		final String hotissueId = "887522";
-		
-		// prepare
-		prepareNaverArticleList();
-		prepareMocksGetArticleListOfHotissue(hotissueId);
-		
-		// exec - except
-		List<Article> actuals = naverService.getArticleListByHotissueId(hotissueId);
-		ArticleTest.ASSERTS(actuals, NaverArticle.convert(naverArticles));
-	}
-
-	
-	
-	// prepare mocks
-	private void prepareMocksGetArticleListOfHotissue(String hotissueId) {
-		when(naverAaoMock.getArticleListByHotissueId(hotissueId)).thenReturn(naverArticleList);		
-	}
-	
-	private void prepareMockForGetUpdateArticles() {
-		when(naverAaoMock.getArticleList(datehour)).thenReturn(naverArticleList);
-	}	
-	
-	private void prepareMocksForUpdateArticleContent(String[] contentArr) {
-		// mock
-		for (int i=0; i<contentArr.length; i++) {
-			Article article = articles.get(i);
-			NaverArticle naverArticle = naverArticles.get(i);
-			
-			String officeId = article.getOffice().getOfficeId();
-			String articleId = article.getArticleId();
-			
-			when(naverAaoMock.getArticle(officeId, articleId)).thenReturn(naverArticle);			
-		}
-	}
-	
-	
-	// prepare etcs
-
-	private void prepareContent(String[] contents) {
-		for (int i=0; i<contents.length; i++) {
-			naverArticles.get(i).setContent(contents[i]);
-		}
-	}
-
-	private void prepareNaverHotissueList(List<NaverHotissue> naverHotissues) {
-		prepareNaverHotissueList();
-		naverHotissueList.setHotissues(naverHotissues);
-	}
-
-	private void prepareNaverHotissueList(NaverHotissue[] naverHotisuseArr) {
-		prepareNaverHotissueList(Arrays.asList(naverHotisuseArr));
-	}
-
-	private void prepareNaverHotissueList() {
-		naverHotissueList = new NaverHotissueList();
-	}
-
-	private void prepareNaverArticleList(List<NaverArticle> naverArticles) {
-		prepareNaverArticleList();
-		naverArticleList.setArticles(naverArticles);
-	}
-	
-	private void prepareNaverArticleList(NaverArticle[] naverArticleArr) {
-		prepareNaverArticleList(Arrays.asList(naverArticleArr));
-	}
-	
-	private void prepareNaverArticleList() {
-		naverArticleList = new NaverArticleList();
-	}
-		
-	
-	// create objs
-
-
-
-	private void createNaverArticles() {
-		naverArticles = NaverArticleTest.preparedList(naverSectionsList);
-		
-		articles = NaverArticle.convert(naverArticles);
-	}
-	
-	
-	private void createArticleListOfHotissue() {
-		naverArticles = NaverArticleTest.preparedList(
-				naverSectionsList, new String[]{"officeId", "officeName", "articleId", "title", "serviceDate", "serviceTime"});
-	}
+//	@Test
+//	public void getUpdatedArticles() {
+//		// prepare
+//		prepareNaverArticleList(naverArticles);
+//		prepareMockForGetUpdateArticles();
+//		
+//		// exec
+//		List<Article> actualArticles = naverService.getUpdatedArticles(datehour);
+//		ArticleTest.ASSERTS(actualArticles, articles);
+//		
+//	}
+//	
+//	@Test(expected=EmptyNaverDataAccessException.class)
+//	public void getUpdatedArticles_naverArticleSizeIsZero() {
+//		// prepare
+//		prepareNaverArticleList(new NaverArticle[] {});
+//		prepareMockForGetUpdateArticles();
+//		
+//		// exec - except
+//		naverService.getUpdatedArticles(datehour);
+//	}
+//	
+//	@Test(expected=EmptyNaverDataAccessException.class)
+//	public void getUpdatedArticles_naverArticleSizeIsNull() {
+//		// prepare
+//		prepareNaverArticleList();
+//		prepareMockForGetUpdateArticles();
+//		
+//		// exec - except
+//		naverService.getUpdatedArticles(datehour);
+//	}
+//
+//
+//	// updateArticleContent
+//	@Test
+//	public void updateArticleContent() {
+//		// prepare
+//		String[] contentArr = new String[] { "content1", "content2", "content3" };
+//		prepareContent(contentArr);
+//		prepareMocksForUpdateArticleContent(contentArr);
+//		
+//		// exec
+//		for (Article article : articles) {
+//			naverService.updateArticleContent(article);
+//		}
+//		
+//		// assert
+//		for (int i=0; i<contentArr.length; i++) {
+//			assertThat(articles.get(i).getContent(), notNullValue());
+//			assertThat(articles.get(i).getContent(), is(contentArr[i]));
+//		}		
+//	}
+//
+//	@Test(expected=EmptyNaverDataAccessException.class)
+//	public void updateArticleContent_empty() {
+//		// prepare
+//		String[] contentArr = new String[] { "content1", "content2", "content3" };
+//		prepareMocksForUpdateArticleContent(contentArr);
+//		
+//		// exec - except
+//		for (Article article : articles) {
+//			naverService.updateArticleContent(article);
+//		}	
+//	}
+//	
+//	
+//	// getArticleListOfHotissue
+//	@Test
+//	public void getArticleListOfHotissue() {
+//		final String hotissueId = "887522";
+//		
+//		// prepare
+//		createArticleListOfHotissue();
+//		prepareNaverArticleList(naverArticles);
+//		prepareMocksGetArticleListOfHotissue(hotissueId);
+//		
+//		// exec
+//		List<Article> actuals = naverService.getArticleListByHotissueId(hotissueId);
+//		ArticleTest.ASSERTS(actuals, NaverArticle.convert(naverArticles));
+//	}
+//
+//
+//	@Test(expected=EmptyNaverDataAccessException.class)
+//	public void getArticleListOfHotissue_naverArticleIsZero() {
+//		final String hotissueId = "887522";
+//		
+//		// prepare
+//		prepareNaverArticleList(new NaverArticle[]{});
+//		prepareMocksGetArticleListOfHotissue(hotissueId);
+//		
+//		// exec - except
+//		List<Article> actuals = naverService.getArticleListByHotissueId(hotissueId);
+//		ArticleTest.ASSERTS(actuals, NaverArticle.convert(naverArticles));
+//	}
+//	
+//	@Test(expected=EmptyNaverDataAccessException.class)
+//	public void getArticleListOfHotissue_naverArticleIsNull() {
+//		final String hotissueId = "887522";
+//		
+//		// prepare
+//		prepareNaverArticleList();
+//		prepareMocksGetArticleListOfHotissue(hotissueId);
+//		
+//		// exec - except
+//		List<Article> actuals = naverService.getArticleListByHotissueId(hotissueId);
+//		ArticleTest.ASSERTS(actuals, NaverArticle.convert(naverArticles));
+//	}
+//
+//	
+//	
+//	// prepare mocks
+//	private void prepareMocksGetArticleListOfHotissue(String hotissueId) {
+//		when(naverAaoMock.getArticleListByHotissueId(hotissueId)).thenReturn(naverArticleList);		
+//	}
+//	
+//	private void prepareMockForGetUpdateArticles() {
+//		when(naverAaoMock.getArticleList(datehour)).thenReturn(naverArticleList);
+//	}	
+//	
+//	private void prepareMocksForUpdateArticleContent(String[] contentArr) {
+//		// mock
+//		for (int i=0; i<contentArr.length; i++) {
+//			Article article = articles.get(i);
+//			NaverArticle naverArticle = naverArticles.get(i);
+//			
+//			String officeId = article.getOffice().getOfficeId();
+//			String articleId = article.getArticleId();
+//			
+//			when(naverAaoMock.getArticle(officeId, articleId)).thenReturn(naverArticle);			
+//		}
+//	}
+//	
+//	
+//	// prepare etcs
+//
+//	private void prepareContent(String[] contents) {
+//		for (int i=0; i<contents.length; i++) {
+//			naverArticles.get(i).setContent(contents[i]);
+//		}
+//	}
+//
+//	private void prepareNaverHotissueList(List<NaverHotissue> naverHotissues) {
+//		prepareNaverHotissueList();
+//		naverHotissueList.setHotissues(naverHotissues);
+//	}
+//
+//	private void prepareNaverHotissueList(NaverHotissue[] naverHotisuseArr) {
+//		prepareNaverHotissueList(Arrays.asList(naverHotisuseArr));
+//	}
+//
+//	private void prepareNaverHotissueList() {
+//		naverHotissueList = new NaverHotissueList();
+//	}
+//
+//	private void prepareNaverArticleList(List<NaverArticle> naverArticles) {
+//		prepareNaverArticleList();
+//		naverArticleList.setArticles(naverArticles);
+//	}
+//	
+//	private void prepareNaverArticleList(NaverArticle[] naverArticleArr) {
+//		prepareNaverArticleList(Arrays.asList(naverArticleArr));
+//	}
+//	
+//	private void prepareNaverArticleList() {
+//		naverArticleList = new NaverArticleList();
+//	}
+//		
+//	
+//	// create objs
+//
+//
+//
+//	private void createNaverArticles() {
+//		naverArticles = NaverArticleTest.preparedList(naverSectionsList);
+//		
+//		articles = NaverArticle.convert(naverArticles);
+//	}
+//	
+//	
+//	private void createArticleListOfHotissue() {
+//		naverArticles = NaverArticleTest.preparedList(
+//				naverSectionsList, new String[]{"officeId", "officeName", "articleId", "title", "serviceDate", "serviceTime"});
+//	}
 	
 	private void prepareArticles() {
 		List<List<NaverSection>> naverSectionsList = new ArrayList<List<NaverSection>>();
