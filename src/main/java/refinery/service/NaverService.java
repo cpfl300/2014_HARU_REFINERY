@@ -2,12 +2,9 @@ package refinery.service;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import refinery.aao.EmptyNaverDataAccessException;
 import refinery.aao.NaverAao;
 import refinery.model.NaverArticle;
 import refinery.model.NaverArticles;
@@ -18,8 +15,6 @@ import elixir.model.Hotissue;
 
 @Service
 public class NaverService {
-	
-	private static final Logger log = LoggerFactory.getLogger(NaverService.class);
 	
 	@Autowired
 	private NaverAao naverAao;
@@ -36,9 +31,6 @@ public class NaverService {
 		
 		List<NaverArticle> naverArticles = naverAao.getArticleList(datehour);
 		List<Article> articles = NaverArticles.convert(naverArticles);
-		
-		log.debug("in getArticleList()  ");
-		log.debug(articles.toString());
 		
 		return articles;
 	}

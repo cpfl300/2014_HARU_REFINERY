@@ -3,27 +3,16 @@ package refinery.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import elixir.model.Section;
 
 public class NaverSections {
 	
-	private static final Logger log = LoggerFactory.getLogger(NaverSections.class);
-	
 	public static List<Section> convert(List<NaverSection> naverSections) {
-		log.debug("in NaverSections.convert()");
-		log.debug(naverSections.toString());
-		
 		List<List<NaverSection>> naverSectionsList = NaverSections.separate(naverSections);
-		log.debug(naverSectionsList.toString());
 		List<Section> convertedList = new ArrayList<Section>();
-		
-		
+
 		// 마지막 section만 list에 담아 전달
 		for (List<NaverSection> ns : naverSectionsList) {
-			log.debug("here");
 			convertedList.add(ns.get(ns.size()-1).convert());
 		}
 		

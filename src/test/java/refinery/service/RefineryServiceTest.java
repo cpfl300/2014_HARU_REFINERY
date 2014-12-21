@@ -1,11 +1,14 @@
 package refinery.service;
 
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -95,6 +98,12 @@ public class RefineryServiceTest {
 		// verify
 		verify(articleServiceMock, times(1)).addAll(articles);
 		
+	}
+	
+	
+	@Test
+	public void async_updateArticleContent() throws InterruptedException, ExecutionException {
+		assertThat(refineryService.updateArticleContent().get(), is(-2));
 	}
 	
 	private void prepareArticles() {

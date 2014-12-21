@@ -2,16 +2,11 @@ package refinery.model;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import refinery.model.able.Convertible;
 import elixir.model.Article;
 import elixir.model.Office;
 
 public class NaverArticle implements Convertible<Article> {
-	private static final Logger log = LoggerFactory.getLogger(NaverArticle.class);
-	
 	private String officeId;
 	private String officeName;
 	private String articleId;
