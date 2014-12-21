@@ -1,4 +1,4 @@
-package refinery.model.convertible;
+package refinery.model.able;
 
 public interface Convertible<T> {
 	
