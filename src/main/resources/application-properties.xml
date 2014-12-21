@@ -5,17 +5,14 @@
 
 	<!-- Database -->
     <entry key="database.driverClassName">com.mysql.jdbc.Driver</entry>
-    <entry key="refinery.database.url">jdbc:mysql://10.73.45.130/refinery</entry>
-    <entry key="refinery.database.username">refinery</entry>
-    <entry key="refinery.database.password">refinery </entry>
-    
-    <entry key="haru.database.url">jdbc:mysql://10.73.45.130/haru</entry>
-    <entry key="haru.database.username">haru</entry>
-    <entry key="haru.database.password">haru</entry>
+       
+	<entry key="database.url">jdbc:mysql://localhost:3306/harutest</entry>
+    <entry key="database.username">root</entry>
+    <entry key="database.password"></entry>
     
     <!-- NaverAPI -->
-    <entry key="naver.news.api">www.naver.com/?</entry>
+    <entry key="naver.news.host">http://api.news.naver.com</entry>
+    <entry key="naver.news.api.context">/main/export/v2/outside/next</entry>
+
     
-    <!-- CronExpression -->
-    <entry key="cron.exp.naverapi.news">0/3 * * * * ?</entry>
 </properties>

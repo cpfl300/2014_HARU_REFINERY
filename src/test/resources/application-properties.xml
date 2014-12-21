@@ -6,15 +6,18 @@
 	<!-- Database -->
     <entry key="database.driverClassName">com.mysql.jdbc.Driver</entry>
        
-    <entry key="database.url">jdbc:mysql://localhost/harutest</entry>
-    <entry key="database.username">root</entry>
-    <entry key="database.password"></entry>
+    <entry key="database.url">jdbc:mysql://10.73.45.130:3306/harutest</entry>
+    <entry key="database.username">haru</entry>
+    <entry key="database.password">haru</entry>
     
     <!-- NaverAPI -->
-    <entry key="naver.news.api">http://localhost/~Dec7/haru/test/newNewsApiServer.php</entry>
+    <entry key="naver.news.host">http://api.news.naver.com</entry>
+    <entry key="naver.news.api.context">/main/export/v2/outside/next</entry>
+    
     
     <!-- CronExpression -->
-    <!-- <entry key="cron.exp.naverapi.news">0 0/10 * * * ?</entry> -->
-    <entry key="cron.exp.naverapi.news">0/5 * * * * ?</entry>
+    <entry key="cron.exp.naver.save_article">0 0/10 * * * ?</entry>
     <entry key="cron.exp.news.extract">0 0 6/12 * * ?</entry>
+    <!-- <entry key="cron.exp.naverapi.news">0/5 * * * * ?</entry>  -->
+    
 </properties>

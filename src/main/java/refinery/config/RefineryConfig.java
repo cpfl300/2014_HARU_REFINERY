@@ -1,48 +1,55 @@
 package refinery.config;
 
 import javax.annotation.Resource;
-import javax.sql.DataSource;
 
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import refinery.core.template.HttpClientTemplate;
+import refinery.core.template.HttpTemplate;
 
 @Configuration
-@ComponentScan(basePackages={"refinery"})
+@ComponentScan(basePackages={"refinery.core", "refinery.aao"})
 @PropertySource(value="classpath:application-properties.xml")
-@EnableTransactionManagement
 public class RefineryConfig {
-
+	
 	@Resource
 	private Environment env;
 	
+//	@Resource(name="host")
+//	public String host = env.getRequiredProperty("naver.news.host");
+//
 	@Bean
-	public DataSource dataSource() {
-		BasicDataSource ds = new BasicDataSource();
-		ds.setDriverClassName(env.getRequiredProperty("database.driverClassName"));
-		ds.setUrl(env.getRequiredProperty("database.url"));
-		ds.setUsername(env.getRequiredProperty("database.username"));
-		ds.setPassword(env.getRequiredProperty("database.password"));
-		return ds;
+	public HttpTemplate httpTemplate() {
+		
+		String host = env.getRequiredProperty("naver.news.host");
+		String context = env.getRequiredProperty("naver.news.api.context");
+		
+		return new HttpClientTemplate(host, context);
 	}
 	
-	@Bean
-	public JdbcTemplate jdbcTemplate() {
-		
-		return new JdbcTemplate(dataSource());
-	}
+//	@Bean
+//	public RestTemplate restTemplate() {
+//		
+//		return new RestTemplate(Arrays.asList(new HttpMessageConverter[]{jsonConverter()}));
+//		
+//	}
 	
-	@Bean
-    public PlatformTransactionManager txManager() {
-		
-        return new DataSourceTransactionManager(dataSource());
-    }
+//	@Bean
+//	public MappingJackson2HttpMessageConverter jsonConverter() {
+//		List<MediaType> supportedMediaTypes = new ArrayList<MediaType>();
+//		supportedMediaTypes.add(MediaType.APPLICATION_JSON);
+//		supportedMediaTypes.add(MediaType.TEXT_PLAIN);
+//		supportedMediaTypes.add(new MediaType("text", "json"));
+//		
+//		MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
+//		jsonConverter.setSupportedMediaTypes(supportedMediaTypes);
+//
+//		return jsonConverter;
+//	}
+	
 	
 }
