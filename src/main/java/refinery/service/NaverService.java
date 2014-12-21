@@ -28,39 +28,39 @@ public class NaverService {
 	
 	
 	
-	public List<Article> getUpdatedArticles(String datehour) {
-		NaverArticleList naverArticleList = naverAao.getArticleList(datehour);
-		List<NaverArticle> naverArticles = naverArticleList.getArticles();		
-		
-		if (naverArticles == null || naverArticles.size() == 0) {
-			throw new EmptyNaverDataAccessException("naver articles have not updated yet");
-		}
-		
-		return NaverArticle.convert(naverArticles);
-	}
-
-	public void updateArticleContent(Article article) {
-		NaverArticle naverArticle = naverAao.getArticle(article.getOffice().getOfficeId(), article.getArticleId());
-		
-		String content = naverArticle.getContent();
-		if (content == null || content.length() == 0) {
-			throw new EmptyNaverDataAccessException("content of naver article is empty");
-		}
-		
-		article.setContent(content);
-	}
-
-
-
-	public List<Article> getArticleListByHotissueId(String hotissueId) {
-		NaverArticleList naverArticleList = naverAao.getArticleListByHotissueId(hotissueId);
-		List<NaverArticle> naverArticles = naverArticleList.getArticles();
-		
-		if (naverArticles == null || naverArticles.size() == 0) {
-			throw new EmptyNaverDataAccessException("naver articles of hotissue have not existed");
-		}
-		
-		return NaverArticle.convert(naverArticles);
-	}
+//	public List<Article> getUpdatedArticles(String datehour) {
+//		NaverArticleList naverArticleList = naverAao.getArticleList(datehour);
+//		List<NaverArticle> naverArticles = naverArticleList.getArticles();		
+//		
+//		if (naverArticles == null || naverArticles.size() == 0) {
+//			throw new EmptyNaverDataAccessException("naver articles have not updated yet");
+//		}
+//		
+//		return NaverArticle.convert(naverArticles);
+//	}
+//
+//	public void updateArticleContent(Article article) {
+//		NaverArticle naverArticle = naverAao.getArticle(article.getOffice().getOfficeId(), article.getArticleId());
+//		
+//		String content = naverArticle.getContent();
+//		if (content == null || content.length() == 0) {
+//			throw new EmptyNaverDataAccessException("content of naver article is empty");
+//		}
+//		
+//		article.setContent(content);
+//	}
+//
+//
+//
+//	public List<Article> getArticleListByHotissueId(String hotissueId) {
+//		NaverArticleList naverArticleList = naverAao.getArticleListByHotissueId(hotissueId);
+//		List<NaverArticle> naverArticles = naverArticleList.getArticles();
+//		
+//		if (naverArticles == null || naverArticles.size() == 0) {
+//			throw new EmptyNaverDataAccessException("naver articles of hotissue have not existed");
+//		}
+//		
+//		return NaverArticle.convert(naverArticles);
+//	}
 
 }

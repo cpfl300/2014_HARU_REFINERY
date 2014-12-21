@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import refinery.config.RefineryConfig;
+import elixir.config.ElixirConfig;
 
 public class RefineryMain {
 	
@@ -12,10 +13,13 @@ public class RefineryMain {
 
 	public static void main(String[] args) {
 		
-		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(RefineryConfig.class);
+		AnnotationConfigApplicationContext parent = new AnnotationConfigApplicationContext(ElixirConfig.class);
+		AnnotationConfigApplicationContext child = new AnnotationConfigApplicationContext();
+		child.setParent(parent);
+		child.register(RefineryConfig.class);
+		child.refresh();
 		
-		log.debug("context: " + context);
-		
+		log.debug("start");
 		
 	}
 
