@@ -1,4 +1,4 @@
-package refinery.model.convertible;
+package refinery.model.able;
 
 public class NaverConvertFailureException extends RuntimeException {
 	

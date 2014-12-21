@@ -22,14 +22,12 @@ public class NaverArticleTest {
 	
 	@Before
 	public void setup() {
-		naverSections = NaverSectionTest.preparedList();
 		List<List<NaverSection>> naverSectionsList = new ArrayList<List<NaverSection>>();
-		naverSectionsList.add(naverSections);
-		naverSectionsList.add(naverSections);
-		naverSectionsList.add(naverSections);
+		naverSectionsList.add(NaverSectionTest.preparedList1());
+		naverSectionsList.add(NaverSectionTest.preparedList2());
+		naverSectionsList.add(NaverSectionTest.preparedList3());
 		
-		section = NaverSection.convert(naverSections);
-		
+		//section = NaverSection.convert(naverSections);
 		naverArticles = NaverArticleTest.preparedList(naverSectionsList);
 		articles = ArticleTest.preparedList(
 				OfficeTest.preparedList(),
@@ -76,7 +74,7 @@ public class NaverArticleTest {
 	}
 	
 	// ("001", "officeName1", "111", "title1", "20140124", "113202")
-	public static NaverArticle CREATE(String officeId, String officeName, String articleId,
+	public static NaverArticle create(String officeId, String officeName, String articleId,
 			String title, String serviceDate, String serviceTime) {
 		NaverArticle naverArticle = new NaverArticle();
 		

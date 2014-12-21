@@ -1,5 +1,8 @@
 package refinery.model;
 
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,19 +23,57 @@ public class NaverSectionTest {
 		sections = SectionTest.preparedList(new String[]{"sectionId", "sectionName"});
 		naverSections = NaverSectionTest.preparedList();
 	}
-
+	
+	// convert
 	@Test
 	public void covert() {
 		Section actual = naverSections.get(0).convert();
 		SectionTest.ASSERT(actual, sections.get(0));
 	}
 	
+	// separateFrom
 	@Test
-	public void convertAtList() {
-		List<Section> actuals = NaverSections.convert(naverSections);
-		SectionTest.ASSERTS(actuals, sections);
+	public void separateFrom_연속된_첫자리_수가_증가시() {
+		NaverSection naverSection1 = NaverSectionTest.create("100", "백");
+		NaverSection naverSection2 = NaverSectionTest.create("200", "이백");
+		NaverSection naverSection3 = NaverSectionTest.create("700", "칠백");
 		
+		assertThat(naverSection2.separateFrom(naverSection1), is(0));
+		assertThat(naverSection3.separateFrom(naverSection2), is(0));
 	}
+	
+	@Test
+	public void separateFrom_연속된_첫자리_수가_감소할시() {
+		NaverSection naverSection1 = NaverSectionTest.create("700", "칠백");
+		NaverSection naverSection2 = NaverSectionTest.create("200", "이백");
+		NaverSection naverSection3 = NaverSectionTest.create("100", "백");
+		
+		assertThat(naverSection2.separateFrom(naverSection1), is(1));
+		assertThat(naverSection3.separateFrom(naverSection2), is(1));
+	}
+	
+	@Test
+	public void separateFrom_연속된_첫자리_수가_동일할시_1일때() {
+		NaverSection naverSection1 = NaverSectionTest.create("100", "백");
+		NaverSection naverSection2 = NaverSectionTest.create("101", "백일");
+		NaverSection naverSection3 = NaverSectionTest.create("102", "백이");
+		
+		assertThat(naverSection2.separateFrom(naverSection1), is(1));
+		assertThat(naverSection3.separateFrom(naverSection2), is(1));
+	}
+	
+	@Test
+	public void separateFrom_연속된_첫자리_수가_동일할시_2이상일때() {
+		NaverSection naverSection1 = NaverSectionTest.create("100", "백");
+		NaverSection naverSection2 = NaverSectionTest.create("200", "이백일");
+		NaverSection naverSection3 = NaverSectionTest.create("201", "이백이");
+		
+		assertThat(naverSection2.separateFrom(naverSection1), is(0));
+		assertThat(naverSection3.separateFrom(naverSection2), is(-1));
+	}
+
+
+	
 
 	
 	// creator

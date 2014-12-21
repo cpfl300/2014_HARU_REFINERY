@@ -2,7 +2,12 @@ package refinery.model;
 
 import java.util.List;
 
-public class NaverArticle {
+import refinery.model.able.Convertible;
+import elixir.model.Article;
+import elixir.model.Office;
+import elixir.model.Section;
+
+public class NaverArticle implements Convertible<Article> {
 	private String officeId;
 	private String officeName;
 	private String articleId;
@@ -147,9 +152,24 @@ public class NaverArticle {
 				+ ", reporter=" + reporter + ", copyright=" + copyright + ", hitCount=" + hitCount + ", readCount=" + readCount + ", rank=" + rank
 				+ "]";
 	}
-	
-	
 
-	
-	
+
+	@Override
+	public Article convert() {
+		Article article = new Article();
+		
+		article.setArticleId(articleId);
+		article.setOffice(new Office(officeId, officeName));
+		//article.setSection(sections);
+		article.setContributionDate(serviceDate);
+		article.setContributionTime(serviceTime);
+		article.setTitle(title);
+		
+		article.setContent(content);
+		article.setOrgUrl(orgUrl);
+		article.setImageUrl(imageUrl);
+		
+		return article;
+	}
+
 }
