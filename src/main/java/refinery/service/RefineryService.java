@@ -45,9 +45,13 @@ public class RefineryService {
 		
 		List<Article> articles = naverService.getArticleList(datehour);
 		List<Signature> signatures = Articles.sign(articles);
-		articleService.addAll(articles);
+		//articleService.addAll(articles);
 		
-		updateContentOfArticleList(signatures);
+		for (Signature signature : signatures) {
+			updateContentOfArticle(signature);
+			log.debug("saveArticle");
+//			updateContentOfArticleList(signatures);
+		}
 	}
 	
 	@Async
@@ -63,8 +67,15 @@ public class RefineryService {
 	@Async
 	public Future<Integer> updateContentOfArticle(Signature signature) {
 		
-		Article article = naverService.getArticle(signature);
-		articleService.updateContent(article);
+		try {
+			Thread.sleep(1000);
+			log.debug("in updateCA");
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		Article article = naverService.getArticle(signature);
+//		articleService.updateContent(article);
 		
 		return new AsyncResult<Integer>(-2);
 	}

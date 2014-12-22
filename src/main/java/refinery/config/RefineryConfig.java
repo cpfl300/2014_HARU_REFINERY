@@ -2,6 +2,8 @@ package refinery.config;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -16,16 +18,16 @@ import refinery.core.template.HttpTemplate;
 @PropertySource(value="classpath:application-properties.xml")
 public class RefineryConfig {
 	
+	private static final Logger log = LoggerFactory.getLogger(RefineryConfig.class);
+	
 	@Resource
 	private Environment env;
 	
-//	@Resource(name="host")
-//	public String host = env.getRequiredProperty("naver.news.host");
-//
 	@Bean
 	public HttpTemplate httpTemplate() {
 		
 		String host = env.getRequiredProperty("naver.news.host");
+		log.debug("host: " + host);
 		String context = env.getRequiredProperty("naver.news.api.context");
 		
 		return new HttpClientTemplate(host, context);
