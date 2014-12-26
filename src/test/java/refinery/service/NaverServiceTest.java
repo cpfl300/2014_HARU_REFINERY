@@ -64,7 +64,7 @@ public class NaverServiceTest {
 	
 	@Before
 	public void setup() {
-		datehour = ElixirUtils.format("yyyyMMddHHmm", ElixirUtils.getNow()).substring(0, 11);
+		datehour = ElixirUtils.format("yyyyMMddHHmm", ElixirUtils.now()).substring(0, 11);
 		naverSectionsList = new ArrayList<List<NaverSection>>();
 		naverSectionsList.add(naverSections);
 		naverSectionsList.add(naverSections);

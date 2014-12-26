@@ -27,7 +27,6 @@ public class RefineryMain {
 		secondChild.refresh();
 		
 		log.debug("start");
-		
 	}
 
 }

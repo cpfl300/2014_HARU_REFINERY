@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import elixir.model.Article;
@@ -17,7 +16,6 @@ import elixir.model.Hotissue;
 import elixir.model.Signature;
 import elixir.service.ArticleService;
 import elixir.service.HotissueService;
-import elixir.utility.ElixirUtils;
 
 @Service
 public class RefineryService {
@@ -32,26 +30,20 @@ public class RefineryService {
 	@Autowired
 	private ArticleService articleService;
 	
-	@Scheduled(cron="* 0/10 * * * ?")
+	
 	public void saveHotissueList() {
 		List<Hotissue> hotissues = naverService.getHotissueList();
 		hotissueService.addAll(hotissues);
 	}
 	
-//	@Scheduled(cron="* 0/10 * * * ?")
-	@Scheduled(cron="0/10 * * * * ?")
-	public void saveArticleList() {
-		String datehour = ElixirUtils.format("yyyyMMddHHmm", ElixirUtils.getNow()).substring(0, 11);
-		
+	
+	
+	public void saveArticleList(String datehour) {		
 		List<Article> articles = naverService.getArticleList(datehour);
 		List<Signature> signatures = Articles.sign(articles);
-		//articleService.addAll(articles);
+		articleService.addAll(articles);
 		
-		for (Signature signature : signatures) {
-			updateContentOfArticle(signature);
-			log.debug("saveArticle");
-//			updateContentOfArticleList(signatures);
-		}
+		//updateContentOfArticleList(signatures);
 	}
 	
 	@Async
@@ -79,9 +71,6 @@ public class RefineryService {
 		
 		return new AsyncResult<Integer>(-2);
 	}
-
-	
-	
 }
 	
 	
