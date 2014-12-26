@@ -55,9 +55,4 @@ public class NaverSection implements Convertible<Section>, Separable<NaverSectio
 	public String toString() {
 		return "NaverSection [sectionId=" + sectionId + ", sectionName=" + sectionName + "]";
 	}
-	
-	
-	
-	
-
 }

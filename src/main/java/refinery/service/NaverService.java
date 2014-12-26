@@ -43,8 +43,7 @@ public class NaverService {
 		
 		return naverArticle.convert();
 	}
-	
-	
+
 	
 	
 	
