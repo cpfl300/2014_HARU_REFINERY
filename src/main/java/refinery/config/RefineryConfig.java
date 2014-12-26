@@ -14,7 +14,7 @@ import refinery.core.template.HttpClientTemplate;
 import refinery.core.template.HttpTemplate;
 
 @Configuration
-@ComponentScan(basePackages={"refinery.core", "refinery.aao"})
+@ComponentScan(basePackages={"refinery.core", "refinery.aao", "refinery.service"})
 @PropertySource(value="classpath:application-properties.xml")
 public class RefineryConfig {
 	
@@ -32,26 +32,4 @@ public class RefineryConfig {
 		
 		return new HttpClientTemplate(host, context);
 	}
-	
-//	@Bean
-//	public RestTemplate restTemplate() {
-//		
-//		return new RestTemplate(Arrays.asList(new HttpMessageConverter[]{jsonConverter()}));
-//		
-//	}
-	
-//	@Bean
-//	public MappingJackson2HttpMessageConverter jsonConverter() {
-//		List<MediaType> supportedMediaTypes = new ArrayList<MediaType>();
-//		supportedMediaTypes.add(MediaType.APPLICATION_JSON);
-//		supportedMediaTypes.add(MediaType.TEXT_PLAIN);
-//		supportedMediaTypes.add(new MediaType("text", "json"));
-//		
-//		MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
-//		jsonConverter.setSupportedMediaTypes(supportedMediaTypes);
-//
-//		return jsonConverter;
-//	}
-	
-	
 }

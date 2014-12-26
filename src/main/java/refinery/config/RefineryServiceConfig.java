@@ -17,7 +17,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 @Configuration
-@ComponentScan(basePackages={"refinery.service"})
+@ComponentScan(basePackages={"refinery.scheduler"})
 @EnableScheduling
 @EnableAsync
 public class RefineryServiceConfig implements SchedulingConfigurer, AsyncConfigurer {
