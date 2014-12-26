@@ -1,10 +1,12 @@
 package refinery.service;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import elixir.service.StatusService;
+import elixir.status.StatusArchive;
 import elixir.utility.ElixirUtils;
 
 @Service
@@ -14,11 +16,12 @@ public class ScheduleService {
 	private RefineryService refineryService;
 	
 	@Autowired
-	private StatusService statusService;
+	private StatusArchive statusArchive;
 	
 	@Scheduled(cron="0 0 0/1 * * ?")
 	public void syncStatus() {
-		statusService.sync();
+		Date now = ElixirUtils.now();
+		statusArchive.sync(now);
 	}
 	
 	@Scheduled(cron="* 0/10 * * * ?")
