@@ -10,10 +10,12 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
+import elixir.archive.StatusArchive;
 import elixir.model.Article;
 import elixir.model.Articles;
 import elixir.model.Hotissue;
 import elixir.model.Signature;
+import elixir.model.Status;
 import elixir.service.ArticleService;
 import elixir.service.HotissueService;
 
@@ -30,10 +32,15 @@ public class RefineryService {
 	@Autowired
 	private ArticleService articleService;
 	
+	@Autowired
+	private StatusArchive statusArchive;
+	
 	
 	public void saveHotissueList() {
+		Status status = statusArchive.getStatus();
 		List<Hotissue> hotissues = naverService.getHotissueList();
-		hotissueService.addAll(hotissues);
+		
+		hotissueService.addAll(status, hotissues);
 	}
 	
 	
